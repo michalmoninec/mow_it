@@ -39,16 +39,21 @@
         </style>
     </head>
     <body>
-        <h1>You choosed solo...</h1>
-        Player:
+        <h1>MOW_IT mowing image, maybe gif</h1>
         <p id="p1_val">Player name</p>
-        <div class="grid" id="p_grid">
-            <!-- JavaScript will populate the grid with items -->
-        </div>
-        <script src="{{ url_for('static', filename='single.js') }}"></script>
+        <div>SCORE label</div>
+        <div>SCORE value</div>
+        <div class="grid" id="p_grid"></div>
+        <div>Level name</div>
+        <div>Max score of this level</div>
+        <button id="game_info">INFO</button>
+        <button id="back">BACK</button>
+
+        <script
+            type="module"
+            src="{{ url_for('static', filename='single.js') }}"
+        ></script>
+
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-        <script>
-            const map = '{{ player_map | tojson | safe }}';
-        </script>
     </body>
 </html>

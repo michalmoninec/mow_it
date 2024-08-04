@@ -1,22 +1,38 @@
 def game_update(key, session) -> None:
     last_visited = session["last_visited"]
     map = session["map"]
-    
+
     # print(f"pos_x is {pos_x}")
-    print(f'Actual position is: {session['position']}')
+    # print(f'Actual position is: {session['position']}')
 
     pos_x = session["position"]["x"]
     pos_y = session["position"]["y"]
 
     valid = True
 
-    if key == "ArrowRight" and (pos_x + 1 < len(map)):
+    if (
+        key == "ArrowRight"
+        and (pos_x + 1 < len(map))
+        and cell_not_blocked(map, pos_x + 1, pos_y)
+    ):
         pos_x += 1
-    elif key == "ArrowLeft" and (pos_x - 1 >= 0):
+    elif (
+        key == "ArrowLeft"
+        and (pos_x - 1 >= 0)
+        and cell_not_blocked(map, pos_x - 1, pos_y)
+    ):
         pos_x -= 1
-    elif key == "ArrowUp" and (pos_y - 1 >= 0):
+    elif (
+        key == "ArrowUp"
+        and (pos_y - 1 >= 0)
+        and cell_not_blocked(map, pos_x, pos_y - 1)
+    ):
         pos_y -= 1
-    elif key == "ArrowDown" and (pos_y + 1 < len(map)):
+    elif (
+        key == "ArrowDown"
+        and (pos_y + 1 < len(map))
+        and cell_not_blocked(map, pos_x, pos_y + 1)
+    ):
         pos_y += 1
     else:
         valid = False
@@ -39,3 +55,6 @@ def game_update(key, session) -> None:
         map[last_visited["x"]][last_visited["y"]]["active"] = False
         map[last_visited["x"]][last_visited["y"]]["visited"] = True
 
+
+def cell_not_blocked(map, x, y) -> bool:
+    return not map[x][y]["blocker"]

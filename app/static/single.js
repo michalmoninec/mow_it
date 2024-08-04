@@ -1,11 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
-    let socket = null;
+import { updateGrid } from './shared.js';
 
-    map_p = JSON.parse(map);
+document.addEventListener('DOMContentLoaded', () => {
+    // map_p = JSON.parse(map);
     // console.log(map_p);
     // map_p.prototype.forEach((e) => console.log(e));
 
     const grid = document.getElementById('p_grid');
+    const backButton = document.getElementById('back');
 
     for (let row = 0; row < 10; row++) {
         for (let col = 0; col < 10; col++) {
@@ -16,26 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // console.log(map_p);
-    // map_p.forEach((element) => {
-    //     console.log(element);
-    // });
-    updateGrid(map_p);
+    retrieveMap();
 
-    function updateGrid(map) {
-        for (const row of map) {
-            for (const cell of row) {
-                gridItem = document.getElementById(`${cell.x}${cell.y}`);
-                if (cell.active) {
-                    gridItem.classList.add('active');
-                } else if (cell.visited) {
-                    gridItem.classList.remove('active');
-                    gridItem.classList.add('visited');
-                } else {
-                    gridItem.classList.remove('active');
-                }
-            }
-        }
+    function retrieveMap() {
+        fetch('/single/ready', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: '',
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                updateGrid(data.map, 'player');
+            })
+            .catch((error) => console.error('Error:', error));
     }
 
     function sendKeyPress(key) {
@@ -48,10 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                position = data.position;
-                //TODO: implement logic for movement.
-                // console.log(data.map);
-                updateGrid(data.map);
+                updateGrid(data.map, 'player');
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -61,5 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
             sendKeyPress(key);
         }
+    });
+
+    backButton.addEventListener('click', () => {
+        window.location.href = '/';
     });
 });
