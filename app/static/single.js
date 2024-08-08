@@ -1,10 +1,6 @@
 import { updateGrid } from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // map_p = JSON.parse(map);
-    // console.log(map_p);
-    // map_p.prototype.forEach((e) => console.log(e));
-
     const grid = document.getElementById('p_grid');
     const backButton = document.getElementById('back');
 

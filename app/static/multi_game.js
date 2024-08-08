@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let socket = io.connect('http://' + document.domain + ':' + location.port);
     let p1_val = document.getElementById('p1_val');
     let p2_val = document.getElementById('p2_val');
+    let backButton = document.getElementById('back');
 
     const grid = document.getElementById('p_grid');
     const o_grid = document.getElementById('o_grid');
@@ -51,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data['player_id'] == player_id) {
             updateGrid(data['map'], 'player');
         } else {
-            updateGrid(data['map'], 'oponent');
+            pass;
+            // updateGrid(data['map'], 'oponent');
         }
     });
 
@@ -61,6 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             sendKeyPress(key);
         }
+    });
+
+    backButton.addEventListener('click', () => {
+        window.location.href = '/';
     });
 
     function sendKeyPress(key) {

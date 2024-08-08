@@ -1,4 +1,4 @@
-def game_update(key, session) -> None:
+def game_update(key: str, session) -> None:
     last_visited = session["last_visited"]
     map = session["map"]
 
@@ -58,3 +58,26 @@ def game_update(key, session) -> None:
 
 def cell_not_blocked(map, x, y) -> bool:
     return not map[x][y]["blocker"]
+
+
+def create_map():
+    print("Somebody initialized map creation.")
+    map = []
+    for col in range(10):
+        col_cell = []
+        for row in range(10):
+            cell = {
+                "x": col,
+                "y": row,
+                "active": False,
+                "blocker": False,
+                "visited": False,
+            }
+            col_cell.append(cell)
+        map.append(col_cell)
+    map[0][0]["active"] = True
+    map[0][3]["blocker"] = True
+    map[1][3]["blocker"] = True
+    map[2][3]["blocker"] = True
+    map[3][3]["blocker"] = True
+    return map
