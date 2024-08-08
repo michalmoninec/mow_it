@@ -6,12 +6,6 @@ def configure_socketio(socketio):
     @socketio.on("joined")
     def handle_connect():
         player_id = session["player_id"]
-        # print(f"After connection player id: {player_id}")
-        # print(f'After connection session map: {session['map']}')
-        # print(f"Players in `handle connect`: {players}")
-        
-        # print(f"Session is {session['map']}")
-        # print(f"Player {player_id} connected")
         emit("retrieve_map", {"map": session["map"], "player_id": player_id})
         
 

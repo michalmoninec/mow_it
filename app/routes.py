@@ -26,7 +26,6 @@ def index():
 @main.route("/single")
 def single():
     p_map = create_map()
-    # p_map[0][0]["active"] = True
 
     if "map" not in session:
         session["map"] = p_map
@@ -62,13 +61,11 @@ def move():
 
 @main.route("/create_game")
 def create_game():
-    # room_id = str(uuid.uuid4())
-    # player_id = session.get("player_id")
     p_map = create_map()
-    # db_create_map()
+
     found_map = Maps.query.filter_by(name="Hradec").first()
+    # checking access to DB
     print(f"found map in db is: {found_map.size}")
-    # p_map[0][0]["active"] = True
 
     if "player_id" not in session:
         session["player_id"] = str(uuid.uuid4())
@@ -93,9 +90,6 @@ def create_game():
 
 @main.route("/game")
 def game():
-    # player_id = session.get("player_id")
-    # print(f"player id in game: {player_id}")
-
     return render_template("multi_game.html")
 
 

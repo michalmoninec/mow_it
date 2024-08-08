@@ -1,13 +1,8 @@
 def game_update(key: str, session) -> None:
     last_visited = session["last_visited"]
     map = session["map"]
-
-    # print(f"pos_x is {pos_x}")
-    # print(f'Actual position is: {session['position']}')
-
     pos_x = session["position"]["x"]
     pos_y = session["position"]["y"]
-
     valid = True
 
     if (
@@ -37,7 +32,6 @@ def game_update(key: str, session) -> None:
     else:
         valid = False
 
-    # update_game(pos_x, pos_y, session)
     session["position"] = {
         "x": pos_x,
         "y": pos_y,
@@ -48,7 +42,6 @@ def game_update(key: str, session) -> None:
         "y": pos_y,
     }
 
-    # pos = session["position"]
     map[pos_x][pos_y]["active"] = True
 
     if valid:

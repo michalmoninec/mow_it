@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // updateGridItem(map_p);
-
     socket.on('connect', () => {
         console.log('Connected to server');
         socket.emit('joined');
@@ -53,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateGrid(data['map'], 'player');
         } else {
             pass;
-            // updateGrid(data['map'], 'oponent');
         }
     });
 
