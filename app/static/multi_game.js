@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            const gridItem = document.createElement('div');
+            gridItem.classList.add('grid-item');
+            gridItem.id = `o${col}${row}`;
+            o_grid.appendChild(gridItem);
+        }
+    }
+
     socket.on('connect', () => {
         console.log('Connected to server');
         socket.emit('joined');
@@ -26,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('retrieve_map', (data) => {
         updateGrid(data.map, 'player');
+        updateGrid(data.map, 'oponent');
         player_id = data.player_id;
     });
 
@@ -50,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data['player_id'] == player_id) {
             updateGrid(data['map'], 'player');
         } else {
-            pass;
+            updateGrid(data['map'], 'oponent');
         }
     });
 

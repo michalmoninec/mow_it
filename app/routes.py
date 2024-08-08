@@ -1,4 +1,4 @@
-import uuid
+import uuid, json
 
 from flask import (
     Blueprint,
@@ -11,6 +11,7 @@ from flask import (
 )
 
 from .models import Maps
+from .extensions import db
 from .scripts.game import create_map, game_update
 
 
@@ -25,10 +26,11 @@ def index():
 
 @main.route("/single")
 def single():
-    p_map = create_map()
+    map_db = Maps.query.filter_by(name="Hradec").first()
+    map = json.loads(map_db.data)
 
     if "map" not in session:
-        session["map"] = p_map
+        session["map"] = map
 
     if "position" not in session:
         session["position"] = {
@@ -61,17 +63,18 @@ def move():
 
 @main.route("/create_game")
 def create_game():
-    p_map = create_map()
-
-    found_map = Maps.query.filter_by(name="Hradec").first()
-    # checking access to DB
-    print(f"found map in db is: {found_map.size}")
+    # retrieved_map
+    map_db = Maps.query.filter_by(name="Hradec").first()
+    map = json.loads(map_db.data)
 
     if "player_id" not in session:
         session["player_id"] = str(uuid.uuid4())
 
+    if "room_id" not in session:
+        session["room_id"] = "room_lokofu"
+
     if "map" not in session:
-        session["map"] = p_map
+        session["map"] = map
 
     if "position" not in session:
         session["position"] = {

@@ -1,8 +1,10 @@
 from .extensions import db
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Text, Column, Integer, String
 
 
 class Maps(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
-    size: Mapped[int] = mapped_column()
+    __tablename__ = "map_data"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    data = Column(Text)
