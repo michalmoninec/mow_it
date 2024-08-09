@@ -1,3 +1,10 @@
+import json
+
+
+from app.models import Maps, GameState
+from app.extensions import db
+
+
 def game_update(key: str, session) -> None:
     last_visited = session["last_visited"]
     map = session["map"]
@@ -74,3 +81,13 @@ def create_map():
     map[2][3]["blocker"] = True
     map[3][3]["blocker"] = True
     return map
+
+
+def create_db_test_data():
+    map = Maps(name="Hradec", data=json.dumps(create_map()))
+    db.session.add(map)
+
+    game_state = GameState(room_id="room", players="none", map=json.dumps(create_map()))
+    db.session.add(game_state)
+
+    db.session.commit()
