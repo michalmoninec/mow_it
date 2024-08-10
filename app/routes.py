@@ -65,16 +65,14 @@ def move():
 @main.route("/create_game")
 def create_game():
 
-    # create_db_test_data()
-
-    map_db = Maps.query.filter_by(name="Hradec").first()
-    map = json.loads(map_db.data)
-
     if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())
+        session["player_id"] = str(uuid.uuid4())[:5]
+        if "room_id" not in session:
+            session["room_id"] = "lokofu"
+        create_db_test_data(room_id=session["room_id"], player_id=session["player_id"])
 
-    if "room_id" not in session:
-        session["room_id"] = "room"
+    game_state = GameState.query.filter_by(room_id=session["room_id"]).first()
+    map = json.loads(game_state.map)
 
     if "map" not in session:
         session["map"] = map
@@ -96,13 +94,16 @@ def create_game():
 
 @main.route("/game")
 def game():
+    if "player_id" not in session:
+        return redirect(url_for("main.index"))
+
     return render_template("multi_game.html")
 
 
 @main.route("/game/<room_id>")
 def join_game(room_id):
     if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())
+        session["player_id"] = str(uuid.uuid4())[:5]
 
     db_room_id = GameState.query.filter_by(room_id=room_id).first()
 
@@ -111,6 +112,12 @@ def join_game(room_id):
             session["room_id"] = room_id
     else:
         print(f"ROOM_ID not available.")
+        return redirect(url_for("main.index"))
+
+    if db_room_id.add_player(session["player_id"]):
+        db.session.add(db_room_id)
+        db.session.commit()
+    else:
         return redirect(url_for("main.index"))
 
     if "map" not in session:

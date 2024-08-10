@@ -19,12 +19,23 @@ class GameState(db.Model):
     _id = Column(Integer, primary_key=True)
 
     room_id = Column(String)
-    players = Column(Text)
+    status = Column(String)
+    level = Column(String)
+    winner_id = Column(String)
+
+    player_1_id = Column(String)
+    player_2_id = Column(String)
+
+    player_1_map = Column(Text)
+    player_2_map = Column(Text)
     map = Column(Text)
-    # level = Column(Integer)
 
-    def update_players(self, data):
-        self.players = data
-
-    def update_map(self, data):
-        self.map = data
+    def add_player(self, player_id):
+        if self.player_1_id == None:
+            self.player_1_id = player_id
+            return self.player_1_id
+        elif self.player_2_id == None:
+            self.player_2_id = player_id
+            return self.player_2_id
+        else:
+            return None

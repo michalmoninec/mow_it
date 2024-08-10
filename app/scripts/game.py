@@ -80,14 +80,24 @@ def create_map():
     map[1][3]["blocker"] = True
     map[2][3]["blocker"] = True
     map[3][3]["blocker"] = True
+    map[0][5]["blocker"] = True
+    map[1][5]["blocker"] = True
+    map[2][5]["blocker"] = True
+    map[3][5]["blocker"] = True
     return map
 
 
-def create_db_test_data():
-    map = Maps(name="Hradec", data=json.dumps(create_map()))
-    db.session.add(map)
+def create_db_test_data(room_id: str, player_id: str):
+    # map = Maps(name="Hradec", data=json.dumps(create_map()))
+    # db.session.add(map)
 
-    game_state = GameState(room_id="room", players="none", map=json.dumps(create_map()))
+    game_state = GameState(
+        room_id=room_id,
+        player_1_id=player_id,
+        status="init",
+        level=1,
+        map=json.dumps(create_map()),
+    )
+
     db.session.add(game_state)
-
     db.session.commit()
