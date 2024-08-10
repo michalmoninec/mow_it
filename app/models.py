@@ -28,6 +28,12 @@ class GameState(db.Model):
 
     player_1_map = Column(Text)
     player_2_map = Column(Text)
+
+    player_1_pos = Column(Text)
+    player_2_pos = Column(Text)
+
+    player_1_score = Column(Integer)
+    player_2_score = Column(Integer)
     map = Column(Text)
 
     def add_player(self, player_id):

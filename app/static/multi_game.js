@@ -28,32 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    socket.on('connect', () => {
+    socket.on('connect', (data) => {
         console.log('Connected to server');
-        socket.emit('joined');
+        socket.emit('joined', player, room_id);
     });
 
-    socket.on('retrieve_map', (data) => {
-        updateGrid(data.map, 'player');
-        updateGrid(data.map, 'oponent');
+    socket.on('retrieve_player_id', (data) => {
         player_id = data.player_id;
+
+        if (data['player_id'] == player_id) {
+            updateGrid(data['map_1'], 'player');
+            updateGrid(data['map_2'], 'oponent');
+        } else {
+            updateGrid(data['map_2'], 'player');
+            updateGrid(data['map_1'], 'oponent');
+        }
     });
 
     socket.on('disconnect', () => {
         console.log('disconnecting from server');
-    });
-
-    socket.on('players', (data) => {
-        console.log('Players ID:', data.players);
-        let p1 = data.players.find((id) => id == player_id);
-        let p2 = data.players.find((id) => id !== player_id);
-
-        p1_val.innerText = 'Boy he thick!';
-        if (p2) {
-            p2_val.innerText = p2;
-        } else {
-            p2_val.innerText = 'Player not joined, but he better be thick!';
-        }
     });
 
     socket.on('update_grid', (data) => {
