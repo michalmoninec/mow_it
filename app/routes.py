@@ -56,8 +56,9 @@ def single_player_init_map() -> Response:
     map = json.loads(db_map.data)
     pos = json.loads(db_map.start_position)
     score = 0
+    completed = False
 
-    return jsonify({"map": map, "pos": pos, "score": score})
+    return jsonify({"map": map, "pos": pos, "score": score, "completed": completed})
 
 
 @main.route("/single_player/move", methods=["POST"])
@@ -78,8 +79,11 @@ def single_player_move_handle() -> Response:
         map = updated_game_state["map"]
         pos = updated_game_state["position"]
         score = updated_game_state["score"]
+        completed = updated_game_state["completed"]
+    else:
+        completed = False
 
-    return jsonify({"map": map, "pos": pos, "score": score})
+    return jsonify({"map": map, "pos": pos, "score": score, "completed": completed})
 
 
 @main.route("/create_multiplayer_game")
@@ -99,7 +103,6 @@ def create_multiplayer_game() -> Response:
     return redirect(url_for("main.multiplayer_game"))
 
 
-# SLAMUS_NOTES - kokotske nazvy route melo by byt multiplayer_game nebo tak neco
 @main.route("/multiplayer_game")
 def multiplayer_game() -> str:
     """TODO"""

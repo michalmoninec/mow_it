@@ -19,6 +19,7 @@ export function updateGrid(map, player) {
                 gridItem.classList.add('blocked');
             } else {
                 gridItem.classList.remove('active');
+                gridItem.classList.remove('visited');
             }
         }
     }

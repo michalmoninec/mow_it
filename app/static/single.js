@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let map;
     let position;
     let score;
+    let completed;
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -35,10 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                updateGrid(data.map, 'player');
                 map = data.map;
                 position = data.pos;
                 score = data.score;
+                completed = data.completed;
+                updateGrid(map, 'player');
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -58,10 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                updateGrid(data.map, 'player');
                 map = data.map;
                 position = data.pos;
                 score = data.score;
+
+                updateGrid(map, 'player');
+
+                if (data.completed) {
+                    console.log('GAME FINISHED!');
+                    //TODO - modal window will popup with restart and continue.
+                    retrieveMap();
+                }
             })
             .catch((error) => console.error('Error:', error));
     }

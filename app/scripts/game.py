@@ -19,6 +19,7 @@ def game_state_update(
 
     if all(pos is not None for pos in (pos_x, pos_y)):
         map[pos_x][pos_y]["active"] = True
+        map[pos_x][pos_y]["visited"] = True
         map[prev_pos_x][prev_pos_y]["active"] = False
         map[prev_pos_x][prev_pos_y]["visited"] = True
         score = update_score(map, pos_x, pos_y, score)
@@ -32,6 +33,7 @@ def game_state_update(
             "y": pos_y,
         },
         "score": score,
+        "completed": game_completed(map),
     }
 
 
@@ -83,6 +85,13 @@ def update_score(map: NestedDictList, pos_x: int, pos_y: int, score: int) -> int
     else:
         score += 100
     return score
+
+
+def game_completed(map: NestedDictList) -> bool:
+    for row in map:
+        if any(not cell["blocker"] and not cell["visited"] for cell in row):
+            return False
+    return True
 
 
 def create_map() -> NestedDictList:
