@@ -1,6 +1,5 @@
 import json
 
-
 from typing import List
 
 from app.models import Maps, GameState

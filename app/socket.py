@@ -2,8 +2,8 @@ import json
 
 from flask import session
 from flask_socketio import emit, join_room
-from .scripts.game import game_state_update
-from .models import GameState
+from app.scripts.game import game_state_update
+from app.models import GameState
 
 from app.extensions import db
 

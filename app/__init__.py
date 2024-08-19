@@ -1,8 +1,8 @@
 from flask import Flask
 
-from .extensions import db, socketio
-from .socket import configure_socketio
-from .routes import main
+from app.extensions import db, socketio
+from app.socket import configure_socketio
+from app.routes import main
 
 
 def create_app():

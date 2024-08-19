@@ -1,6 +1,6 @@
-from .extensions import db
-from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Text, Column, Integer, String
+
+from app.extensions import db
 
 
 class Maps(db.Model):

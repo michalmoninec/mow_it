@@ -1,20 +1,19 @@
 import uuid, json
 
 from flask import (
-    Blueprint,
     render_template,
     redirect,
     url_for,
+    jsonify,
     session,
     request,
+    Blueprint,
     Response,
-    jsonify,
 )
 
-from .models import Maps, GameState
-from .extensions import db
-from .scripts.game import (
-    create_map,
+from app.models import Maps, GameState
+from app.extensions import db
+from app.scripts.game import (
     game_state_update,
     create_db_game_state_data,
     create_db_maps_data,
@@ -46,7 +45,7 @@ def single_player_prepare() -> str:
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
 
-    # level_name will be retrieved from front end via post method
+    # level_name will be retrieved from db via user_id from frontend
     level_name = 1
 
     db_map = Maps.query.filter_by(level=level_name).first()
