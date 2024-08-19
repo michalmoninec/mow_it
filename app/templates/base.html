@@ -3,10 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>XXX</title>
+        <title>{% block title%} My Flask App {% endblock%}</title>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='styles/base.css') }}"
+        />
+        {% block style_script %} {% endblock %}
     </head>
     <body>
-        <script src="{{ url_for('static', filename='main.js') }}"></script>
-        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <h1>MOW_IT GAME</h1>
+        <div>{% block content %} {% endblock %} {% block footer %}</div>
+        <div class="footer">Powered by &copy; Anton's beer quality</div>
+        {% endblock %} {% block scripts %} {% endblock %}
     </body>
 </html>

@@ -1,0 +1,34 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 50px);
+    grid-template-rows: repeat(10, 50px);
+    gap: 1px;
+    position: relative;
+    margin: 20px;
+}
+.grid-item {
+    width: 50px;
+    height: 50px;
+    background-color: yellow;
+}
+.visited {
+    background-color: green !important;
+}
+.active {
+    background-color: blue !important;
+}
+.o-visited {
+    background-color: green !important;
+}
+.o-active {
+    background-color: blue !important;
+}
+.blocked {
+    background-color: brown !important;
+}
+.padding-bottom {
+    padding-bottom: 10px;
+}
+.game-whole {
+    display: flex;
+}
