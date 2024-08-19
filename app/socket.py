@@ -2,7 +2,7 @@ import json
 
 from flask import session
 from flask_socketio import emit, join_room
-from .scripts.game import game_update
+from .scripts.game import game_state_update
 from .models import GameState
 
 from app.extensions import db
@@ -49,7 +49,7 @@ def configure_socketio(socketio):
         player_id = session["player_id"]
         key = data["key"]
 
-        game_update(key, session)
+        game_state_update(key, session)
         print(f'Updated score is: {session["score"]}')
 
         game_state = GameState.query.filter_by(room_id=session["room_id"]).first()

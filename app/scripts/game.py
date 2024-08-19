@@ -1,17 +1,47 @@
 import json
 
 
+from typing import List
+
 from app.models import Maps, GameState
 from app.extensions import db
 
+NestedDictList = List[List[dict[str, dict | int]]]
 
-def game_update(key: str, session) -> None:
 
-    last_visited = session["last_visited"]
-    map = session["map"]
-    pos_x = session["position"]["x"]
-    pos_y = session["position"]["y"]
-    valid = True
+def game_state_update(
+    key: str, map: NestedDictList, position: dict, score: int
+) -> dict | None:
+    """Check if move is valid and then updates game_state"""
+
+    prev_pos_x, prev_pos_y = position["x"], position["y"]
+    pos_x, pos_y = validate_move(key, map, position)
+
+    if all(pos is not None for pos in (pos_x, pos_y)):
+        map[pos_x][pos_y]["active"] = True
+        map[prev_pos_x][prev_pos_y]["active"] = False
+        map[prev_pos_x][prev_pos_y]["visited"] = True
+        score = update_score(map, pos_x, pos_y, score)
+    else:
+        return None
+
+    return {
+        "map": map,
+        "position": {
+            "x": pos_x,
+            "y": pos_y,
+        },
+        "score": score,
+    }
+
+
+def validate_move(
+    key: str, map: NestedDictList, position: dict[str, int]
+) -> dict | None:
+    """Validates players move, return updated position or None"""
+
+    pos_x = position["x"]
+    pos_y = position["y"]
 
     if (
         key == "ArrowRight"
@@ -38,35 +68,24 @@ def game_update(key: str, session) -> None:
     ):
         pos_y += 1
     else:
-        valid = False
+        return None, None
 
-    session["position"] = {
-        "x": pos_x,
-        "y": pos_y,
-    }
-
-    session["last_visited"] = {
-        "x": pos_x,
-        "y": pos_y,
-    }
-
-    map[pos_x][pos_y]["active"] = True
-
-    if valid:
-        if map[pos_x][pos_y]["visited"]:
-            session["score"] -= 100
-        else:
-            session["score"] += 100
-        map[last_visited["x"]][last_visited["y"]]["active"] = False
-        map[last_visited["x"]][last_visited["y"]]["visited"] = True
+    return pos_x, pos_y
 
 
-def cell_not_blocked(map, x, y) -> bool:
+def cell_not_blocked(map: NestedDictList, x: int, y: int) -> bool:
     return not map[x][y]["blocker"]
 
 
-def create_map():
-    print("Somebody initialized map creation.")
+def update_score(map: NestedDictList, pos_x: int, pos_y: int, score: int) -> int:
+    if map[pos_x][pos_y]["visited"]:
+        score -= 100
+    else:
+        score += 100
+    return score
+
+
+def create_map() -> NestedDictList:
     map = []
     for col in range(10):
         col_cell = []
@@ -89,10 +108,14 @@ def create_map():
     map[1][5]["blocker"] = True
     map[2][5]["blocker"] = True
     map[3][5]["blocker"] = True
+    map[0][9]["blocker"] = True
+    map[1][9]["blocker"] = True
+    map[2][9]["blocker"] = True
+    map[3][9]["blocker"] = True
     return map
 
 
-def create_db_test_data(room_id: str, player_id: str):
+def create_db_game_state_data(room_id: str, player_id: str) -> None:
 
     # map = Maps(name="Hradec", data=json.dumps(create_map()))
     # db.session.add(map)
@@ -119,9 +142,19 @@ def create_db_test_data(room_id: str, player_id: str):
     db.session.commit()
 
 
-def create_db_maps_data():
+def create_db_maps_data() -> None:
     map = create_map()
-    map_db = Maps(name="Hradec", data=json.dumps(map))
+    map_db = Maps(
+        name="Hradec",
+        data=json.dumps(map),
+        level=2,
+        start_position=json.dumps(
+            {
+                "x": 0,
+                "y": 0,
+            }
+        ),
+    )
 
     db.session.add(map_db)
     db.session.commit()

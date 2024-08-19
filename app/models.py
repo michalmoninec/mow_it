@@ -8,10 +8,9 @@ class Maps(db.Model):
     id = Column(Integer, primary_key=True)
 
     name = Column(String)
+    start_position = Column(Text)
+    level = Column(Integer)
     data = Column(Text)
-
-    def change_name(self, name):
-        self.name = name
 
 
 class GameState(db.Model):

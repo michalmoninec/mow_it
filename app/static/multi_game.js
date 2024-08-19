@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', (data) => {
         console.log('Connected to server');
-        socket.emit('joined', player, room_id);
+        socket.emit('joined');
     });
 
     socket.on('retrieve_player_id', (data) => {

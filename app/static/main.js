@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const versus_ai = document.getElementById('versus_ai');
 
     single_player.addEventListener('click', () => {
-        window.location.href = '/single';
+        window.location.href = '/single_player';
     });
 
     multi_player.addEventListener('click', () => {
-        window.location.href = '/create_game';
+        window.location.href = '/create_multiplayer_game';
     });
 
     versus_ai.addEventListener('click', () => {
