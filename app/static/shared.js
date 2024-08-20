@@ -10,16 +10,13 @@ export function updateGrid(map, player) {
                 `${idPrefix}${cell.x}${cell.y}`
             );
             if (cell.active) {
-                gridItem.classList.add('active');
+                gridItem.className = 'active';
             } else if (cell.visited) {
-                gridItem.classList.remove('active');
-                gridItem.classList.add('visited');
+                gridItem.className = 'visited';
             } else if (cell.blocker) {
-                gridItem.classList.remove('active');
-                gridItem.classList.add('blocked');
+                gridItem.className = 'blocked';
             } else {
-                gridItem.classList.remove('active');
-                gridItem.classList.remove('visited');
+                gridItem.className = 'grid-item';
             }
         }
     }

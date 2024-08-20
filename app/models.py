@@ -3,6 +3,13 @@ from sqlalchemy import Text, Column, Integer, String
 from app.extensions import db
 
 
+class UserState(db.Model):
+    __tablename__ = "user_state"
+    id = Column(Integer, primary_key=True, unique=True)
+    user_id = Column(String, nullable=False)
+    level = Column(Integer)
+
+
 class Maps(db.Model):
     __tablename__ = "map_data"
     id = Column(Integer, primary_key=True)

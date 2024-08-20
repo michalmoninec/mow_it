@@ -123,6 +123,56 @@ def create_map() -> NestedDictList:
     return map
 
 
+def create_map_2() -> NestedDictList:
+    map = []
+    for col in range(10):
+        col_cell = []
+        for row in range(10):
+            cell = {
+                "x": col,
+                "y": row,
+                "active": False,
+                "blocker": False,
+                "visited": False,
+            }
+            col_cell.append(cell)
+        map.append(col_cell)
+    map[0][0]["active"] = True
+    map[0][3]["blocker"] = True
+    map[1][3]["blocker"] = True
+    map[2][3]["blocker"] = True
+    map[3][3]["blocker"] = True
+    map[4][3]["blocker"] = True
+    map[5][3]["blocker"] = True
+    map[6][3]["blocker"] = True
+    return map
+
+
+def create_map_3() -> NestedDictList:
+    map = []
+    for col in range(10):
+        col_cell = []
+        for row in range(10):
+            cell = {
+                "x": col,
+                "y": row,
+                "active": False,
+                "blocker": False,
+                "visited": False,
+            }
+            col_cell.append(cell)
+        map.append(col_cell)
+    map[0][0]["active"] = True
+    map[0][5]["blocker"] = True
+    map[1][5]["blocker"] = True
+    map[2][5]["blocker"] = True
+    map[3][5]["blocker"] = True
+    map[4][5]["blocker"] = True
+    map[5][5]["blocker"] = True
+    map[6][5]["blocker"] = True
+    return map
+
+
 def create_db_game_state_data(room_id: str, player_id: str) -> None:
 
     # map = Maps(name="Hradec", data=json.dumps(create_map()))
@@ -155,7 +205,39 @@ def create_db_maps_data() -> None:
     map_db = Maps(
         name="Hradec",
         data=json.dumps(map),
+        level=1,
+        start_position=json.dumps(
+            {
+                "x": 0,
+                "y": 0,
+            }
+        ),
+    )
+
+    db.session.add(map_db)
+    db.session.commit()
+
+    map = create_map_2()
+    map_db = Maps(
+        name="Hradec",
+        data=json.dumps(map),
         level=2,
+        start_position=json.dumps(
+            {
+                "x": 0,
+                "y": 0,
+            }
+        ),
+    )
+
+    db.session.add(map_db)
+    db.session.commit()
+
+    map = create_map_3()
+    map_db = Maps(
+        name="Hradec",
+        data=json.dumps(map),
+        level=3,
         start_position=json.dumps(
             {
                 "x": 0,

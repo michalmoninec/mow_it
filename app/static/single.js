@@ -36,11 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                map = data.map;
-                position = data.pos;
-                score = data.score;
-                completed = data.completed;
-                updateGrid(map, 'player');
+                if (data.levels_completed) {
+                    window.location.href = '/levels_completed';
+                } else {
+                    map = data.map;
+                    position = data.pos;
+                    score = data.score;
+                    completed = data.completed;
+                    updateGrid(map, 'player');
+                }
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -60,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => response.json())
             .then((data) => {
+                if (data.levels_completed) {
+                    window.location.href = '/levels_completed';
+                }
                 map = data.map;
                 position = data.pos;
                 score = data.score;
@@ -67,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateGrid(map, 'player');
 
                 if (data.completed) {
-                    console.log('GAME FINISHED!');
+                    console.log('level FINISHED!');
                     //TODO - modal window will popup with restart and continue.
                     retrieveMap();
                 }
