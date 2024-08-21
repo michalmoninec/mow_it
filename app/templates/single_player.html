@@ -5,12 +5,12 @@ block style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<p id="p1_val">Player name</p>
-<div>SCORE label</div>
-<div>SCORE value</div>
+<p id="p1_val">I like to mow'it mow'it!</p>
+<div>SCORE:</div>
+<div id="score_label">SCORE value</div>
 <div class="grid" id="p_grid"></div>
-<div>Level name</div>
-<div>Max score of this level</div>
+<div>Level:</div>
+<div id="level_label">LEVEL value</div>
 <button id="game_info">INFO</button>
 <button id="back">BACK</button>
 {% endblock %} {% block scripts %}

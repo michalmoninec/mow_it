@@ -11,9 +11,16 @@ from flask import (
     Response,
 )
 
-from app.models import Maps, GameState, UserState
+from app.models import (
+    Maps,
+    GameState,
+    UserState,
+    create_user_state,
+    reset_user_state_level,
+)
 from app.extensions import db
 from app.scripts.game import (
+    game_state_creation,
     game_state_update,
     create_db_game_state_data,
     create_db_maps_data,
@@ -36,72 +43,55 @@ def single_player_prepare() -> str:
     """Render page for single player"""
 
     # for creating data into database when deleting db
-    create_db_maps_data()
+    # create_db_maps_data()
 
     return render_template("single_player.html")
 
 
-@main.route("/single_player/retrieve_map", methods=["POST"])
+@main.route("/single_player/retrieve_map", methods=["POST", "GET"])
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
 
     if "user_id" not in session:
         session["user_id"] = str(uuid.uuid4())[:8]
-        user_state = UserState(user_id=session["user_id"], level=1)
-        db.session.add(user_state)
-        db.session.commit()
+        create_user_state(user_id=session["user_id"])
 
-    user_state = UserState.query.filter_by(user_id=session["user_id"]).first()
+    game_state = game_state_creation(user_id=session["user_id"])
 
-    level = user_state.level
+    if game_state is None:
+        return jsonify({"error": "User or map not found"}), 404
 
-    if level > 3:
-        level = 3
-        return jsonify({"levels_completed": True})
-
-    db_map = Maps.query.filter_by(level=level).first()
-    if db_map is None:
-        return jsonify({"error": "User not found"}), 404
-
-    map = json.loads(db_map.data)
-    pos = json.loads(db_map.start_position)
-    score = 0
-    completed = False
-
-    return jsonify({"map": map, "pos": pos, "score": score, "completed": completed})
+    return jsonify({"game_state": game_state})
 
 
 @main.route("/single_player/move", methods=["POST"])
 def single_player_move_handle() -> Response:
     """
-    Validation of player move
-    If valid, game state is updated and send to client
+    Gets move, map, pos and score from client,
+    Updates game state
+    If move is valid, send updated state, otherwise state is not changed
     """
 
-    key = request.get_json().get("key")
-    map = request.get_json().get("map")
-    pos = request.get_json().get("pos")
-    score = request.get_json().get("score")
+    data = request.get_json()
+    key = data.get("key")
+    map = data.get("map")
+    pos = data.get("pos")
+    score = data.get("score")
 
-    updated_game_state = game_state_update(key, map, pos, score)
+    updated_game_state = game_state_update(
+        key, map, pos, score, user_id=session["user_id"]
+    )
 
-    if updated_game_state:
-        map = updated_game_state["map"]
-        pos = updated_game_state["position"]
-        score = updated_game_state["score"]
-        completed = updated_game_state["completed"]
-    else:
-        completed = False
+    return jsonify({"game_state": updated_game_state})
 
-    if completed:
-        user_state = UserState.query.filter_by(user_id=session["user_id"]).first()
-        # level = user_state.level
-        user_state.level += 1
-        if user_state.level > 3:
-            return jsonify({"levels_completed": True})
-        db.session.commit()
 
-    return jsonify({"map": map, "pos": pos, "score": score, "completed": completed})
+@main.route("/single_player_reset_level")
+def single_player_reset_level() -> Response:
+    """Reset user's level to 1 and redirect to game preparation"""
+
+    reset_user_state_level(user_id=session["user_id"])
+
+    return redirect(url_for("main.single_player_prepare"))
 
 
 @main.route("/create_multiplayer_game")
@@ -175,7 +165,7 @@ def join_game(room_id) -> Response:
 
 @main.route("/levels_completed")
 def levels_completed():
-    return "<h1>CONGRATULATIONS, all levels completed.</h1>"
+    return render_template("single_levels_completed.html")
 
 
 @main.route("/versus_ai")

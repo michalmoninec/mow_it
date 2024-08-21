@@ -1,38 +1,86 @@
 import json
 
 from typing import List
+from flask import session
 
-from app.models import Maps, GameState
+from app.models import (
+    Maps,
+    GameState,
+    UserState,
+    create_user_state,
+    reset_user_state_level,
+    retrieve_user_state_level,
+    get_map_by_level,
+    set_user_state_level,
+)
 from app.extensions import db
 
 NestedDictList = List[List[dict[str, dict | int]]]
 
+MAX_LEVEL = 3
+
+
+def game_state_creation(user_id: str) -> dict | None:
+    level = retrieve_user_state_level(user_id)
+    if level is None:
+        return None
+
+    map = get_map_by_level(level=level)
+    if map is None:
+        return None
+
+    return {
+        "map": json.loads(map.data),
+        "pos": json.loads(map.start_position),
+        "level": level,
+        "score": 0,
+        "completed": False,
+        "levels_completed": False,
+    }
+
 
 def game_state_update(
-    key: str, map: NestedDictList, position: dict, score: int
+    key: str, map: NestedDictList, position: dict, score: int, user_id: str
 ) -> dict | None:
     """Check if move is valid and then updates game_state"""
-
-    prev_pos_x, prev_pos_y = position["x"], position["y"]
     pos_x, pos_y = validate_move(key, map, position)
 
-    if all(pos is not None for pos in (pos_x, pos_y)):
+    prev_pos_x, prev_pos_y = position["x"], position["y"]
+
+    completed = False
+    levels_completed = False
+    level = retrieve_user_state_level(user_id)
+
+    if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
+        score = update_score(map, pos_x, pos_y, score)
         map[pos_x][pos_y]["active"] = True
         map[pos_x][pos_y]["visited"] = True
         map[prev_pos_x][prev_pos_y]["active"] = False
         map[prev_pos_x][prev_pos_y]["visited"] = True
-        score = update_score(map, pos_x, pos_y, score)
+
+        if game_completed(map):
+            completed = True
+            level += 1
+            if level > MAX_LEVEL:
+                levels_completed = True
+                level = MAX_LEVEL
+
+            set_user_state_level(user_id, level)
+            db.session.commit()
     else:
-        return None
+        pass
+        # maybe some message flashing of invalid move
 
     return {
         "map": map,
-        "position": {
+        "pos": {
             "x": pos_x,
             "y": pos_y,
         },
         "score": score,
-        "completed": game_completed(map),
+        "completed": completed,
+        "levels_completed": levels_completed,
+        "level": level,
     }
 
 
@@ -68,8 +116,6 @@ def validate_move(
         and cell_not_blocked(map, pos_x, pos_y + 1)
     ):
         pos_y += 1
-    else:
-        return None, None
 
     return pos_x, pos_y
 
@@ -102,24 +148,18 @@ def create_map() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": False,
+                "blocker": True,
                 "visited": False,
             }
             col_cell.append(cell)
         map.append(col_cell)
     map[0][0]["active"] = True
-    map[0][3]["blocker"] = True
-    map[1][3]["blocker"] = True
-    map[2][3]["blocker"] = True
-    map[3][3]["blocker"] = True
-    map[0][5]["blocker"] = True
-    map[1][5]["blocker"] = True
-    map[2][5]["blocker"] = True
-    map[3][5]["blocker"] = True
-    map[0][9]["blocker"] = True
-    map[1][9]["blocker"] = True
-    map[2][9]["blocker"] = True
-    map[3][9]["blocker"] = True
+    map[0][0]["blocker"] = False
+    map[1][0]["blocker"] = False
+    map[2][0]["blocker"] = False
+    map[3][0]["blocker"] = False
+    map[4][0]["blocker"] = False
+
     return map
 
 
@@ -132,19 +172,17 @@ def create_map_2() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": False,
+                "blocker": True,
                 "visited": False,
             }
             col_cell.append(cell)
         map.append(col_cell)
     map[0][0]["active"] = True
-    map[0][3]["blocker"] = True
-    map[1][3]["blocker"] = True
-    map[2][3]["blocker"] = True
-    map[3][3]["blocker"] = True
-    map[4][3]["blocker"] = True
-    map[5][3]["blocker"] = True
-    map[6][3]["blocker"] = True
+    map[0][0]["blocker"] = False
+    map[0][1]["blocker"] = False
+    map[0][2]["blocker"] = False
+    map[0][3]["blocker"] = False
+    map[0][4]["blocker"] = False
     return map
 
 
@@ -157,19 +195,17 @@ def create_map_3() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": False,
+                "blocker": True,
                 "visited": False,
             }
             col_cell.append(cell)
         map.append(col_cell)
     map[0][0]["active"] = True
-    map[0][5]["blocker"] = True
-    map[1][5]["blocker"] = True
-    map[2][5]["blocker"] = True
-    map[3][5]["blocker"] = True
-    map[4][5]["blocker"] = True
-    map[5][5]["blocker"] = True
-    map[6][5]["blocker"] = True
+    map[0][0]["blocker"] = False
+    map[1][0]["blocker"] = False
+    map[1][1]["blocker"] = False
+    map[1][2]["blocker"] = False
+    map[1][3]["blocker"] = False
     return map
 
 
