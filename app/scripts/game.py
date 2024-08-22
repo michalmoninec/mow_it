@@ -7,6 +7,7 @@ from app.models import (
     Maps,
     GameState,
     UserState,
+    advance_user_state_current_level,
     create_user_state,
     reset_user_state_level,
     retrieve_user_state_level,
@@ -60,12 +61,12 @@ def game_state_update(
 
         if game_completed(map):
             completed = True
-            level += 1
-            if level > MAX_LEVEL:
+            level_condition = level + 1
+            if level_condition > MAX_LEVEL:
                 levels_completed = True
-                level = MAX_LEVEL
+                level_condition = MAX_LEVEL
 
-            set_user_state_level(user_id, level)
+            # set_user_state_level(user_id, level)
             db.session.commit()
     else:
         pass
@@ -82,6 +83,10 @@ def game_state_update(
         "levels_completed": levels_completed,
         "level": level,
     }
+
+
+def game_state_advance_current_level(user_id: str) -> None:
+    advance_user_state_current_level(user_id)
 
 
 def validate_move(

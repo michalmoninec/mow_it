@@ -14,6 +14,10 @@ class UserState(db.Model):
         self.level = level
         db.session.commit()
 
+    def increase_level(self):
+        self.level += 1
+        db.session.commit()
+
 
 def create_user_state(user_id: str) -> None:
     user_state = UserState(user_id=user_id, level=1)
@@ -31,6 +35,10 @@ def reset_user_state_level(user_id: str) -> None:
 
 def set_user_state_level(user_id: str, level: int) -> None:
     UserState.query.filter_by(user_id=user_id).first().set_level(level)
+
+
+def advance_user_state_current_level(user_id: str) -> None:
+    UserState.query.filter_by(user_id=user_id).first().increase_level()
 
 
 class Maps(db.Model):

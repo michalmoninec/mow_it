@@ -20,6 +20,7 @@ from app.models import (
 )
 from app.extensions import db
 from app.scripts.game import (
+    game_state_advance_current_level,
     game_state_creation,
     game_state_update,
     create_db_game_state_data,
@@ -97,6 +98,15 @@ def single_player_reset_level() -> Response:
     reset_user_state_level(user_id=session["user_id"])
 
     return redirect(url_for("main.single_player_prepare"))
+
+
+@main.route("/single_player/advance_current_level", methods=["POST"])
+def single_player_advance_current_level() -> Response:
+    """Decrease user's level by 1 and redirect to game preparation"""
+
+    game_state_advance_current_level(user_id=session["user_id"])
+
+    return jsonify({"level_reset": True})
 
 
 @main.route("/multiplayer_level_selection")

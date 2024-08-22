@@ -21,3 +21,5 @@ export function updateGrid(map, player) {
         }
     }
 }
+
+export function updateMap(map, key) {}

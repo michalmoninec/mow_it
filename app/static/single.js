@@ -1,16 +1,23 @@
-import { updateGrid } from './shared.js';
+import { updateGrid, updateMap } from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('p_grid');
     const backButton = document.getElementById('back');
     const scoreLabel = document.getElementById('score_label');
     const levelLabel = document.getElementById('level_label');
+    const levelCompletedModal = document.getElementById('my_modal');
+    const levelAdvanceLabel = document.getElementById('level_advance_label');
+
+    const advanceLevelButton = document.getElementById('advance_level');
+    const restartLevelButton = document.getElementById('restart_level');
+    const returnHomeButton = document.getElementById('return_home');
 
     let map;
     let position;
     let score;
     let completed;
     let level;
+    let updatedMap;
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -73,21 +80,41 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((response) => response.json())
             .then((data) => {
                 let game_state = data.game_state;
+
                 if (game_state.levels_completed) {
                     window.location.href = '/levels_completed';
+                } else if (game_state.completed) {
+                    levelCompletedModal.style.display = 'block';
+                    // retrieveMap();
                 } else {
                     map = game_state.map;
                     position = game_state.pos;
                     score = game_state.score;
                     level = game_state.level;
+                    // updatedMap = updateMap(map);
                     updateGrid(map, 'player');
                     updateScoreAndLevel(score, level);
                 }
+            })
+            .catch((error) => console.error('Error:', error));
+    }
 
-                if (game_state.completed) {
-                    //show modal window and by choice move to next level, reset current level or move to homepage
-                    retrieveMap();
+    function advanceCurrentLevel() {
+        fetch('/single_player/advance_current_level', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: '',
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    console.log('error occured');
                 }
+                return response.json();
+            })
+            .then(() => {
+                retrieveMap();
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -101,6 +128,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     backButton.addEventListener('click', () => {
         window.location.href = '/';
+    });
+
+    returnHomeButton.addEventListener('click', () => {
+        window.location.href = '/';
+        levelCompletedModal.style.display = 'none';
+    });
+
+    advanceLevelButton.addEventListener('click', () => {
+        advanceCurrentLevel();
+        levelCompletedModal.style.display = 'none';
+    });
+
+    restartLevelButton.addEventListener('click', () => {
+        retrieveMap();
+        levelCompletedModal.style.display = 'none';
     });
 
     function updateScoreAndLevel(score, level) {
