@@ -26,11 +26,11 @@ def retrieve_user_state_level(user_id: str) -> int:
 
 
 def reset_user_state_level(user_id: str) -> None:
-    UserState.query.filter_by(user_id=user_id).first().setLevel(level=1)
+    UserState.query.filter_by(user_id=user_id).first().set_level(level=1)
 
 
 def set_user_state_level(user_id: str, level: int) -> None:
-    UserState.query.filter_by(user_id=user_id).first().setLevel(level)
+    UserState.query.filter_by(user_id=user_id).first().set_level(level)
 
 
 class Maps(db.Model):
