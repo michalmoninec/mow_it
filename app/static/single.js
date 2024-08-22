@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (game_state.completed) {
+                    //show modal window and by choice move to next level, reset current level or move to homepage
                     retrieveMap();
                 }
             })

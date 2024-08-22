@@ -5,18 +5,13 @@ block style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<p id="p1_val">I like to mow'it mow'it!</p>
-<div>SCORE:</div>
-<div id="score_label">SCORE value</div>
-<div class="grid" id="p_grid"></div>
-<div>Level:</div>
-<div id="level_label">LEVEL value</div>
-<button id="game_info">INFO</button>
+<h2>DRAW YOUR DESIRE MAP PLEASE</h2>
+<button id="save_map">SAVE MAP</button>
 <button id="back">HOME</button>
 {% endblock %} {% block scripts %}
 <script
     type="module"
-    src="{{ url_for('static', filename='single.js') }}"
+    src="{{ url_for('static', filename='create_map.js') }}"
 ></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 {% endblock %}

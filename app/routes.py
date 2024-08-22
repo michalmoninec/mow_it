@@ -48,6 +48,11 @@ def single_player_prepare() -> str:
     return render_template("single_player.html")
 
 
+@main.route("/single_player_level_selection")
+def single_player_level_selection() -> str:
+    return render_template("single_player_level_selection.html")
+
+
 @main.route("/single_player/retrieve_map", methods=["POST", "GET"])
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
@@ -92,6 +97,11 @@ def single_player_reset_level() -> Response:
     reset_user_state_level(user_id=session["user_id"])
 
     return redirect(url_for("main.single_player_prepare"))
+
+
+@main.route("/multiplayer_level_selection")
+def multiplayer_level_selection() -> str:
+    return render_template("multiplayer_level_selection.html")
 
 
 @main.route("/create_multiplayer_game")
@@ -173,3 +183,8 @@ def versus() -> str:
     """TODO"""
 
     return render_template("versus_ai.html")
+
+
+@main.route("/map_creation")
+def map_creation() -> str:
+    return render_template("create_map.html")

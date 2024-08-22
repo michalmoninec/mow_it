@@ -1,17 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const single_player = document.getElementById('single_player');
-    const multi_player = document.getElementById('multi_player');
-    const versus_ai = document.getElementById('versus_ai');
+    const singlePlayerButton = document.getElementById('single_player');
+    const multiplayerButton = document.getElementById('multi_player');
+    const versusAIButton = document.getElementById('versus_ai');
+    const mapCreationButton = document.getElementById('map_creation');
 
-    single_player.addEventListener('click', () => {
-        window.location.href = '/single_player';
+    singlePlayerButton.addEventListener('click', () => {
+        window.location.href = '/single_player_level_selection';
     });
 
-    multi_player.addEventListener('click', () => {
-        window.location.href = '/create_multiplayer_game';
+    multiplayerButton.addEventListener('click', () => {
+        window.location.href = '/multiplayer_level_selection';
     });
 
-    versus_ai.addEventListener('click', () => {
+    versusAIButton.addEventListener('click', () => {
         window.location.href = '/versus_ai';
+    });
+
+    mapCreationButton.addEventListener('click', () => {
+        window.location.href = '/map_creation';
     });
 });
