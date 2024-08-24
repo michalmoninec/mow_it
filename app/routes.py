@@ -58,8 +58,14 @@ def single_player_level_selection() -> str:
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
 
+    user_id = request.get_json().get("user_id")
+
     if "user_id" not in session:
-        session["user_id"] = str(uuid.uuid4())[:8]
+        if user_id:
+            session["user_id"] = user_id
+        else:
+            session["user_id"] = str(uuid.uuid4())[:8]
+
         create_user_state(user_id=session["user_id"])
 
     game_state = game_state_creation(user_id=session["user_id"])
@@ -67,7 +73,7 @@ def single_player_init_map() -> Response:
     if game_state is None:
         return jsonify({"error": "User or map not found"}), 404
 
-    return jsonify({"game_state": game_state})
+    return jsonify({"game_state": game_state, "user_id": session["user_id"]})
 
 
 @main.route("/single_player/move", methods=["POST"])

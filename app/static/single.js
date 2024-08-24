@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let score;
     let completed;
     let level;
-    let updatedMap;
+    let userID = getUserID();
+    console.log(userID);
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -38,7 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: '',
+            body: JSON.stringify({
+                user_id: userID,
+            }),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -48,6 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then((data) => {
                 let game_state = data.game_state;
+
+                if (userID == null) {
+                    localStorage.setItem('userID', data.user_id);
+                }
+
                 if (game_state.levels_completed) {
                     window.location.href = '/levels_completed';
                 } else {
@@ -61,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch((error) => console.error('Error:', error));
+    }
+
+    function getUserID() {
+        return localStorage.getItem('userID');
     }
 
     function sendKeyPress(key) {
