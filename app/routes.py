@@ -65,8 +65,7 @@ def single_player_init_map() -> Response:
             session["user_id"] = user_id
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
-
-        create_user_state(user_id=session["user_id"])
+            create_user_state(user_id=session["user_id"])
 
     game_state = game_state_creation(user_id=session["user_id"])
 
