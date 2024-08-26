@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => {
                 if (!response.ok) {
-                    console.log('error occured');
+                    console.log('ERROR occured');
                 }
                 return response.json();
             })

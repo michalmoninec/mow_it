@@ -136,6 +136,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
             sendKeyPress(key);
         }
+        if (['Enter'].includes(key)) {
+            if (levelCompletedModal.style.display === 'block') {
+                advanceCurrentLevel();
+                levelCompletedModal.style.display = 'none';
+            }
+        }
     });
 
     backButton.addEventListener('click', () => {

@@ -45,14 +45,13 @@ def home() -> str:
 def single_player_prepare() -> str:
     """Render page for single player"""
 
-    # for creating data into database when deleting db
-    create_db_maps_data()
-
     return render_template("single_player.html")
 
 
 @main.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
+    # for creating data into database when deleting db
+    # create_db_maps_data()
     return render_template("single_player_level_selection.html")
 
 
