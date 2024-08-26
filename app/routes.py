@@ -50,6 +50,7 @@ def single_player_prepare() -> str:
 
 @main.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
+    """Render page for level selection"""
     # for creating data into database when deleting db
     # create_db_maps_data()
     return render_template("single_player_level_selection.html")
@@ -57,11 +58,15 @@ def single_player_level_selection() -> str:
 
 @main.route("/single_player/level_data", methods=["POST"])
 def single_player_level_data() -> Response:
+    """Prepare level based on user's achieved level"""
+
     user_id = request.get_json().get("user_id")
+    print(user_id)
 
     if "user_id" not in session:
         if user_id:
             session["user_id"] = user_id
+            create_user_state(user_id=session["user_id"])
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
             create_user_state(user_id=session["user_id"])
@@ -69,12 +74,13 @@ def single_player_level_data() -> Response:
     levels = game_get_achieved_levels(user_id=session["user_id"])
     # print(f"levels are: {levels}")
 
-    return jsonify({"user": session["user_id"], "levels": levels})
+    return jsonify({"user_id": session["user_id"], "levels": levels})
 
 
 @main.route("/single_player/selected_level", methods=["POST"])
 def single_player_set_selected_level() -> Response:
     desired_level = request.get_json().get("selected_level")
+
     if "user_id" not in session:
         return jsonify({"error": "User or map not found"}), 404
 
@@ -93,14 +99,8 @@ def single_player_set_selected_level() -> Response:
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
 
-    user_id = request.get_json().get("user_id")
-
     if "user_id" not in session:
-        if user_id:
-            session["user_id"] = user_id
-        else:
-            session["user_id"] = str(uuid.uuid4())[:8]
-            create_user_state(user_id=session["user_id"])
+        return jsonify({"error": "User or map not found"}), 404
 
     game_state = game_state_creation(user_id=session["user_id"])
 
@@ -172,7 +172,7 @@ def create_multiplayer_game() -> Response:
 
 
 @main.route("/multiplayer_game")
-def multiplayer_game() -> str:
+def multiplayer_game() -> str | Response:
     """TODO"""
 
     if "player_id" not in session:
@@ -221,11 +221,6 @@ def join_game(room_id) -> Response:
         return redirect(url_for("main.home"))
 
     return redirect(url_for("main.multiplayer_game"))
-
-
-@main.route("/levels_completed")
-def levels_completed():
-    return render_template("single_levels_completed.html")
 
 
 @main.route("/versus_ai")

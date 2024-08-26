@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let position;
     let score;
     let completed;
+    let allLevelsCompleted;
     let level;
     let userID = getUserID();
     console.log(userID);
@@ -56,17 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('userID', data.user_id);
                 }
 
-                if (game_state.levels_completed) {
-                    window.location.href = '/levels_completed';
-                } else {
-                    map = game_state.map;
-                    position = game_state.pos;
-                    score = game_state.score;
-                    completed = game_state.completed;
-                    level = game_state.level;
-                    updateGrid(map, 'player');
-                    updateScoreAndLevel(score, level);
-                }
+                map = game_state.map;
+                position = game_state.pos;
+                score = game_state.score;
+                completed = game_state.completed;
+                level = game_state.level;
+                updateGrid(map, 'player');
+                updateScoreAndLevel(score, level);
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -92,10 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((response) => response.json())
             .then((data) => {
                 let game_state = data.game_state;
+                allLevelsCompleted = game_state.levels_completed;
+                if (allLevelsCompleted) {
+                    document.getElementById('level_advance_label').innerText =
+                        'CONGRATULATIONS, ALL LEVELS CLEARED';
+                }
 
-                if (game_state.levels_completed) {
-                    window.location.href = '/levels_completed';
-                } else if (game_state.completed) {
+                console.log(`levels completed: ${allLevelsCompleted}`);
+
+                if (game_state.completed) {
                     levelCompletedModal.style.display = 'block';
                     // retrieveMap();
                 } else {
@@ -112,23 +114,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function advanceCurrentLevel() {
-        fetch('/single_player/advance_current_level', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: '',
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    console.log('error occured');
-                }
-                return response.json();
+        if (allLevelsCompleted) {
+            window.location.href = '/single_player/level_selection';
+        } else {
+            fetch('/single_player/advance_current_level', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: '',
             })
-            .then(() => {
-                retrieveMap();
-            })
-            .catch((error) => console.error('Error:', error));
+                .then((response) => {
+                    if (!response.ok) {
+                        console.log('error occured');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    retrieveMap();
+                })
+                .catch((error) => console.error('Error:', error));
+        }
     }
 
     document.addEventListener('keydown', (event) => {
