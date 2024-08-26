@@ -9,6 +9,7 @@ class UserState(db.Model):
     id = Column(Integer, primary_key=True, unique=True)
     user_id = Column(String, nullable=False)
     level = Column(Integer)
+    achieved_level = Column(Integer)
 
     def set_level(self, level: int):
         self.level = level
@@ -16,11 +17,13 @@ class UserState(db.Model):
 
     def increase_level(self):
         self.level += 1
+        if self.level > self.achieved_level:
+            self.achieved_level = self.level
         db.session.commit()
 
 
 def create_user_state(user_id: str) -> None:
-    user_state = UserState(user_id=user_id, level=1)
+    user_state = UserState(user_id=user_id, level=1, achieved_level=1)
     db.session.add(user_state)
     db.session.commit()
 

@@ -44,7 +44,7 @@ def single_player_prepare() -> str:
     """Render page for single player"""
 
     # for creating data into database when deleting db
-    # create_db_maps_data()
+    create_db_maps_data()
 
     return render_template("single_player.html")
 
@@ -107,7 +107,7 @@ def single_player_reset_level() -> Response:
 
 @main.route("/single_player/advance_current_level", methods=["POST"])
 def single_player_advance_current_level() -> Response:
-    """Decrease user's level by 1 and redirect to game preparation"""
+    """Increase user's level by 1 and redirect to game preparation"""
 
     game_state_advance_current_level(user_id=session["user_id"])
 
