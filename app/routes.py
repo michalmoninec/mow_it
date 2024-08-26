@@ -17,9 +17,11 @@ from app.models import (
     UserState,
     create_user_state,
     reset_user_state_level,
+    set_user_state_level,
 )
 from app.extensions import db
 from app.scripts.game import (
+    game_get_achieved_levels,
     game_state_advance_current_level,
     game_state_creation,
     game_state_update,
@@ -52,6 +54,40 @@ def single_player_prepare() -> str:
 @main.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
     return render_template("single_player_level_selection.html")
+
+
+@main.route("/single_player/level_data", methods=["POST"])
+def single_player_level_data() -> Response:
+    user_id = request.get_json().get("user_id")
+
+    if "user_id" not in session:
+        if user_id:
+            session["user_id"] = user_id
+        else:
+            session["user_id"] = str(uuid.uuid4())[:8]
+            create_user_state(user_id=session["user_id"])
+
+    levels = game_get_achieved_levels(user_id=session["user_id"])
+    # print(f"levels are: {levels}")
+
+    return jsonify({"user": session["user_id"], "levels": levels})
+
+
+@main.route("/single_player/selected_level", methods=["POST"])
+def single_player_set_selected_level() -> Response:
+    desired_level = request.get_json().get("selected_level")
+    if "user_id" not in session:
+        return jsonify({"error": "User or map not found"}), 404
+
+    achieved_level = (
+        UserState.query.filter_by(user_id=session["user_id"]).first().achieved_level
+    )
+
+    if desired_level <= achieved_level:
+        set_user_state_level(user_id=session["user_id"], level=desired_level)
+
+    print(f"desired level is: {desired_level}")
+    return jsonify({"level": "ok"})
 
 
 @main.route("/single_player/retrieve_map", methods=["POST", "GET"])

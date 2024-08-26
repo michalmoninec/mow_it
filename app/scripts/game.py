@@ -89,6 +89,17 @@ def game_state_advance_current_level(user_id: str) -> None:
     advance_user_state_current_level(user_id)
 
 
+def game_get_achieved_levels(user_id: str) -> List:
+    levels = []
+    cnt_of_levels = UserState.query.filter_by(user_id=user_id).first().achieved_level
+
+    for i in range(1, cnt_of_levels + 1):
+        level_info = {"level": i, "data": Maps.query.filter_by(level=i).first().data}
+        levels.append(level_info)
+
+    return levels
+
+
 def validate_move(
     key: str, map: NestedDictList, position: dict[str, int]
 ) -> dict | None:
