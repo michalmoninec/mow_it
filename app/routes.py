@@ -49,7 +49,7 @@ def single_player_prepare() -> str:
     return render_template("single_player.html")
 
 
-@main.route("/single_player_level_selection")
+@main.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
     return render_template("single_player_level_selection.html")
 
@@ -114,7 +114,7 @@ def single_player_advance_current_level() -> Response:
     return jsonify({"level_reset": True})
 
 
-@main.route("/multiplayer_level_selection")
+@main.route("/multiplayer/level_selection")
 def multiplayer_level_selection() -> str:
     return render_template("multiplayer_level_selection.html")
 

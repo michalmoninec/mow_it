@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mapCreationButton = document.getElementById('map_creation');
 
     singlePlayerButton.addEventListener('click', () => {
-        window.location.href = '/single_player_level_selection';
+        window.location.href = '/single_player/level_selection';
     });
 
     multiplayerButton.addEventListener('click', () => {
-        window.location.href = '/multiplayer_level_selection';
+        window.location.href = '/multiplayer/level_selection';
     });
 
     versusAIButton.addEventListener('click', () => {
