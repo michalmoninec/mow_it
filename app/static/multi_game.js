@@ -35,14 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('retrieve_player_id', (data) => {
         player_id = data.player_id;
-
-        if (data['player_id'] == player_id) {
-            updateGrid(data['map_1'], 'player');
-            updateGrid(data['map_2'], 'oponent');
-        } else {
-            updateGrid(data['map_2'], 'player');
-            updateGrid(data['map_1'], 'oponent');
-        }
     });
 
     socket.on('disconnect', () => {

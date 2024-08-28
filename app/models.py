@@ -3,6 +3,8 @@ from sqlalchemy import Text, Column, Integer, String
 
 from app.extensions import db
 
+MAX_LEVEL = 3
+
 
 class UserState(db.Model):
     __tablename__ = "user_state"
@@ -24,6 +26,8 @@ class UserState(db.Model):
 
     def increase_level(self):
         self.level += 1
+        if self.level > MAX_LEVEL:
+            self.level = MAX_LEVEL
         if self.level > self.achieved_level:
             self.achieved_level = self.level
         self.map = Maps.query.filter_by(level=self.level).first().data
@@ -35,8 +39,9 @@ def get_user_by_id(user_id: str) -> any:
     return UserState.query.filter_by(user_id=user_id).first()
 
 
-def create_user_state(user_id: str) -> None:
-    user_state = UserState(user_id=user_id, level=1, achieved_level=1, score=0)
+def create_user_state(user_id: str, level=1) -> None:
+    user_state = UserState(user_id=user_id, level=level, achieved_level=1, score=0)
+    user_state.set_level(level)
     db.session.add(user_state)
     db.session.commit()
 
@@ -72,26 +77,29 @@ class Maps(db.Model):
     data = Column(Text)
 
 
+def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> any:
+    game_state = GameState(room_id=room_id, level=level)
+    game_state.map = Maps.query.filter_by(level=level).first().data
+    game_state.add_player(player_id)
+
+    create_user_state(user_id=player_id, level=level)
+
+    db.session.add(game_state)
+    db.session.commit()
+
+
 class GameState(db.Model):
     __tablename__ = "game_state"
     _id = Column(Integer, primary_key=True)
 
     room_id = Column(String)
-    status = Column(String)
-    level = Column(String)
-    winner_id = Column(String)
 
     player_1_id = Column(String)
     player_2_id = Column(String)
 
-    player_1_map = Column(Text)
-    player_2_map = Column(Text)
-
-    player_1_pos = Column(Text)
-    player_2_pos = Column(Text)
-
-    player_1_score = Column(Integer)
-    player_2_score = Column(Integer)
+    status = Column(String)
+    level = Column(String)
+    winner_id = Column(String)
     map = Column(Text)
 
     def add_player(self, player_id):

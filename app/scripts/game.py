@@ -8,6 +8,7 @@ from app.models import (
     GameState,
     UserState,
     advance_user_state_current_level,
+    create_multiplayer_game_state,
     create_user_state,
     get_map_by_user,
     get_user_by_id,
@@ -223,30 +224,7 @@ def create_map_3() -> NestedDictList:
 
 
 def create_db_game_state_data(room_id: str, player_id: str) -> None:
-
-    # map = Maps(name="Hradec", data=json.dumps(create_map()))
-    # db.session.add(map)
-    start_position = {
-        "x": 0,
-        "y": 0,
-    }
-
-    game_state = GameState(
-        room_id=room_id,
-        player_1_id=player_id,
-        status="init",
-        level=1,
-        map=json.dumps(create_map()),
-        player_1_map=json.dumps(create_map()),
-        player_1_pos=json.dumps(start_position),
-        player_2_map=json.dumps(create_map()),
-        player_2_pos=json.dumps(start_position),
-        player_1_score=0,
-        player_2_score=0,
-    )
-
-    db.session.add(game_state)
-    db.session.commit()
+    create_multiplayer_game_state(room_id, player_id, level=1)
 
 
 def create_db_maps_data() -> None:

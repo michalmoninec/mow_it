@@ -144,14 +144,12 @@ def create_multiplayer_game() -> Response:
     """TODO"""
 
     if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())[:5]
+        session["player_id"] = str(uuid.uuid4())[:8]
         if "room_id" not in session:
-            session["room_id"] = str(uuid.uuid4())[:5]
+            session["room_id"] = str(uuid.uuid4())[:8]
         create_db_game_state_data(
             room_id=session["room_id"], player_id=session["player_id"]
         )
-
-    # TODO - check if model exist with data above - player_id and room_id
 
     return redirect(url_for("main.multiplayer_game"))
 
@@ -163,25 +161,10 @@ def multiplayer_game() -> str | Response:
     if "player_id" not in session:
         return redirect(url_for("main.create_multiplayer_game"))
 
-    game_state = GameState.query.filter_by(room_id=session["room_id"]).first()
-    if session["player_id"] == game_state.player_1_id:
-        map = json.loads(game_state.player_1_map)
-        pos = json.loads(game_state.player_1_pos)
-        score = game_state.player_1_score
-    elif session["player_id"] == game_state.player_2_id:
-        map = json.loads(game_state.player_2_map)
-        pos = json.loads(game_state.player_2_pos)
-        score = game_state.player_2_score
-
-    session["map"] = map
-    session["position"] = pos
-    session["last_visited"] = pos
-    session["score"] = score
-
     return render_template("multiplayer_game.html")
 
 
-@main.route("/game/<room_id>")
+@main.route("/multiplayer_game/<room_id>")
 def join_game(room_id) -> Response:
     """TODO"""
 
