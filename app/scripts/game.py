@@ -1,6 +1,6 @@
 import json
 
-from typing import List
+from typing import List, Tuple
 from flask import session
 
 from app.models import (
@@ -9,9 +9,10 @@ from app.models import (
     UserState,
     advance_user_state_current_level,
     create_user_state,
+    get_map_by_user,
+    get_user_by_id,
     reset_user_state_level,
     retrieve_user_state_level,
-    get_map_by_level,
     set_user_state_level,
 )
 from app.extensions import db
@@ -22,35 +23,32 @@ MAX_LEVEL = 3
 
 
 def game_state_creation(user_id: str) -> dict | None:
-    level = retrieve_user_state_level(user_id)
-    if level is None:
-        return None
-
-    map = get_map_by_level(level=level)
-    if map is None:
+    user = get_user_by_id(user_id)
+    if user is None:
         return None
 
     return {
-        "map": json.loads(map.data),
-        "pos": json.loads(map.start_position),
-        "level": level,
-        "score": 0,
+        "map": json.loads(user.map),
+        "level": user.level,
+        "score": user.score,
         "completed": False,
         "levels_completed": False,
     }
 
 
-def game_state_update(
-    key: str, map: NestedDictList, position: dict, score: int, user_id: str
-) -> dict | None:
+def game_state_update(key: str, user_id: str) -> dict | None:
     """Check if move is valid and then updates game_state"""
-    pos_x, pos_y = validate_move(key, map, position)
+    user = get_user_by_id(user_id)
+    map = json.loads(user.map)
+    level = user.level
+    score = user.score
 
-    prev_pos_x, prev_pos_y = position["x"], position["y"]
+    prev_pos_x, prev_pos_y = get_position_from_map(map)
+
+    pos_x, pos_y = validate_move(key, map, prev_pos_x, prev_pos_y)
 
     completed = False
     levels_completed = False
-    level = retrieve_user_state_level(user_id)
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
         score = update_score(map, pos_x, pos_y, score)
@@ -58,6 +56,7 @@ def game_state_update(
         map[pos_x][pos_y]["visited"] = True
         map[prev_pos_x][prev_pos_y]["active"] = False
         map[prev_pos_x][prev_pos_y]["visited"] = True
+        user.set_map(json.dumps(map))
 
         if game_completed(map):
             completed = True
@@ -67,17 +66,12 @@ def game_state_update(
                 level_condition = MAX_LEVEL
 
             # set_user_state_level(user_id, level)
-            db.session.commit()
     else:
         pass
         # maybe some message flashing of invalid move
 
     return {
         "map": map,
-        "pos": {
-            "x": pos_x,
-            "y": pos_y,
-        },
         "score": score,
         "completed": completed,
         "levels_completed": levels_completed,
@@ -100,13 +94,8 @@ def game_get_achieved_levels(user_id: str) -> List:
     return levels
 
 
-def validate_move(
-    key: str, map: NestedDictList, position: dict[str, int]
-) -> dict | None:
+def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> dict | None:
     """Validates players move, return updated position or None"""
-
-    pos_x = position["x"]
-    pos_y = position["y"]
 
     if (
         key == "ArrowRight"
@@ -153,6 +142,14 @@ def game_completed(map: NestedDictList) -> bool:
         if any(not cell["blocker"] and not cell["visited"] for cell in row):
             return False
     return True
+
+
+def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
+    for row in range(len(map)):
+        for col in range(len(map[row])):
+            if map[row][col]["active"]:
+                return row, col
+    return None, None
 
 
 def create_map() -> NestedDictList:

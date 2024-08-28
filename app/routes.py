@@ -117,15 +117,9 @@ def single_player_move_handle() -> Response:
     If move is valid, send updated state, otherwise state is not changed
     """
 
-    data = request.get_json()
-    key = data.get("key")
-    map = data.get("map")
-    pos = data.get("pos")
-    score = data.get("score")
+    key = request.get_json().get("key")
 
-    updated_game_state = game_state_update(
-        key, map, pos, score, user_id=session["user_id"]
-    )
+    updated_game_state = game_state_update(key, user_id=session["user_id"])
 
     return jsonify({"game_state": updated_game_state})
 

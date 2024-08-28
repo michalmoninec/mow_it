@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function sendKeyPress(key) {
-        console.log(`position is ${position.x}, ${position.y}`);
         fetch('/single_player/move', {
             method: 'POST',
             headers: {
@@ -81,9 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({
                 key: key,
-                map: map,
-                pos: position,
-                score: score,
             }),
         })
             .then((response) => response.json())

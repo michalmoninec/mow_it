@@ -10,23 +10,33 @@ class UserState(db.Model):
     user_id = Column(String, nullable=False)
     level = Column(Integer)
     achieved_level = Column(Integer)
-    map = Column(Text)
     score = Column(Integer)
-    position = Column(Text)
+    map = Column(Text)
 
-    def set_level(self, level: int):
+    def set_level(self, level: int) -> None:
         self.level = level
+        self.map = Maps.query.filter_by(level=level).first().data
+        db.session.commit()
+
+    def set_map(self, map: Text) -> None:
+        self.map = map
         db.session.commit()
 
     def increase_level(self):
         self.level += 1
         if self.level > self.achieved_level:
             self.achieved_level = self.level
+        self.map = Maps.query.filter_by(level=self.level).first().data
+
         db.session.commit()
 
 
+def get_user_by_id(user_id: str) -> any:
+    return UserState.query.filter_by(user_id=user_id).first()
+
+
 def create_user_state(user_id: str) -> None:
-    user_state = UserState(user_id=user_id, level=1, achieved_level=1)
+    user_state = UserState(user_id=user_id, level=1, achieved_level=1, score=0)
     db.session.add(user_state)
     db.session.commit()
 
@@ -40,11 +50,16 @@ def reset_user_state_level(user_id: str) -> None:
 
 
 def set_user_state_level(user_id: str, level: int) -> None:
-    UserState.query.filter_by(user_id=user_id).first().set_level(level)
+    user_state = UserState.query.filter_by(user_id=user_id).first()
+    user_state.set_level(level)
 
 
 def advance_user_state_current_level(user_id: str) -> None:
     UserState.query.filter_by(user_id=user_id).first().increase_level()
+
+
+def get_map_by_user(user_id: str) -> Response:
+    return UserState.query.filter_by(user_id=user_id).first().map
 
 
 class Maps(db.Model):
@@ -55,10 +70,6 @@ class Maps(db.Model):
     start_position = Column(Text)
     level = Column(Integer)
     data = Column(Text)
-
-
-def get_map_by_level(level: int) -> Response:
-    return Maps.query.filter_by(level=level).first()
 
 
 class GameState(db.Model):
