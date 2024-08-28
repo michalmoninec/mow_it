@@ -58,7 +58,7 @@ def game_state_update(key: str, user_id: str) -> dict | None:
         map[prev_pos_x][prev_pos_y]["visited"] = True
         user.set_map(json.dumps(map))
 
-        if game_completed(map):
+        if level_completed(map):
             completed = True
             level_condition = level + 1
             if level_condition > MAX_LEVEL:
@@ -137,7 +137,7 @@ def update_score(map: NestedDictList, pos_x: int, pos_y: int, score: int) -> int
     return score
 
 
-def game_completed(map: NestedDictList) -> bool:
+def level_completed(map: NestedDictList) -> bool:
     for row in map:
         if any(not cell["blocker"] and not cell["visited"] for cell in row):
             return False

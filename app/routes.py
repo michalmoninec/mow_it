@@ -112,9 +112,9 @@ def single_player_init_map() -> Response:
 @main.route("/single_player/move", methods=["POST"])
 def single_player_move_handle() -> Response:
     """
-    Gets move, map, pos and score from client,
+    Receives key
     Updates game state
-    If move is valid, send updated state, otherwise state is not changed
+    For valid move, updates game state
     """
 
     key = request.get_json().get("key")
