@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backButton = document.getElementById('back');
 
     levelChoosed.addEventListener('click', () => {
-        window.location.href = '/multiplayer/create_room';
+        window.location.href = '/multiplayer/create_game/room';
     });
 
     backButton.addEventListener('click', () => {
