@@ -86,24 +86,21 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((data) => {
                 let game_state = data.game_state;
                 allLevelsCompleted = game_state.levels_completed;
+
+                map = game_state.map;
+                position = game_state.pos;
+                score = game_state.score;
+                level = game_state.level;
+                // updatedMap = updateMap(map);
+                updateGrid(map, 'player');
+                updateScoreAndLevel(score, level);
+
                 if (allLevelsCompleted) {
                     document.getElementById('level_advance_label').innerText =
                         'CONGRATULATIONS, ALL LEVELS CLEARED';
                 }
-
-                console.log(`levels completed: ${allLevelsCompleted}`);
-
                 if (game_state.completed) {
                     levelCompletedModal.style.display = 'block';
-                    // retrieveMap();
-                } else {
-                    map = game_state.map;
-                    position = game_state.pos;
-                    score = game_state.score;
-                    level = game_state.level;
-                    // updatedMap = updateMap(map);
-                    updateGrid(map, 'player');
-                    updateScoreAndLevel(score, level);
                 }
             })
             .catch((error) => console.error('Error:', error));
