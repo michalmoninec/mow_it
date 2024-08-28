@@ -10,6 +10,9 @@ class UserState(db.Model):
     user_id = Column(String, nullable=False)
     level = Column(Integer)
     achieved_level = Column(Integer)
+    map = Column(Text)
+    score = Column(Integer)
+    position = Column(Text)
 
     def set_level(self, level: int):
         self.level = level

@@ -5,13 +5,13 @@ block style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<p id="p1_val">Choose level!</p>
-<button id="level_choosed">PLAY LEVEL 1</button>
+<p id="p1_val">Choose multiplayer settings!</p>
+<button id="level_choosed">CREATE GAME</button>
 <button id="back">HOME</button>
 {% endblock %} {% block scripts %}
 <script
     type="module"
-    src="{{ url_for('static', filename='multiplayer_level_selection.js') }}"
+    src="{{ url_for('static', filename='multiplayer_create_game.js') }}"
 ></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 {% endblock %}

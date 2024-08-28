@@ -61,7 +61,6 @@ def single_player_level_data() -> Response:
     """Prepare level based on user's achieved level"""
 
     user_id = request.get_json().get("user_id")
-    print(user_id)
 
     if "user_id" not in session:
         if user_id:
@@ -131,15 +130,6 @@ def single_player_move_handle() -> Response:
     return jsonify({"game_state": updated_game_state})
 
 
-@main.route("/single_player_reset_level")
-def single_player_reset_level() -> Response:
-    """Reset user's level to 1 and redirect to game preparation"""
-
-    reset_user_state_level(user_id=session["user_id"])
-
-    return redirect(url_for("main.single_player_prepare"))
-
-
 @main.route("/single_player/advance_current_level", methods=["POST"])
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
@@ -149,12 +139,13 @@ def single_player_advance_current_level() -> Response:
     return jsonify({"level_reset": True})
 
 
-@main.route("/multiplayer/level_selection")
+@main.route("/multiplayer/create_game")
 def multiplayer_level_selection() -> str:
-    return render_template("multiplayer_level_selection.html")
+    """Create multiplayer game"""
+    return render_template("multiplayer_create_game.html")
 
 
-@main.route("/create_multiplayer_game")
+@main.route("/multiplayer/create_game/room")
 def create_multiplayer_game() -> Response:
     """TODO"""
 
@@ -221,15 +212,3 @@ def join_game(room_id) -> Response:
         return redirect(url_for("main.home"))
 
     return redirect(url_for("main.multiplayer_game"))
-
-
-@main.route("/versus_ai")
-def versus() -> str:
-    """TODO"""
-
-    return render_template("versus_ai.html")
-
-
-@main.route("/map_creation")
-def map_creation() -> str:
-    return render_template("create_map.html")
