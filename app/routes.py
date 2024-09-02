@@ -15,6 +15,7 @@ from app.models import (
     Maps,
     GameState,
     UserState,
+    create_user_after_room_join,
     create_user_state,
     reset_user_state_level,
     set_user_state_level,
@@ -170,6 +171,10 @@ def join_game(room_id) -> Response:
 
     if "player_id" not in session:
         session["player_id"] = str(uuid.uuid4())[:5]
+        create_user_after_room_join(
+            room_id=room_id,
+            player_id=session["player_id"],
+        )
 
     db_room_id = GameState.query.filter_by(room_id=room_id).first()
 

@@ -1,6 +1,6 @@
 import json
 
-from flask import jsonify, session
+from flask import session
 from flask_socketio import emit, join_room
 from app.scripts.game import game_state_advance_current_level, game_state_update
 from app.models import GameState, get_map_by_user
@@ -9,23 +9,28 @@ from app.extensions import db
 
 
 def configure_socketio(socketio):
-    @socketio.on("joined")
-    def handle_connect():
+    @socketio.on("join_room")
+    def handle_join_room() -> None:
         player_id = session["player_id"]
         room = session["room_id"]
 
         join_room(room)
         print(f"Joined room: {room}")
 
-        map = json.loads(get_map_by_user(user_id=player_id))
-
         emit(
-            "retrieve_player_id",
+            "response_player_id",
             {"player_id": session["player_id"]},
         )
 
+        emit("request_maps_from_server", broadcast=True)
+
+    @socketio.on("request_initial_maps")
+    def get_initial_maps():
+        player_id = session["player_id"]
+        map = json.loads(get_map_by_user(user_id=player_id))
+
         emit(
-            "update_grid",
+            "response_update_data",
             {"map": map, "player_id": player_id},
             broadcast=True,
         )
@@ -36,8 +41,8 @@ def configure_socketio(socketio):
 
         print(f"Player {player_id} disconnected")
 
-    @socketio.on("update_values")
-    def update(data):
+    @socketio.on("request_update_data")
+    def handle_update_values(data):
         player_id = session["player_id"]
         key = data["key"]
         print(key)
@@ -47,7 +52,7 @@ def configure_socketio(socketio):
         level_finished = updated_game_state["completed"]
 
         emit(
-            "update_grid",
+            "response_update_data",
             {"map": map, "player_id": player_id},
             broadcast=True,
         )
@@ -56,7 +61,7 @@ def configure_socketio(socketio):
             game_state_advance_current_level(user_id=player_id)
             map = json.loads(get_map_by_user(user_id=player_id))
             emit(
-                "update_grid",
+                "response_update_data",
                 {"map": map, "player_id": player_id},
                 broadcast=True,
             )

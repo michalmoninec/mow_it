@@ -30,10 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', (data) => {
         console.log('Connected to server');
-        socket.emit('joined');
+        socket.emit('join_room');
     });
 
-    socket.on('retrieve_player_id', (data) => {
+    socket.on('request_maps_from_server', () => {
+        console.log('getting maps after join');
+        socket.emit('request_initial_maps');
+    });
+
+    socket.on('response_player_id', (data) => {
         player_id = data.player_id;
     });
 
@@ -41,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('disconnecting from server');
     });
 
-    socket.on('update_grid', (data) => {
+    socket.on('response_update_data', (data) => {
         if (data['player_id'] == player_id) {
             updateGrid(data['map'], 'player');
         } else {
@@ -62,6 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function sendKeyPress(key) {
-        socket.emit('update_values', { key: key });
+        socket.emit('request_update_data', { key: key });
     }
 });

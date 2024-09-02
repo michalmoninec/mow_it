@@ -77,7 +77,7 @@ class Maps(db.Model):
     data = Column(Text)
 
 
-def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> any:
+def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> None:
     game_state = GameState(room_id=room_id, level=level)
     game_state.map = Maps.query.filter_by(level=level).first().data
     game_state.add_player(player_id)
@@ -86,6 +86,13 @@ def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> a
 
     db.session.add(game_state)
     db.session.commit()
+
+
+def create_user_after_room_join(room_id: str, player_id: str) -> None:
+    game_state = GameState.query.filter_by(room_id=room_id).first()
+    level = game_state.level
+
+    create_user_state(user_id=player_id, level=level)
 
 
 class GameState(db.Model):
