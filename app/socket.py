@@ -22,17 +22,18 @@ def configure_socketio(socketio):
             {"player_id": session["player_id"]},
         )
 
-        emit("request_maps_from_server", broadcast=True)
+        emit("request_maps_from_server", to=room)
 
     @socketio.on("request_initial_maps")
     def get_initial_maps():
         player_id = session["player_id"]
+        room = session["room_id"]
         map = json.loads(get_map_by_user(user_id=player_id))
 
         emit(
             "response_update_data",
             {"map": map, "player_id": player_id},
-            broadcast=True,
+            to=room,
         )
 
     @socketio.on("disconnect")
@@ -44,6 +45,7 @@ def configure_socketio(socketio):
     @socketio.on("request_update_data")
     def handle_update_values(data):
         player_id = session["player_id"]
+        room = session["room_id"]
         key = data["key"]
         print(key)
 
@@ -54,7 +56,7 @@ def configure_socketio(socketio):
         emit(
             "response_update_data",
             {"map": map, "player_id": player_id},
-            broadcast=True,
+            to=room,
         )
 
         if level_finished:
@@ -63,5 +65,5 @@ def configure_socketio(socketio):
             emit(
                 "response_update_data",
                 {"map": map, "player_id": player_id},
-                broadcast=True,
+                to=room,
             )

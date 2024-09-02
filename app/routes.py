@@ -169,28 +169,27 @@ def multiplayer_game() -> str | Response:
 def join_game(room_id) -> Response:
     """TODO"""
 
-    if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())[:5]
-        create_user_after_room_join(
-            room_id=room_id,
-            player_id=session["player_id"],
-        )
-
     db_room_id = GameState.query.filter_by(room_id=room_id).first()
 
     if db_room_id:
-        if "room_id" not in session:
-            session["room_id"] = room_id
+        session["room_id"] = room_id
     else:
         # TODO - add some message flashing to user, so they know room doesn exist.
         print(f"ROOM_ID not available.")
         return redirect(url_for("main.home"))
 
+    session["player_id"] = str(uuid.uuid4())[:8]
+    create_user_after_room_join(
+        room_id=room_id,
+        player_id=session["player_id"],
+    )
+
+    # TODO - change it to function at models module
     if db_room_id.add_player(session["player_id"]):
         db.session.add(db_room_id)
         db.session.commit()
     else:
-        # TODO - add message flash that room is full
+        print("Room does not exist, or is full.")
         return redirect(url_for("main.home"))
 
     return redirect(url_for("main.multiplayer_game"))
