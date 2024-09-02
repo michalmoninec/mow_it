@@ -3,7 +3,7 @@ import json
 from flask import session
 from flask_socketio import emit, join_room
 from app.scripts.game import game_state_advance_current_level, game_state_update
-from app.models import GameState, get_map_by_user
+from app.models import GameState, get_map_by_user, get_user_by_id
 
 from app.extensions import db
 
@@ -28,11 +28,13 @@ def configure_socketio(socketio):
     def get_initial_maps():
         player_id = session["player_id"]
         room = session["room_id"]
-        map = json.loads(get_map_by_user(user_id=player_id))
 
+        user_state = get_user_by_id(user_id=player_id)
+        map = json.loads(user_state.map)
+        level = user_state.level
         emit(
             "response_update_data",
-            {"map": map, "player_id": player_id},
+            {"map": map, "player_id": player_id, "level": level},
             to=room,
         )
 
@@ -47,7 +49,6 @@ def configure_socketio(socketio):
         player_id = session["player_id"]
         room = session["room_id"]
         key = data["key"]
-        print(key)
 
         updated_game_state = game_state_update(key=key, user_id=player_id)
         map = updated_game_state["map"]
@@ -61,9 +62,11 @@ def configure_socketio(socketio):
 
         if level_finished:
             game_state_advance_current_level(user_id=player_id)
-            map = json.loads(get_map_by_user(user_id=player_id))
+            user_state = get_user_by_id(user_id=player_id)
+            map = json.loads(user_state.map)
+            level = user_state.level
             emit(
                 "response_update_data",
-                {"map": map, "player_id": player_id},
+                {"map": map, "player_id": player_id, "level": level},
                 to=room,
             )
