@@ -39,6 +39,10 @@ class UserState(db.Model):
         self.name = name
         db.session.commit()
 
+    def set_score(self, diff: int):
+        self.score += diff
+        db.session.commit()
+
 
 def get_user_by_id(user_id: str) -> any:
     return UserState.query.filter_by(user_id=user_id).first()
@@ -47,6 +51,11 @@ def get_user_by_id(user_id: str) -> any:
 def set_user_name(user_id: str, name: str) -> None:
     user_state = UserState.query.filter_by(user_id=user_id).first()
     user_state.set_name(name=name)
+
+
+def set_user_score(user_id: str, diff: int) -> None:
+    user_state = get_user_by_id(user_id=user_id)
+    user_state.set_score(diff=diff)
 
 
 def create_user_state(user_id: str, level=1) -> None:

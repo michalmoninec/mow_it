@@ -14,6 +14,7 @@ from app.models import (
     get_user_by_id,
     reset_user_state_level,
     retrieve_user_state_level,
+    set_user_score,
     set_user_state_level,
 )
 from app.extensions import db
@@ -52,7 +53,8 @@ def game_state_update(key: str, user_id: str) -> dict | None:
     levels_completed = False
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
-        score = update_score(map, pos_x, pos_y, score)
+        diff = update_score(map, pos_x, pos_y)
+        user.set_score(diff=diff)
         map[pos_x][pos_y]["active"] = True
         map[pos_x][pos_y]["visited"] = True
         map[prev_pos_x][prev_pos_y]["active"] = False
@@ -73,7 +75,7 @@ def game_state_update(key: str, user_id: str) -> dict | None:
 
     return {
         "map": map,
-        "score": score,
+        "score": user.score,
         "completed": completed,
         "levels_completed": levels_completed,
         "level": level,
@@ -130,12 +132,11 @@ def cell_not_blocked(map: NestedDictList, x: int, y: int) -> bool:
     return not map[x][y]["blocker"]
 
 
-def update_score(map: NestedDictList, pos_x: int, pos_y: int, score: int) -> int:
+def update_score(map: NestedDictList, pos_x: int, pos_y: int) -> int:
     if map[pos_x][pos_y]["visited"]:
-        score -= 100
+        return -100
     else:
-        score += 100
-    return score
+        return 100
 
 
 def level_completed(map: NestedDictList) -> bool:
