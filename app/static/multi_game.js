@@ -3,6 +3,9 @@ import { updateGrid } from './shared.js';
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io.connect('http://' + document.domain + ':' + location.port);
     let p1_name = document.getElementById('p1_name');
+    let p1_score = document.getElementById('p1_score');
+    let p1_level = document.getElementById('p1_level');
+
     let p2_name = document.getElementById('p2_name');
     let backButton = document.getElementById('back');
 
@@ -49,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('response_update_data', (data) => {
         if (data['player_id'] == player_id) {
             updateGrid(data['map'], 'player');
+            p1_name.innerText = data['name'];
+            p1_level.innerText = data['level'];
+            p1_score.innerText = data['score'];
         } else {
             updateGrid(data['map'], 'oponent');
         }

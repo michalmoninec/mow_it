@@ -30,11 +30,16 @@ def configure_socketio(socketio):
         room = session["room_id"]
 
         user_state = get_user_by_id(user_id=player_id)
-        map = json.loads(user_state.map)
-        level = user_state.level
+
         emit(
             "response_update_data",
-            {"map": map, "player_id": player_id, "level": level},
+            {
+                "player_id": player_id,
+                "map": json.loads(user_state.map),
+                "level": user_state.level,
+                "score": user_state.score,
+                "name": user_state.name,
+            },
             to=room,
         )
 
@@ -51,22 +56,34 @@ def configure_socketio(socketio):
         key = data["key"]
 
         updated_game_state = game_state_update(key=key, user_id=player_id)
-        map = updated_game_state["map"]
         level_finished = updated_game_state["completed"]
+
+        user_state = get_user_by_id(user_id=player_id)
 
         emit(
             "response_update_data",
-            {"map": map, "player_id": player_id},
+            {
+                "player_id": player_id,
+                "map": json.loads(user_state.map),
+                "level": user_state.level,
+                "score": user_state.score,
+                "name": user_state.name,
+            },
             to=room,
         )
 
         if level_finished:
             game_state_advance_current_level(user_id=player_id)
             user_state = get_user_by_id(user_id=player_id)
-            map = json.loads(user_state.map)
-            level = user_state.level
+
             emit(
                 "response_update_data",
-                {"map": map, "player_id": player_id, "level": level},
+                {
+                    "player_id": player_id,
+                    "map": json.loads(user_state.map),
+                    "level": user_state.level,
+                    "score": user_state.score,
+                    "name": user_state.name,
+                },
                 to=room,
             )

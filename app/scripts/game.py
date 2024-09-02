@@ -43,7 +43,6 @@ def game_state_update(key: str, user_id: str) -> dict | None:
     user = get_user_by_id(user_id)
     map = json.loads(user.map)
     level = user.level
-    score = user.score
 
     prev_pos_x, prev_pos_y = get_position_from_map(map)
 
