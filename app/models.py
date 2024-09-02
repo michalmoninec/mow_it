@@ -13,6 +13,7 @@ class UserState(db.Model):
     level = Column(Integer)
     achieved_level = Column(Integer)
     score = Column(Integer)
+    name = Column(String)
     map = Column(Text)
 
     def set_level(self, level: int) -> None:
@@ -34,9 +35,18 @@ class UserState(db.Model):
 
         db.session.commit()
 
+    def set_name(self, name):
+        self.name = name
+        db.session.commit()
+
 
 def get_user_by_id(user_id: str) -> any:
     return UserState.query.filter_by(user_id=user_id).first()
+
+
+def set_user_name(user_id: str, name: str) -> None:
+    user_state = UserState.query.filter_by(user_id=user_id).first()
+    user_state.set_name(name=name)
 
 
 def create_user_state(user_id: str, level=1) -> None:

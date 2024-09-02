@@ -7,18 +7,26 @@ style_script %}
 {% endblock %} {%block content %}
 <div class="game-whole">
     <div>
-        <h1>
-            You:
+        <div class="player-info">
+            <p>You:</p>
             <p id="p1_val">NIC</p>
-            <div class="grid" id="p_grid"></div>
-        </h1>
+        </div>
+        <div class="player-info">
+            <p>Score:</p>
+            <p id="p1_score">NIC</p>
+        </div>
+        <div class="grid" id="p_grid"></div>
     </div>
     <div>
-        <h1>
-            Oponent:
+        <div class="player-info">
+            <p id="p2_name">Oponent:</p>
             <p id="p2_val">NIC</p>
-            <div class="grid" id="o_grid"></div>
-        </h1>
+        </div>
+        <div class="player-info">
+            <p>Score:</p>
+            <p id="p2_score">NIC</p>
+        </div>
+        <div class="grid" id="o_grid"></div>
     </div>
 </div>
 <h1>TBD</h1>
