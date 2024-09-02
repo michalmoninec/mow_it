@@ -35,7 +35,7 @@ class UserState(db.Model):
 
         db.session.commit()
 
-    def set_name(self, name):
+    def set_name(self, name: str):
         self.name = name
         db.session.commit()
 
@@ -52,6 +52,7 @@ def set_user_name(user_id: str, name: str) -> None:
 def create_user_state(user_id: str, level=1) -> None:
     user_state = UserState(user_id=user_id, level=level, achieved_level=1, score=0)
     user_state.set_level(level)
+    user_state.set_name("Anonymous")
     db.session.add(user_state)
     db.session.commit()
 
