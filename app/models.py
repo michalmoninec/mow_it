@@ -78,6 +78,7 @@ def create_user_state(user_id: str, level=1) -> None:
     user_state.set_name("Anonymous")
     user_state.level_completed = False
     user_state.game_completed = False
+
     db.session.add(user_state)
     db.session.commit()
 
@@ -101,6 +102,10 @@ def advance_user_state_current_level(user_id: str) -> None:
 
 def get_map_by_user(user_id: str) -> Response:
     return UserState.query.filter_by(user_id=user_id).first().map
+
+
+def get_map_by_level(level: int) -> Response:
+    return Maps.query.filter_by(level=level).first().data
 
 
 class Maps(db.Model):

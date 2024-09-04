@@ -38,9 +38,8 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def home() -> str:
-    """Clears session data and renders homepage."""
+    """Renders homepage."""
 
-    # session.clear()
     return render_template("home.html")
 
 
@@ -86,15 +85,12 @@ def single_player_set_selected_level() -> Response:
     if "user_id" not in session:
         return jsonify({"error": "User or map not found"}), 404
 
-    achieved_level = (
-        UserState.query.filter_by(user_id=session["user_id"]).first().achieved_level
-    )
+    achieved_level = get_user_by_id(session["user_id"]).achieved_level
 
     if desired_level <= achieved_level:
-        set_user_state_level(user_id=session["user_id"], level=desired_level)
+        set_user_state_level(session["user_id"], desired_level)
 
-    print(f"desired level is: {desired_level}")
-    return jsonify({"level": "ok"})
+    return jsonify({})
 
 
 @main.route("/single_player/retrieve_map", methods=["POST", "GET"])
@@ -153,7 +149,7 @@ def single_player_advance_current_level() -> Response:
 
     game_state_advance_current_level(user_id=session["user_id"])
 
-    return jsonify({"level_reset": True})
+    return jsonify({})
 
 
 @main.route("/multiplayer/create_game")
