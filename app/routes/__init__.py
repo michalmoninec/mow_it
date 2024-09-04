@@ -1,3 +1,3 @@
-from .main import main
-from .singleplayer import singleplayer
-from .multiplayer import multiplayer
+from .main_route import main
+from .singleplayer_routes import singleplayer
+from .multiplayer_routes import multiplayer
