@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const returnHomeButton = document.getElementById('return_home');
 
     let map;
-    let position;
     let score;
     let completed;
     let allLevelsCompleted;
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     retrieveMap();
 
     function retrieveMap() {
-        console.log('retrieve probehlo');
         fetch('/single_player/retrieve_map', {
             method: 'POST',
             headers: {

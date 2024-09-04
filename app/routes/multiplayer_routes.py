@@ -54,7 +54,7 @@ def create_multiplayer_game() -> Response:
             room_id=session["room_id"], player_id=session["player_id"]
         )
 
-    return redirect(url_for("main.multiplayer_game"))
+    return redirect(url_for("multiplayer.multiplayer_game"))
 
 
 @multiplayer.route("/multiplayer_game")
@@ -62,7 +62,7 @@ def multiplayer_game() -> str | Response:
     """TODO"""
 
     if "player_id" not in session:
-        return redirect(url_for("main.create_multiplayer_game"))
+        return redirect(url_for("multiplayer.create_multiplayer_game"))
 
     return render_template("multiplayer_game.html")
 
@@ -78,7 +78,7 @@ def join_game(room_id) -> Response:
     else:
         # TODO - add some message flashing to user, so they know room doesn exist.
         print(f"ROOM_ID not available.")
-        return redirect(url_for("main.home"))
+        return redirect(url_for("multiplayer.home"))
 
     session["player_id"] = str(uuid.uuid4())[:8]
     create_user_after_room_join(
@@ -93,6 +93,6 @@ def join_game(room_id) -> Response:
         db.session.commit()
     else:
         print("Room does not exist, or is full.")
-        return redirect(url_for("main.home"))
+        return redirect(url_for("multiplayer.home"))
 
-    return redirect(url_for("main.multiplayer_game"))
+    return redirect(url_for("multiplayer.multiplayer_game"))

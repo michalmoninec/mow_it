@@ -61,8 +61,8 @@ def game_state_update(key: str, user_id: str) -> dict | None:
 
     pos_x, pos_y = validate_move(key, map, prev_pos_x, prev_pos_y)
 
-    completed = False
-    levels_completed = False
+    user.set_game_completed(False)
+    user.set_level_completed(False)
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
         diff = update_score(map, pos_x, pos_y)
@@ -77,7 +77,7 @@ def game_state_update(key: str, user_id: str) -> dict | None:
             user.set_level_completed(True)
             level_condition = level + 1
             if level_condition > MAX_LEVEL:
-                user.set_game_completed()
+                user.set_game_completed(True)
                 level_condition = MAX_LEVEL
 
 

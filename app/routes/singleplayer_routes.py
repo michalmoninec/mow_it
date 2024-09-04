@@ -2,8 +2,6 @@ import uuid, json
 
 from flask import (
     render_template,
-    redirect,
-    url_for,
     jsonify,
     session,
     request,
@@ -11,46 +9,30 @@ from flask import (
     Response,
 )
 
-from app.enums import Status
+
 from app.models import (
-    Maps,
-    GameState,
-    UserState,
-    create_user_after_room_join,
     create_user_state,
     get_user_by_id,
-    reset_user_state_level,
     set_user_state_level,
 )
-from app.extensions import db
 from app.scripts.game import (
     game_get_achieved_levels,
     game_state_advance_current_level,
-    game_state_creation,
     game_state_update,
-    create_db_game_state_data,
-    create_db_maps_data,
 )
 
 
-main = Blueprint("main", __name__)
+singleplayer = Blueprint("singleplayer", __name__)
 
 
-@main.route("/")
-def home() -> str:
-    """Renders homepage."""
-
-    return render_template("home.html")
-
-
-@main.route("/single_player")
+@singleplayer.route("/single_player")
 def single_player_prepare() -> str:
     """Render page for single player"""
 
     return render_template("single_player.html")
 
 
-@main.route("/single_player/level_selection")
+@singleplayer.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
     """Render page for level selection"""
     # for creating data into database when deleting db
@@ -58,7 +40,7 @@ def single_player_level_selection() -> str:
     return render_template("single_player_level_selection.html")
 
 
-@main.route("/single_player/level_data", methods=["POST"])
+@singleplayer.route("/single_player/level_data", methods=["POST"])
 def single_player_level_data() -> Response:
     """Prepare level based on user's achieved level"""
 
@@ -78,7 +60,7 @@ def single_player_level_data() -> Response:
     return jsonify({"user_id": session["user_id"], "levels": levels})
 
 
-@main.route("/single_player/selected_level", methods=["POST"])
+@singleplayer.route("/single_player/selected_level", methods=["POST"])
 def single_player_set_selected_level() -> Response:
     desired_level = request.get_json().get("selected_level")
 
@@ -93,7 +75,7 @@ def single_player_set_selected_level() -> Response:
     return jsonify({})
 
 
-@main.route("/single_player/retrieve_map", methods=["POST", "GET"])
+@singleplayer.route("/single_player/retrieve_map", methods=["POST", "GET"])
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects"""
 
@@ -104,6 +86,8 @@ def single_player_init_map() -> Response:
 
     if user_state is None:
         return jsonify({"error": "User or map not found"}), 404
+    user_state.reset_score()
+    user_state.reset_map()
 
     return jsonify(
         {
@@ -118,12 +102,11 @@ def single_player_init_map() -> Response:
     )
 
 
-@main.route("/single_player/move", methods=["POST"])
+@singleplayer.route("/single_player/move", methods=["POST"])
 def single_player_move_handle() -> Response:
     """
     Receives key
     Updates game state
-    For valid move, updates game state
     """
 
     key = request.get_json().get("key")
@@ -137,78 +120,17 @@ def single_player_move_handle() -> Response:
                 "map": json.loads(user_state.map),
                 "score": user_state.score,
                 "completed": user_state.level_completed,
+                "game_completed": user_state.game_completed,
                 "level": user_state.level,
             }
         }
     )
 
 
-@main.route("/single_player/advance_current_level", methods=["POST"])
+@singleplayer.route("/single_player/advance_current_level", methods=["POST"])
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
 
     game_state_advance_current_level(user_id=session["user_id"])
 
     return jsonify({})
-
-
-@main.route("/multiplayer/create_game")
-def multiplayer_level_selection() -> str:
-    """Create multiplayer game"""
-    return render_template("multiplayer_create_game.html")
-
-
-@main.route("/multiplayer/create_game/room")
-def create_multiplayer_game() -> Response:
-    """TODO"""
-
-    if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())[:8]
-        if "room_id" not in session:
-            session["room_id"] = str(uuid.uuid4())[:8]
-        create_db_game_state_data(
-            room_id=session["room_id"], player_id=session["player_id"]
-        )
-
-    return redirect(url_for("main.multiplayer_game"))
-
-
-@main.route("/multiplayer_game")
-def multiplayer_game() -> str | Response:
-    """TODO"""
-
-    if "player_id" not in session:
-        return redirect(url_for("main.create_multiplayer_game"))
-
-    return render_template("multiplayer_game.html")
-
-
-@main.route("/multiplayer_game/<room_id>")
-def join_game(room_id) -> Response:
-    """TODO"""
-
-    db_room_id = GameState.query.filter_by(room_id=room_id).first()
-
-    if db_room_id:
-        session["room_id"] = room_id
-    else:
-        # TODO - add some message flashing to user, so they know room doesn exist.
-        print(f"ROOM_ID not available.")
-        return redirect(url_for("main.home"))
-
-    session["player_id"] = str(uuid.uuid4())[:8]
-    create_user_after_room_join(
-        room_id=room_id,
-        player_id=session["player_id"],
-    )
-
-    # TODO - change it to function at models module
-    if db_room_id.add_player(session["player_id"]):
-        db_room_id.status = Status.READY.value
-        db.session.add(db_room_id)
-        db.session.commit()
-    else:
-        print("Room does not exist, or is full.")
-        return redirect(url_for("main.home"))
-
-    return redirect(url_for("main.multiplayer_game"))

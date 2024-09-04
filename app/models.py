@@ -37,7 +37,7 @@ class UserState(db.Model):
         if self.level > self.achieved_level:
             self.achieved_level = self.level
         self.level_completed = False
-        self.map = Maps.query.filter_by(level=self.level).first().data
+        # self.map = Maps.query.filter_by(level=self.level).first().data
 
         db.session.commit()
 
@@ -49,12 +49,20 @@ class UserState(db.Model):
         self.score += diff
         db.session.commit()
 
+    def reset_score(self):
+        self.score = 0
+        db.session.commit()
+
     def set_level_completed(self, value: bool):
         self.level_completed = value
         db.session.commit()
 
-    def set_game_completed(self):
-        self.game_completed = True
+    def set_game_completed(self, value: bool):
+        self.game_completed = value
+        db.session.commit()
+
+    def reset_map(self):
+        self.map = get_map_by_level(self.level)
         db.session.commit()
 
 
