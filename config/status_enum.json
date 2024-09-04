@@ -1,0 +1,9 @@
+{
+    "Status": {
+        "INIT": "init",
+        "JOIN_WATI": "join_wait",
+        "READY": "ready",
+        "PLAYING": "playing",
+        "FINISHED": "finished"
+    }
+}

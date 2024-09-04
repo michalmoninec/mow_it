@@ -11,12 +11,14 @@ from flask import (
     Response,
 )
 
+from app.enums import Status
 from app.models import (
     Maps,
     GameState,
     UserState,
     create_user_after_room_join,
     create_user_state,
+    get_user_by_id,
     reset_user_state_level,
     set_user_state_level,
 )
@@ -102,12 +104,22 @@ def single_player_init_map() -> Response:
     if "user_id" not in session:
         return jsonify({"error": "User or map not found"}), 404
 
-    game_state = game_state_creation(user_id=session["user_id"])
+    user_state = get_user_by_id(session["user_id"])
 
-    if game_state is None:
+    if user_state is None:
         return jsonify({"error": "User or map not found"}), 404
 
-    return jsonify({"game_state": game_state, "user_id": session["user_id"]})
+    return jsonify(
+        {
+            "user_state": {
+                "map": json.loads(user_state.map),
+                "score": user_state.score,
+                "completed": user_state.level_completed,
+                "level": user_state.level,
+            },
+            "user_id": session["user_id"],
+        }
+    )
 
 
 @main.route("/single_player/move", methods=["POST"])
@@ -120,9 +132,19 @@ def single_player_move_handle() -> Response:
 
     key = request.get_json().get("key")
 
-    updated_game_state = game_state_update(key, user_id=session["user_id"])
+    game_state_update(key, user_id=session["user_id"])
+    user_state = get_user_by_id(session["user_id"])
 
-    return jsonify({"game_state": updated_game_state})
+    return jsonify(
+        {
+            "user_state": {
+                "map": json.loads(user_state.map),
+                "score": user_state.score,
+                "completed": user_state.level_completed,
+                "level": user_state.level,
+            }
+        }
+    )
 
 
 @main.route("/single_player/advance_current_level", methods=["POST"])
@@ -186,6 +208,7 @@ def join_game(room_id) -> Response:
 
     # TODO - change it to function at models module
     if db_room_id.add_player(session["player_id"]):
+        db_room_id.status = Status.READY.value
         db.session.add(db_room_id)
         db.session.commit()
     else:

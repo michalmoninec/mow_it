@@ -19,12 +19,14 @@ style_script %}
             <p>Level:</p>
             <p id="p1_level">NIC</p>
         </div>
-        <div class="grid" id="p_grid"></div>
+        <div id="grid-container-player">
+            <!-- <div class="grid" id="p_grid"></div> -->
+        </div>
     </div>
     <div>
         <div class="player-info">
-            <p id="p2_name">Oponent:</p>
-            <p id="p2_val">NIC</p>
+            <p>Oponent:</p>
+            <p id="p2_name">NIC</p>
         </div>
         <div class="player-info">
             <p>Score:</p>
@@ -34,7 +36,9 @@ style_script %}
             <p>Level:</p>
             <p id="p2_level">NIC</p>
         </div>
-        <div class="grid" id="o_grid"></div>
+        <div id="grid-container-oponent">
+            <div class="grid" id="o_grid"></div>
+        </div>
     </div>
 </div>
 <h1>TBD</h1>
@@ -43,7 +47,7 @@ style_script %}
 
 <script
     type="module"
-    src="{{ url_for('static', filename='multi_game.js') }}"
+    src="{{ url_for('static', filename='multiplayer.js') }}"
 ></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 {% endblock %}

@@ -1,7 +1,10 @@
+import json
+
 from flask import Response
-from sqlalchemy import Text, Column, Integer, String
+from sqlalchemy import Text, Column, Integer, String, Boolean
 
 from app.extensions import db
+from app.enums import Status
 
 MAX_LEVEL = 3
 
@@ -14,6 +17,8 @@ class UserState(db.Model):
     achieved_level = Column(Integer)
     score = Column(Integer)
     name = Column(String)
+    level_completed = Column(Boolean)
+    game_completed = Column(Boolean)
     map = Column(Text)
 
     def set_level(self, level: int) -> None:
@@ -31,6 +36,7 @@ class UserState(db.Model):
             self.level = MAX_LEVEL
         if self.level > self.achieved_level:
             self.achieved_level = self.level
+        self.level_completed = False
         self.map = Maps.query.filter_by(level=self.level).first().data
 
         db.session.commit()
@@ -41,6 +47,14 @@ class UserState(db.Model):
 
     def set_score(self, diff: int):
         self.score += diff
+        db.session.commit()
+
+    def set_level_completed(self, value: bool):
+        self.level_completed = value
+        db.session.commit()
+
+    def set_game_completed(self):
+        self.game_completed = True
         db.session.commit()
 
 
@@ -62,6 +76,8 @@ def create_user_state(user_id: str, level=1) -> None:
     user_state = UserState(user_id=user_id, level=level, achieved_level=1, score=0)
     user_state.set_level(level)
     user_state.set_name("Anonymous")
+    user_state.level_completed = False
+    user_state.game_completed = False
     db.session.add(user_state)
     db.session.commit()
 
@@ -100,6 +116,7 @@ class Maps(db.Model):
 def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> None:
     game_state = GameState(room_id=room_id, level=level)
     game_state.map = Maps.query.filter_by(level=level).first().data
+    game_state.status = Status.INIT.value
     game_state.add_player(player_id)
 
     create_user_state(user_id=player_id, level=level)
@@ -138,3 +155,12 @@ class GameState(db.Model):
             return self.player_2_id
         else:
             return None
+
+    def both_player_completed_level(self):
+        p1 = get_user_by_id(self.player_1_id)
+        p2 = get_user_by_id(self.player_2_id)
+        return p1.level_completed and p2.level_completed
+
+
+def get_game_state_by_room(room_id: str) -> any:
+    return GameState.query.filter_by(room_id=room_id).first()

@@ -1,4 +1,4 @@
-import json
+import json, time
 
 from typing import List, Tuple
 from flask import session
@@ -10,6 +10,7 @@ from app.models import (
     advance_user_state_current_level,
     create_multiplayer_game_state,
     create_user_state,
+    get_game_state_by_room,
     get_map_by_user,
     get_user_by_id,
     reset_user_state_level,
@@ -18,10 +19,21 @@ from app.models import (
     set_user_state_level,
 )
 from app.extensions import db
+from app.enums import Status
 
 NestedDictList = List[List[dict[str, dict | int]]]
 
 MAX_LEVEL = 3
+
+
+def game_state_advance_ready(room_id: str) -> bool:
+    game_state = get_game_state_by_room(room_id)
+    return game_state.both_player_completed_level()
+
+
+def game_state_status(room_id: str) -> any:
+    # return Status.READY.value
+    return get_game_state_by_room(room_id).status
 
 
 def game_state_creation(user_id: str) -> dict | None:
@@ -33,8 +45,8 @@ def game_state_creation(user_id: str) -> dict | None:
         "map": json.loads(user.map),
         "level": user.level,
         "score": user.score,
-        "completed": False,
-        "levels_completed": False,
+        "completed": user.level_completed,
+        "levels_completed": user.game_completed,
     }
 
 
@@ -61,24 +73,11 @@ def game_state_update(key: str, user_id: str) -> dict | None:
         user.set_map(json.dumps(map))
 
         if level_completed(map):
-            completed = True
+            user.set_level_completed(True)
             level_condition = level + 1
             if level_condition > MAX_LEVEL:
-                levels_completed = True
+                user.set_game_completed()
                 level_condition = MAX_LEVEL
-
-            # set_user_state_level(user_id, level)
-    else:
-        pass
-        # maybe some message flashing of invalid move
-
-    return {
-        "map": map,
-        "score": user.score,
-        "completed": completed,
-        "levels_completed": levels_completed,
-        "level": level,
-    }
 
 
 def game_state_advance_current_level(user_id: str) -> None:

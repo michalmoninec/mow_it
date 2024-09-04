@@ -51,17 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                let game_state = data.game_state;
+                let user_state = data.user_state;
 
                 if (userID == null) {
                     localStorage.setItem('userID', data.user_id);
                 }
 
-                map = game_state.map;
-                position = game_state.pos;
-                score = game_state.score;
-                completed = game_state.completed;
-                level = game_state.level;
+                map = user_state.map;
+                score = user_state.score;
+                completed = user_state.completed;
+                level = user_state.level;
                 updateGrid(map, 'player');
                 updateScoreAndLevel(score, level);
             })
@@ -84,11 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                let game_state = data.game_state;
-                allLevelsCompleted = game_state.levels_completed;
+                let game_state = data.user_state;
+                allLevelsCompleted = game_state.game_completed;
 
                 map = game_state.map;
-                position = game_state.pos;
                 score = game_state.score;
                 level = game_state.level;
                 // updatedMap = updateMap(map);
