@@ -37,6 +37,7 @@ class UserState(db.Model):
         if self.level > self.achieved_level:
             self.achieved_level = self.level
         self.level_completed = False
+        self.game_completed = False
         # self.map = Maps.query.filter_by(level=self.level).first().data
 
         db.session.commit()
@@ -172,7 +173,9 @@ class GameState(db.Model):
     def both_player_completed_level(self):
         p1 = get_user_by_id(self.player_1_id)
         p2 = get_user_by_id(self.player_2_id)
-        return p1.level_completed and p2.level_completed
+        if p1 and p2:
+            return p1.level_completed and p2.level_completed
+        return False
 
 
 def get_game_state_by_room(room_id: str) -> any:

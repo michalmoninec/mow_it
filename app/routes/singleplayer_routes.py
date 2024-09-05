@@ -88,6 +88,8 @@ def single_player_init_map() -> Response:
         return jsonify({"error": "User or map not found"}), 404
     user_state.reset_score()
     user_state.reset_map()
+    user_state.set_level_completed(False)
+    user_state.set_game_completed(False)
 
     return jsonify(
         {

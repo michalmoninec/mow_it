@@ -49,6 +49,8 @@ def configure_socketio(socketio):
                 "level": user_state.level,
                 "score": user_state.score,
                 "name": user_state.name,
+                "level_completed": user_state.level_completed,
+                "game_completed": user_state.game_completed,
             },
             to=room,
         )

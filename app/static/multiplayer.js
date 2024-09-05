@@ -95,9 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('response_player_finished_level', (data) => {
         console.log('Player finished level.');
         if (data.player_id == player_id) {
-            gridContainerPlayer.innerHTML = 'Waiting for another player.';
+            gridContainerPlayer.innerHTML =
+                'Waiting for another player to finish level.';
         } else {
-            gridContainerOponent.innerHTML = 'Waiting for another player.';
+            gridContainerOponent.innerHTML =
+                'Waiting for another player to finish level.';
         }
     });
 
