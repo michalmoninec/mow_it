@@ -11,9 +11,15 @@
         {% block style_script %} {% endblock %}
     </head>
     <body>
-        <h1>MOW_IT GAME</h1>
-        <div>{% block content %} {% endblock %} {% block footer %}</div>
-        <div class="footer">Powered by &copy; Anton's beer quality</div>
+        <div class="container">
+            <div class="navbar">
+                <h1>MOW_IT GAME</h1>
+            </div>
+            <div class="content">
+                {% block content %} {% endblock %} {% block footer %}
+            </div>
+            <div class="footer">Powered by &copy; Anton's beer quality</div>
+        </div>
         {% endblock %} {% block scripts %} {% endblock %}
     </body>
 </html>

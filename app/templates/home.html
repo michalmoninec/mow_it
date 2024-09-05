@@ -1,7 +1,9 @@
 {% extends "base.html" %} {% block content %}
-<h2>Select game mode</h2>
-<button id="single_player">Single Player</button>
-<button id="multi_player">Multiplayer</button>
+<h2 class="horizontal center">Select game mode</h2>
+<div class="vertical menu center">
+    <button id="single_player">Single Player</button>
+    <button id="multi_player">Multiplayer</button>
+</div>
 
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='home.js') }}"></script>

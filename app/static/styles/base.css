@@ -2,9 +2,56 @@ body {
     background-color: blueviolet;
     margin: 0;
     padding: 0;
+    height: 100%;
 }
 
 p {
     margin: 0;
     padding: 0;
+}
+
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    display: inline-block;
+    width: auto;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.content {
+    flex: 1;
+    width: 100%;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
+
+.between {
+    justify-content: space-between;
+}
+
+.max_content {
+    width: max-content;
 }

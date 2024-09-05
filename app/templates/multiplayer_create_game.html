@@ -5,13 +5,17 @@ block style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<p>Choose multiplayer settings!</p>
-<p>
-    In future, there will be some setting, now just click button to create the
-    game.
-</p>
-<button id="level_choosed">CREATE GAME</button>
-<button id="back">HOME</button>
+<div class="vertical center">
+    <p>Choose multiplayer settings!</p>
+    <p>
+        In future, there will be some setting, now just click button to create
+        the game.
+    </p>
+    <div class="vertical center">
+        <button id="level_choosed">CREATE GAME</button>
+        <button id="back">HOME</button>
+    </div>
+</div>
 {% endblock %} {% block scripts %}
 <script
     type="module"

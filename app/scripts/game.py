@@ -33,8 +33,8 @@ def game_state_advance_ready(room_id: str) -> bool:
 
 
 def game_state_status(room_id: str) -> any:
-    # return Status.READY.value
-    return get_game_state_by_room(room_id).status
+    return Status.READY.value
+    # return get_game_state_by_room(room_id).status
 
 
 def game_state_creation(user_id: str) -> dict | None:

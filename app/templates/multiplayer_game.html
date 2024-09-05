@@ -5,44 +5,48 @@ style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<div class="game-whole">
-    <div>
-        <div class="player-info">
-            <p>You:</p>
-            <p id="p1_name">NIC</p>
+<div class="vertical">
+    <div class="game-whole">
+        <div>
+            <div class="player-info">
+                <p>You:</p>
+                <p id="p1_name">NIC</p>
+            </div>
+            <div class="player-info">
+                <p>Score:</p>
+                <p id="p1_score">NIC</p>
+            </div>
+            <div class="player-info">
+                <p>Level:</p>
+                <p id="p1_level">NIC</p>
+            </div>
+            <div id="grid-container-player">
+                <!-- <div class="grid" id="p_grid"></div> -->
+            </div>
         </div>
-        <div class="player-info">
-            <p>Score:</p>
-            <p id="p1_score">NIC</p>
-        </div>
-        <div class="player-info">
-            <p>Level:</p>
-            <p id="p1_level">NIC</p>
-        </div>
-        <div id="grid-container-player">
-            <!-- <div class="grid" id="p_grid"></div> -->
+        <div>
+            <div class="player-info">
+                <p>Oponent:</p>
+                <p id="p2_name">NIC</p>
+            </div>
+            <div class="player-info">
+                <p>Score:</p>
+                <p id="p2_score">NIC</p>
+            </div>
+            <div class="player-info">
+                <p>Level:</p>
+                <p id="p2_level">NIC</p>
+            </div>
+            <div id="grid-container-oponent">
+                <div class="grid" id="o_grid"></div>
+            </div>
         </div>
     </div>
-    <div>
-        <div class="player-info">
-            <p>Oponent:</p>
-            <p id="p2_name">NIC</p>
-        </div>
-        <div class="player-info">
-            <p>Score:</p>
-            <p id="p2_score">NIC</p>
-        </div>
-        <div class="player-info">
-            <p>Level:</p>
-            <p id="p2_level">NIC</p>
-        </div>
-        <div id="grid-container-oponent">
-            <div class="grid" id="o_grid"></div>
-        </div>
+    <div class="vertical center">
+        <h1>TBD</h1>
+        <button id="back">BACK</button>
     </div>
 </div>
-<h1>TBD</h1>
-<button id="back">BACK</button>
 {% endblock %}{% block scripts %}
 
 <script

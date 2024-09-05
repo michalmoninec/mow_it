@@ -5,9 +5,11 @@ block style_script %}
     href="{{ url_for('static', filename='styles/game_compounds.css') }}"
 />
 {% endblock %} {%block content %}
-<p id="p1_val">Choose level!</p>
-<div id="achieved_levels"></div>
-<button id="back">HOME</button>
+<div class="vertical menu center">
+    <p id="p1_val">Choose level!</p>
+    <div id="achieved_levels"></div>
+    <button id="back">HOME</button>
+</div>
 {% endblock %} {% block scripts %}
 <script
     type="module"

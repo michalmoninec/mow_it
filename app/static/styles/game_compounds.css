@@ -2,9 +2,9 @@
     display: grid;
     grid-template-columns: repeat(10, 50px);
     grid-template-rows: repeat(10, 50px);
-    gap: 1px;
+    /* gap: 1px; */
     position: relative;
-    margin: 20px;
+    /* margin: 20px; */
 }
 .grid-item {
     width: 50px;
@@ -31,12 +31,15 @@
 }
 .game-whole {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
 }
 .player-info {
     display: flex;
     justify-content: space-between;
-    margin-left: 20px;
-    margin-right: 20px;
+    /* margin-left: 20px; */
+    /* margin-right: 20px; */
 }
 
 .modal {
