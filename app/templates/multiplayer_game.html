@@ -7,7 +7,7 @@ style_script %}
 {% endblock %} {%block content %}
 <div class="vertical">
     <div class="game-whole">
-        <div>
+        <div id="player_container">
             <div class="player-info">
                 <p>You:</p>
                 <p id="p1_name">NIC</p>
@@ -21,10 +21,10 @@ style_script %}
                 <p id="p1_level">NIC</p>
             </div>
             <div id="grid-container-player">
-                <!-- <div class="grid" id="p_grid"></div> -->
+                <div class="grid" id="p1_grid"></div>
             </div>
         </div>
-        <div>
+        <div id="oponent_container">
             <div class="player-info">
                 <p>Oponent:</p>
                 <p id="p2_name">NIC</p>
@@ -38,7 +38,7 @@ style_script %}
                 <p id="p2_level">NIC</p>
             </div>
             <div id="grid-container-oponent">
-                <div class="grid" id="o_grid"></div>
+                <div class="grid" id="p2_grid"></div>
             </div>
         </div>
     </div>
@@ -46,6 +46,14 @@ style_script %}
         <h1>TBD</h1>
         <button id="back">BACK</button>
     </div>
+</div>
+<div id="player_modal" class="modal">
+    <div class="modal-content" id="player_modal_content">
+        <div id="player_modal_text" class="modal-text"></div>
+    </div>
+</div>
+<div id="oponent_modal" class="modal">
+    <div id="oponent_modal_text" class="modal-text"></div>
 </div>
 {% endblock %}{% block scripts %}
 

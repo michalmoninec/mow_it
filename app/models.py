@@ -152,8 +152,17 @@ class GameState(db.Model):
 
     room_id = Column(String)
 
+    rounds = Column(Integer)
+    current_round = Column(Integer)
+
     player_1_id = Column(String)
     player_2_id = Column(String)
+
+    p1_round_score = Column(Integer)
+    p2_round_score = Column(Integer)
+
+    p1_rounds_won = Column(Integer)
+    p2_rounds_won = Column(Integer)
 
     status = Column(String)
     level = Column(String)

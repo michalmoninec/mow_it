@@ -96,6 +96,7 @@ def configure_socketio(socketio):
 
         game_state_advance_current_level(user_id=player_id)
         user_state = get_user_by_id(user_id=player_id)
+        user_state.reset_map()
 
         emit(
             "response_update_data",
@@ -105,6 +106,8 @@ def configure_socketio(socketio):
                 "level": user_state.level,
                 "score": user_state.score,
                 "name": user_state.name,
+                "level_completed": user_state.level_completed,
+                "game_completed": user_state.game_completed,
             },
             to=room,
         )

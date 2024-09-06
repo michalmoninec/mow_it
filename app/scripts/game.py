@@ -28,6 +28,8 @@ MAX_LEVEL = 3
 
 
 def game_state_advance_ready(room_id: str) -> bool:
+    time.sleep(2)
+    return True
     game_state = get_game_state_by_room(room_id)
     return game_state.both_player_completed_level()
 

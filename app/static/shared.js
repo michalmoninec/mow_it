@@ -23,3 +23,12 @@ export function updateGrid(map, player) {
 }
 
 export function updateMap(map, key) {}
+
+export function setModalPosition(grid, modal) {
+    modal.style.width = `${grid.offsetWidth}px`;
+    modal.style.height = `${grid.offsetHeight}px`;
+    let pos = grid.getBoundingClientRect();
+    // console.log(pos.top);
+    modal.style.top = `${pos.top}px`;
+    modal.style.left = `${pos.left}px`;
+}

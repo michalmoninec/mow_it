@@ -1,4 +1,4 @@
-import { updateGrid, updateMap } from './shared.js';
+import { updateGrid, setModalPosition } from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('p_grid');
@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let level;
     let userID = getUserID();
     console.log(userID);
+    console.log(grid.offsetWidth);
+    console.log(grid.getBoundingClientRect().top);
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -30,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    setModalPosition(
+        document.getElementById('single_content'),
+        document.getElementById('my_modal_content')
+    );
     retrieveMap();
 
     function retrieveMap() {
@@ -96,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'CONGRATULATIONS, ALL LEVELS CLEARED';
                 }
                 if (game_state.completed) {
-                    levelCompletedModal.style.display = 'block';
+                    levelCompletedModal.style.display = 'flex';
                 }
             })
             .catch((error) => console.error('Error:', error));
@@ -132,11 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
             sendKeyPress(key);
         }
         if (['Enter'].includes(key)) {
-            if (levelCompletedModal.style.display === 'block') {
+            if (levelCompletedModal.style.display === 'flex') {
                 advanceCurrentLevel();
                 levelCompletedModal.style.display = 'none';
             }
         }
+    });
+
+    window.addEventListener('resize', () => {
+        console.log('resize');
+        setModalPosition(
+            document.getElementById('single_content'),
+            document.getElementById('my_modal_content')
+        );
     });
 
     backButton.addEventListener('click', () => {

@@ -6,7 +6,7 @@ block style_script %}
 />
 {% endblock %} {%block content %}
 <div class="vertical center">
-    <div class="max_content">
+    <div class="max_content" id="single_content">
         <p class="horizontal center" id="p1_val">I like to mow'it mow'it!</p>
         <div class="horizontal between">
             <div>SCORE:</div>
@@ -22,7 +22,7 @@ block style_script %}
             <button id="back">HOME</button>
         </div>
         <div id="my_modal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content" id="my_modal_content">
                 <h1 id="level_advance_label">Level completed</h1>
                 <button id="advance_level">CONTINUE</button>
                 <button id="restart_level">RESTART LEVEL</button>
