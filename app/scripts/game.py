@@ -28,15 +28,15 @@ MAX_LEVEL = 3
 
 
 def game_state_advance_ready(room_id: str) -> bool:
-    time.sleep(2)
-    return True
+    # time.sleep(2)
+    # return True
     game_state = get_game_state_by_room(room_id)
     return game_state.both_player_completed_level()
 
 
 def game_state_status(room_id: str) -> any:
-    return Status.READY.value
-    # return get_game_state_by_room(room_id).status
+    # return Status.READY.value
+    return get_game_state_by_room(room_id).status
 
 
 def game_state_creation(user_id: str) -> dict | None:
@@ -230,6 +230,10 @@ def create_db_game_state_data(room_id: str, player_id: str) -> None:
 
 
 def create_db_maps_data() -> None:
+    if db.session.query(Maps).first():
+        print("already existing table")
+        return
+
     map = create_map()
     map_db = Maps(
         name="Hradec",

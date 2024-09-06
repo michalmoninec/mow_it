@@ -168,9 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function waitingForPlayerToJoin() {
         console.log('Game not ready yet..');
         readyToPlay = false;
-        gridContainerPlayer.innerHTML =
-            'Player ready - Waiting for another player to join game.';
-        gridContainerOponent.innerHTML = 'Player not joined.';
+        p1_modal_text.innerText = 'Waiting for oponent to join.';
+        setModalVisible(p1_modal);
     }
 
     function startGame() {
