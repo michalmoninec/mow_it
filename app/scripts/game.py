@@ -31,7 +31,12 @@ def game_state_advance_ready(room_id: str) -> bool:
     # time.sleep(2)
     # return True
     game_state = get_game_state_by_room(room_id)
-    return game_state.both_player_completed_level()
+    return game_state.both_players_completed_level()
+
+
+def game_state_next_round_ready(room_id: str) -> bool:
+    game_state = get_game_state_by_room(room_id)
+    return game_state.bot_players_completed_game()
 
 
 def game_state_status(room_id: str) -> any:
@@ -53,7 +58,7 @@ def game_state_creation(user_id: str) -> dict | None:
     }
 
 
-def game_state_update(key: str, user_id: str) -> dict | None:
+def game_state_update(key: str, user_id: str, max_level: int) -> dict | None:
     """Check if move is valid and then updates game_state"""
     user = get_user_by_id(user_id)
     map = json.loads(user.map)
@@ -78,13 +83,13 @@ def game_state_update(key: str, user_id: str) -> dict | None:
         if level_completed(map):
             user.set_level_completed(True)
             level_condition = level + 1
-            if level_condition > MAX_LEVEL:
+            if level_condition > max_level:
                 user.set_game_completed(True)
-                level_condition = MAX_LEVEL
+                level_condition = max_level
 
 
-def game_state_advance_current_level(user_id: str) -> None:
-    advance_user_state_current_level(user_id)
+def game_state_advance_current_level(user_id: str, max_level: int) -> None:
+    advance_user_state_current_level(user_id, max_level)
 
 
 def game_get_achieved_levels(user_id: str) -> List:
@@ -225,8 +230,37 @@ def create_map_3() -> NestedDictList:
     return map
 
 
+def create_map_4() -> NestedDictList:
+    map = []
+    for col in range(10):
+        col_cell = []
+        for row in range(10):
+            cell = {
+                "x": col,
+                "y": row,
+                "active": False,
+                "blocker": True,
+                "visited": False,
+            }
+            col_cell.append(cell)
+        map.append(col_cell)
+    map[0][0]["active"] = True
+    map[0][0]["blocker"] = False
+    map[1][0]["blocker"] = False
+    map[1][1]["blocker"] = False
+    map[1][2]["blocker"] = False
+    map[1][3]["blocker"] = False
+    map[1][4]["blocker"] = False
+    map[1][5]["blocker"] = False
+    map[2][5]["blocker"] = False
+    map[3][5]["blocker"] = False
+    map[4][5]["blocker"] = False
+    map[5][5]["blocker"] = False
+    return map
+
+
 def create_db_game_state_data(room_id: str, player_id: str) -> None:
-    create_multiplayer_game_state(room_id, player_id, level=1)
+    create_multiplayer_game_state(room_id, player_id)
 
 
 def create_db_maps_data() -> None:
@@ -271,6 +305,22 @@ def create_db_maps_data() -> None:
         name="Hradec",
         data=json.dumps(map),
         level=3,
+        start_position=json.dumps(
+            {
+                "x": 0,
+                "y": 0,
+            }
+        ),
+    )
+
+    db.session.add(map_db)
+    db.session.commit()
+
+    map = create_map_4()
+    map_db = Maps(
+        name="Hradec",
+        data=json.dumps(map),
+        level=4,
         start_position=json.dumps(
             {
                 "x": 0,

@@ -113,7 +113,7 @@ def single_player_move_handle() -> Response:
 
     key = request.get_json().get("key")
 
-    game_state_update(key, user_id=session["user_id"])
+    game_state_update(key, session["user_id"], 4)
     user_state = get_user_by_id(session["user_id"])
 
     return jsonify(
@@ -133,6 +133,6 @@ def single_player_move_handle() -> Response:
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
 
-    game_state_advance_current_level(user_id=session["user_id"])
+    game_state_advance_current_level(session["user_id"], 4)
 
     return jsonify({})

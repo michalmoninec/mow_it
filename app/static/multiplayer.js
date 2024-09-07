@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let p2_modal = document.getElementById('oponent_modal');
     let p2_modal_text = document.getElementById('oponent_modal_text');
 
+    let endGameModal = document.getElementById('end_game_modal');
+
     let backButton = document.getElementById('back');
     let player_id;
     let gameStatus;
@@ -62,7 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
         player_id = data.player_id;
         gameStatus = data.game_status;
 
-        if (gameStatus == 'ready') {
+        if (gameStatus == 'finished') {
+            readyToPlay = false;
+            setModalDisable(p1_modal);
+            setModalDisable(p2_modal);
+            setModalVisible(endGameModal);
+        } else if (gameStatus == 'ready') {
             socket.emit('request_maps_from_server');
         } else if (gameStatus == 'finished') {
             finishedGame();
@@ -120,12 +127,20 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('response_player_finished_game', (data) => {
         if (data.player_id == player_id) {
             readyToPlay = false;
-            p1_modal_text.innerText = 'All levels completed, congratulations.';
+            p1_modal_text.innerText =
+                'All levels of this round completed, congratulations.';
             setModalVisible(p1_modal);
         } else {
-            p2_modal_text.innerText = 'All levels completed.';
+            p2_modal_text.innerText = 'All levels of this round completed.';
             setModalVisible(p2_modal);
         }
+    });
+
+    socket.on('response_player_finished_all_rounds', (data) => {
+        readyToPlay = false;
+        setModalDisable(p1_modal);
+        setModalDisable(p2_modal);
+        setModalVisible(endGameModal);
     });
 
     socket.on('disconnect', () => {

@@ -2,6 +2,7 @@ import json
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean
+from typing import List
 
 from app.extensions import db
 from app.enums import Status
@@ -30,10 +31,10 @@ class UserState(db.Model):
         self.map = map
         db.session.commit()
 
-    def increase_level(self):
+    def increase_level(self, max_level: int):
         self.level += 1
-        if self.level > MAX_LEVEL:
-            self.level = MAX_LEVEL
+        if self.level > max_level:
+            self.level = max_level
         if self.level > self.achieved_level:
             self.achieved_level = self.level
         self.level_completed = False
@@ -105,8 +106,8 @@ def set_user_state_level(user_id: str, level: int) -> None:
     user_state.set_level(level)
 
 
-def advance_user_state_current_level(user_id: str) -> None:
-    UserState.query.filter_by(user_id=user_id).first().increase_level()
+def advance_user_state_current_level(user_id: str, max_level: int) -> None:
+    UserState.query.filter_by(user_id=user_id).first().increase_level(max_level)
 
 
 def get_map_by_user(user_id: str) -> Response:
@@ -127,10 +128,14 @@ class Maps(db.Model):
     data = Column(Text)
 
 
-def create_multiplayer_game_state(room_id: str, player_id: str, level: int) -> None:
+def create_multiplayer_game_state(room_id: str, player_id: str) -> None:
+    # later will be randomized at creation
+    level = 1
     game_state = GameState(room_id=room_id, level=level)
     game_state.map = Maps.query.filter_by(level=level).first().data
     game_state.status = Status.INIT.value
+    game_state.rounds = 2
+    game_state.current_round = 1
     game_state.add_player(player_id)
 
     create_user_state(user_id=player_id, level=level)
@@ -154,12 +159,10 @@ class GameState(db.Model):
 
     rounds = Column(Integer)
     current_round = Column(Integer)
+    levels_per_round = Column(Integer)
 
     player_1_id = Column(String)
     player_2_id = Column(String)
-
-    p1_round_score = Column(Integer)
-    p2_round_score = Column(Integer)
 
     p1_rounds_won = Column(Integer)
     p2_rounds_won = Column(Integer)
@@ -179,13 +182,48 @@ class GameState(db.Model):
         else:
             return None
 
-    def both_player_completed_level(self):
-        p1 = get_user_by_id(self.player_1_id)
-        p2 = get_user_by_id(self.player_2_id)
+    def set_status(self, status: str) -> None:
+        self.status = status
+        db.session.commit()
+
+    def get_players(self) -> List[Maps]:
+        return get_user_by_id(self.player_1_id), get_user_by_id(self.player_2_id)
+
+    def both_players_completed_level(self):
+        p1, p2 = self.get_players()
         if p1 and p2:
             return p1.level_completed and p2.level_completed
         return False
 
+    def both_players_completed_game(self):
+        p1, p2 = self.get_players()
+        if p1 and p2:
+            return p1.game_completed and p2.game_completed
+        return False
+
+    def advance_next_round(self) -> None:
+        p1, p2 = self.get_players()
+
+        if self.current_round != self.rounds:
+            self.current_round += 1
+
+        self.level = 3
+
+        for player in p1, p2:
+            player.set_level(self.level)
+            player.set_level_completed(False)
+            player.set_game_completed(False)
+            player.reset_score()
+
+        db.session.commit()
+
+    def final_round(self) -> bool:
+        return self.current_round == self.rounds
+
 
 def get_game_state_by_room(room_id: str) -> any:
     return GameState.query.filter_by(room_id=room_id).first()
+
+
+def get_game_state_max_level_by_room(room_id: str) -> int:
+    return int(get_game_state_by_room(room_id).level) + 1

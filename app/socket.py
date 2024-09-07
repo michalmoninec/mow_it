@@ -8,7 +8,13 @@ from app.scripts.game import (
     game_state_status,
     game_state_update,
 )
-from app.models import GameState, get_map_by_user, get_user_by_id
+from app.models import (
+    GameState,
+    get_game_state_by_room,
+    get_game_state_max_level_by_room,
+    get_map_by_user,
+    get_user_by_id,
+)
 
 from app.extensions import db
 from app.enums import Status
@@ -60,8 +66,9 @@ def configure_socketio(socketio):
         player_id = session["player_id"]
         room = session["room_id"]
         key = data["key"]
+        max_level = get_game_state_max_level_by_room(room)
 
-        game_state_update(key=key, user_id=player_id)
+        game_state_update(key, player_id, max_level)
 
         user_state = get_user_by_id(user_id=player_id)
 
@@ -93,8 +100,8 @@ def configure_socketio(socketio):
     def handle_level_advance():
         player_id = session["player_id"]
         room = session["room_id"]
-
-        game_state_advance_current_level(user_id=player_id)
+        max_level = get_game_state_max_level_by_room(room)
+        game_state_advance_current_level(player_id, max_level)
         user_state = get_user_by_id(user_id=player_id)
         user_state.reset_map()
 
@@ -114,11 +121,26 @@ def configure_socketio(socketio):
 
     @socketio.on("request_game_finished")
     def handle_game_finished():
+        game_state = get_game_state_by_room(session["room_id"])
         emit(
             "response_player_finished_game",
             {"player_id": session["player_id"]},
             to=session["room_id"],
         )
+
+        if game_state.both_players_completed_game():
+            game_state.advance_next_round()
+
+            if game_state.final_round():
+                game_state.set_status(Status.FINISHED.value)
+                emit(
+                    "response_player_finished_all_rounds",
+                    {"player_id": session["player_id"]},
+                    to=session["room_id"],
+                )
+            else:
+                emit("response_maps_from_server", to=session["room_id"])
+                print("should move to next round")
 
     @socketio.on("disconnect")
     def handle_disconnect():
