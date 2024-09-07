@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let endGameModal = document.getElementById('end_game_modal');
 
     let backButton = document.getElementById('back');
-    let player_id;
+    let user_id;
     let gameStatus;
     let readyToPlay;
 
@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('join_room');
     });
 
-    socket.on('response_player_id_and_status', (data) => {
-        player_id = data.player_id;
+    socket.on('response_user_id_and_status', (data) => {
+        user_id = data.user_id;
         gameStatus = data.game_status;
 
         if (gameStatus == 'finished') {
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_update_data', (data) => {
-        if (data.player_id == player_id) {
+        if (data.user_id == user_id) {
             setModalDisable(p1_modal);
             updateGrid(data.map, 'player');
             p1_name.innerText = data['name'];
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_player_finished_level', (data) => {
         console.log('Player finished level.');
-        if (data.player_id == player_id) {
+        if (data.user_id == user_id) {
             readyToPlay = false;
             p1_modal_text.innerText = 'Level completed, waiting for oponent.';
             setModalVisible(p1_modal);
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_player_finished_game', (data) => {
-        if (data.player_id == player_id) {
+        if (data.user_id == user_id) {
             readyToPlay = false;
             p1_modal_text.innerText =
                 'All levels of this round completed, congratulations.';

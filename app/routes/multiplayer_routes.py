@@ -16,19 +16,17 @@ from app.models import (
     Maps,
     GameState,
     UserState,
+    create_multiplayer_game_state,
     create_user_after_room_join,
     create_user_state,
+    get_game_state_by_room,
     get_user_by_id,
-    reset_user_state_level,
-    set_user_state_level,
 )
 from app.extensions import db
 from app.scripts.game import (
     game_get_achieved_levels,
     game_state_advance_current_level,
-    game_state_creation,
     game_state_update,
-    create_db_game_state_data,
     create_db_maps_data,
 )
 
@@ -44,55 +42,44 @@ def multiplayer_level_selection() -> str:
 
 @multiplayer.route("/multiplayer/create_game/room")
 def create_multiplayer_game() -> Response:
-    """TODO"""
+    """
+    Sets flask session with user_id and room_id.
+    Creates multiplayer game state.
+    Redirects to multiplayer game with id in parameter.
+    """
 
-    if "player_id" not in session:
-        session["player_id"] = str(uuid.uuid4())[:8]
-        if "room_id" not in session:
-            session["room_id"] = str(uuid.uuid4())[:8]
-        create_db_game_state_data(
-            room_id=session["room_id"], player_id=session["player_id"]
-        )
+    if "user_id" not in session:
+        session["user_id"] = str(uuid.uuid4())[:8]
+    if "room_id" not in session:
+        session["room_id"] = str(uuid.uuid4())[:8]
+    create_multiplayer_game_state(session["room_id"], session["user_id"])
 
-    return redirect(url_for("multiplayer.multiplayer_game"))
-
-
-@multiplayer.route("/multiplayer_game")
-def multiplayer_game() -> str | Response:
-    """TODO"""
-
-    if "player_id" not in session:
-        return redirect(url_for("multiplayer.create_multiplayer_game"))
-
-    return render_template("multiplayer_game.html")
+    return redirect(url_for("multiplayer.join_game", room_id=session["room_id"]))
 
 
 @multiplayer.route("/multiplayer_game/<room_id>")
-def join_game(room_id) -> Response:
+def join_game(room_id) -> Response | str:
     """TODO"""
+    if "user_id" not in session:
+        session["user_id"] = str(uuid.uuid4())[:8]
 
-    db_room_id = GameState.query.filter_by(room_id=room_id).first()
-
-    if db_room_id:
-        session["room_id"] = room_id
-    else:
-        # TODO - add some message flashing to user, so they know room doesn exist.
+    game_state = get_game_state_by_room(room_id)
+    if game_state is None:
         print(f"ROOM_ID not available.")
-        return redirect(url_for("multiplayer.home"))
+        return redirect(url_for("main.home"))
 
-    session["player_id"] = str(uuid.uuid4())[:8]
+    if game_state.user_not_in_room(session["user_id"]):
+        if game_state.room_is_available():
+            game_state.add_player(session["user_id"])
+        else:
+            print("Room is full.")
+            return redirect(url_for("main.home"))
+
+    session["room_id"] = room_id
+
     create_user_after_room_join(
-        room_id=room_id,
-        player_id=session["player_id"],
+        session["room_id"],
+        session["user_id"],
     )
 
-    # TODO - change it to function at models module
-    if db_room_id.add_player(session["player_id"]):
-        db_room_id.status = Status.READY.value
-        db.session.add(db_room_id)
-        db.session.commit()
-    else:
-        print("Room does not exist, or is full.")
-        return redirect(url_for("multiplayer.home"))
-
-    return redirect(url_for("multiplayer.multiplayer_game"))
+    return render_template("multiplayer_game.html")

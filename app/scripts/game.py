@@ -12,54 +12,35 @@ from app.models import (
     create_user_state,
     get_game_state_by_room,
     get_map_by_level,
-    get_map_by_user,
     get_user_by_id,
-    reset_user_state_level,
-    retrieve_user_state_level,
-    set_user_score,
-    set_user_state_level,
+    get_max_level_of_maps,
 )
 from app.extensions import db
 from app.enums import Status
 
 NestedDictList = List[List[dict[str, dict | int]]]
 
-MAX_LEVEL = 3
-
 
 def game_state_advance_ready(room_id: str) -> bool:
-    # time.sleep(2)
-    # return True
-    game_state = get_game_state_by_room(room_id)
-    return game_state.both_players_completed_level()
+    return get_game_state_by_room(room_id).both_players_completed_level()
 
 
 def game_state_next_round_ready(room_id: str) -> bool:
-    game_state = get_game_state_by_room(room_id)
-    return game_state.bot_players_completed_game()
+    return get_game_state_by_room(room_id).both_players_completed_game()
 
 
-def game_state_status(room_id: str) -> any:
-    # return Status.READY.value
+def game_state_status(room_id: str) -> str:
+
     return get_game_state_by_room(room_id).status
 
 
-def game_state_creation(user_id: str) -> dict | None:
-    user = get_user_by_id(user_id)
-    if user is None:
-        return None
-
-    return {
-        "map": json.loads(user.map),
-        "level": user.level,
-        "score": user.score,
-        "completed": user.level_completed,
-        "levels_completed": user.game_completed,
-    }
-
-
-def game_state_update(key: str, user_id: str, max_level: int) -> dict | None:
+def game_state_update(
+    key: str, user_id: str, max_level: int | None = None
+) -> dict | None:
     """Check if move is valid and then updates game_state"""
+    if max_level is None:
+        max_level = get_max_level_of_maps()
+
     user = get_user_by_id(user_id)
     map = json.loads(user.map)
     level = user.level
@@ -88,7 +69,9 @@ def game_state_update(key: str, user_id: str, max_level: int) -> dict | None:
                 level_condition = max_level
 
 
-def game_state_advance_current_level(user_id: str, max_level: int) -> None:
+def game_state_advance_current_level(
+    user_id: str, max_level: int | None = None
+) -> None:
     advance_user_state_current_level(user_id, max_level)
 
 
@@ -259,13 +242,8 @@ def create_map_4() -> NestedDictList:
     return map
 
 
-def create_db_game_state_data(room_id: str, player_id: str) -> None:
-    create_multiplayer_game_state(room_id, player_id)
-
-
 def create_db_maps_data() -> None:
     if db.session.query(Maps).first():
-        print("already existing table")
         return
 
     map = create_map()
