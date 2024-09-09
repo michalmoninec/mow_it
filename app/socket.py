@@ -77,6 +77,7 @@ def configure_socketio(socketio):
         user_state_update(key, user_id, max_level)
 
         user_state = get_user_by_id(user_id=user_id)
+        print(f"User completed level: {user_state.level_completed}")
 
         emit(
             "response_update_data",
@@ -141,14 +142,6 @@ def configure_socketio(socketio):
             to=room,
         )
 
-    @socketio.on("request_game_finished_confirmation")
-    def handle_game_finished_confirmation():
-        emit(
-            "response_player_finished_game",
-            {"user_id": session["user_id"]},
-            to=session["room_id"],
-        )
-
     @socketio.on("request_game_finished")
     def handle_game_finished():
         game_state = get_game_state_by_room(session["room_id"])
@@ -171,6 +164,7 @@ def configure_socketio(socketio):
 
                 emit("response_maps_from_server", to=session["room_id"])
         else:
+            emit("response_player_finished_game", {"user_id": session["user_id"]})
             user_state.set_score(300)
 
         emit(

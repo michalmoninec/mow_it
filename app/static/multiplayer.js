@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let restartGameButton = document.getElementById('restart_game');
     let roundValue = document.getElementById('round_value');
     let winnerLabel = document.getElementById('winner_label');
+    const grassBlock = document.getElementById('grass-block');
     let user_id;
     let gameStatus;
     let readyToPlay;
@@ -94,14 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.user_id == user_id) {
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
-            updateGrid(data.map, 'player');
+            updateGrid(data.map, 'player', grassBlock);
             p1_name.innerText = data.name;
             p1_level.innerText = data.level;
             p1_score.innerText = data.score;
             p1_rounds_label.innerText = data.rounds_won;
             if (data.game_completed) {
                 console.log('Game finished');
-                socket.emit('request_game_finished_confirmation');
+                socket.emit('request_game_finished');
             } else if (data.level_completed) {
                 console.log('Level finished');
                 socket.emit('request_level_advance_confirmation');
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setModalDisable(p2_modal);
             setModalDisable(endGameModal);
-            updateGrid(data.map, 'oponent');
+            updateGrid(data.map, 'oponent', grassBlock);
             p2_name.innerText = data['name'];
             p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
@@ -144,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             p2_modal_text.innerText = 'All levels of this round completed.';
             setModalVisible(p2_modal);
         }
-        socket.emit('request_game_finished');
     });
 
     socket.on('response_player_finished_all_rounds', (data) => {

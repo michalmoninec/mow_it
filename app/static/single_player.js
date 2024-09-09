@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const advanceLevelButton = document.getElementById('advance_level');
     const restartLevelButton = document.getElementById('restart_level');
     const returnHomeButton = document.getElementById('return_home');
+    const grassBlock = document.getElementById('grass-block');
 
     let map;
     let score;
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 completed = user_state.completed;
                 level = user_state.level;
                 readyToPlay = true;
-                updateGrid(map, 'player');
+                updateGrid(map, 'player', grassBlock);
                 updateScoreAndLevel(score, level);
             })
             .catch((error) => console.error('Error:', error));
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 score = game_state.score;
                 level = game_state.level;
                 // updatedMap = updateMap(map);
-                updateGrid(map, 'player');
+                updateGrid(map, 'player', grassBlock);
                 updateScoreAndLevel(score, level);
 
                 if (allLevelsCompleted) {

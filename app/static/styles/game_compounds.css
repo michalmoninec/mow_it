@@ -12,13 +12,13 @@
     background-color: yellow;
 }
 .visited {
-    background-color: green !important;
+    background-color: rgb(137, 204, 131) !important;
 }
 .active {
     background-color: blue !important;
 }
 .o-visited {
-    background-color: green !important;
+    background-color: rgb(90, 128, 0) !important;
 }
 .o-active {
     background-color: blue !important;
