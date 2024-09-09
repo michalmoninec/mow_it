@@ -43,8 +43,8 @@ def create_multiplayer_game() -> Response:
 
     if "user_id" not in session:
         session["user_id"] = str(uuid.uuid4())[:8]
-    if "room_id" not in session:
-        session["room_id"] = str(uuid.uuid4())[:8]
+
+    session["room_id"] = str(uuid.uuid4())[:8]
     create_multiplayer_game_state(session["room_id"], session["user_id"])
 
     return redirect(url_for("multiplayer.join_game", room_id=session["room_id"]))

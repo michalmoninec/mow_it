@@ -6,6 +6,10 @@ style_script %}
 />
 {% endblock %} {%block content %}
 <div class="vertical">
+    <div class="horizontal center">
+        <div>ROUND:</div>
+        <div id="round_value">PLACEHOLDER</div>
+    </div>
     <div class="game-whole">
         <div id="player_container">
             <div class="player-info">
@@ -23,6 +27,10 @@ style_script %}
             <div id="grid-container-player">
                 <div class="grid" id="p1_grid"></div>
             </div>
+            <div class="horizontal between">
+                <div>ROUNDS WON:</div>
+                <div id="player_rounds">VALUE</div>
+            </div>
         </div>
         <div id="oponent_container">
             <div class="player-info">
@@ -39,6 +47,10 @@ style_script %}
             </div>
             <div id="grid-container-oponent">
                 <div class="grid" id="p2_grid"></div>
+            </div>
+            <div class="horizontal between">
+                <div>ROUNDS WON:</div>
+                <div id="oponent_rounds">VALUE</div>
             </div>
         </div>
     </div>
@@ -58,7 +70,7 @@ style_script %}
 <div id="end_game_modal" class="modal">
     <div class="modal-content">
         <div class="modal-text">Game completed</div>
-        <div class="modal-text">Winner value</div>
+        <div class="modal-text" id="winner_label">Winner value</div>
         <button id="restart_game">RESTART GAME</button>
         <button id="back_home">HOMEPAGE</button>
     </div>

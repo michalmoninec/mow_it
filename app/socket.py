@@ -24,6 +24,7 @@ def configure_socketio(socketio):
     def handle_join_room() -> None:
         room = session["room_id"]
 
+        # TODO check if room is available and user is alocated to this room
         join_room(room)
         print(f"Joined room: {room}")
         game_status = get_game_state_status(room_id=room)
@@ -55,8 +56,15 @@ def configure_socketio(socketio):
                 "name": user_state.name,
                 "level_completed": user_state.level_completed,
                 "game_completed": user_state.game_completed,
+                "rounds_won": user_state.rounds_won,
             },
             to=room,
+        )
+
+        emit(
+            "response_round_update",
+            {"round": get_game_state_by_room(session["room_id"]).current_round},
+            to=session["room_id"],
         )
 
     @socketio.on("request_update_data")
@@ -80,6 +88,7 @@ def configure_socketio(socketio):
                 "name": user_state.name,
                 "level_completed": user_state.level_completed,
                 "game_completed": user_state.game_completed,
+                "rounds_won": user_state.rounds_won,
             },
             to=room,
         )
@@ -89,10 +98,23 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
 
+        user_state = get_user_by_id(user_id)
+
         emit("response_player_finished_level", {"user_id": user_id}, to=room)
 
         if game_state_advance_ready(room_id=room):
             emit("response_advance_level_confirmation", to=room)
+        else:
+            user_state.set_score(300)
+            emit(
+                "response_score_update",
+                {
+                    "user_id": user_id,
+                    "score": user_state.score,
+                    "rounds_won": user_state.rounds_won,
+                },
+                to=session["room_id"],
+            )
 
     @socketio.on("request_level_advance")
     def handle_level_advance():
@@ -114,34 +136,66 @@ def configure_socketio(socketio):
                 "name": user_state.name,
                 "level_completed": user_state.level_completed,
                 "game_completed": user_state.game_completed,
+                "rounds_won": user_state.rounds_won,
             },
             to=room,
         )
 
-    @socketio.on("request_game_finished")
-    def handle_game_finished():
-        game_state = get_game_state_by_room(session["room_id"])
+    @socketio.on("request_game_finished_confirmation")
+    def handle_game_finished_confirmation():
         emit(
             "response_player_finished_game",
             {"user_id": session["user_id"]},
             to=session["room_id"],
         )
 
+    @socketio.on("request_game_finished")
+    def handle_game_finished():
+        game_state = get_game_state_by_room(session["room_id"])
+        user_state = get_user_by_id(session["user_id"])
+
         if game_state.both_players_completed_game():
+            game_state.update_round_winner()
 
             if game_state.final_round():
                 game_state.set_status(Status.FINISHED.value)
+                game_state.update_game_winner()
                 emit(
                     "response_player_finished_all_rounds",
-                    {"user_id": session["user_id"]},
+                    {"user_id": session["user_id"], "winner_id": game_state.winner_id},
                     to=session["room_id"],
                 )
             else:
+
                 game_state.advance_next_round()
+
                 emit("response_maps_from_server", to=session["room_id"])
+        else:
+            user_state.set_score(300)
+
+        emit(
+            "response_score_update",
+            {
+                "user_id": user_state.user_id,
+                "score": user_state.score,
+                "rounds_won": user_state.rounds_won,
+            },
+            to=session["room_id"],
+        )
+        emit(
+            "response_round_update",
+            {"round": game_state.current_round},
+            to=session["room_id"],
+        )
+
+    @socketio.on("request_game_state_reset")
+    def handle_game_state_reset():
+        game_state = get_game_state_by_room(session["room_id"])
+        game_state.reset_game_state()
+        emit("response_maps_from_server", to=session["room_id"])
 
     @socketio.on("disconnect")
     def handle_disconnect():
-        user_id = session.get("user_id")
+        user_id = session["user_id"]
 
         print(f"Player {user_id} disconnected")

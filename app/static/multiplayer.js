@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let p1_grid = document.getElementById('p1_grid');
     let p1_modal = document.getElementById('player_modal');
     let p1_modal_text = document.getElementById('player_modal_text');
+    let p1_rounds_label = document.getElementById('player_rounds');
 
     let p2_name = document.getElementById('p2_name');
     let p2_score = document.getElementById('p2_score');
@@ -16,10 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let p2_grid = document.getElementById('p2_grid');
     let p2_modal = document.getElementById('oponent_modal');
     let p2_modal_text = document.getElementById('oponent_modal_text');
+    let p2_rounds_label = document.getElementById('oponent_rounds');
 
     let endGameModal = document.getElementById('end_game_modal');
 
     let backButton = document.getElementById('back');
+    let homePageButton = document.getElementById('back_home');
+    let restartGameButton = document.getElementById('restart_game');
+    let roundValue = document.getElementById('round_value');
+    let winnerLabel = document.getElementById('winner_label');
     let user_id;
     let gameStatus;
     let readyToPlay;
@@ -87,23 +93,27 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('response_update_data', (data) => {
         if (data.user_id == user_id) {
             setModalDisable(p1_modal);
+            setModalDisable(endGameModal);
             updateGrid(data.map, 'player');
-            p1_name.innerText = data['name'];
-            p1_level.innerText = data['level'];
-            p1_score.innerText = data['score'];
+            p1_name.innerText = data.name;
+            p1_level.innerText = data.level;
+            p1_score.innerText = data.score;
+            p1_rounds_label.innerText = data.rounds_won;
             if (data.game_completed) {
                 console.log('Game finished');
-                socket.emit('request_game_finished');
+                socket.emit('request_game_finished_confirmation');
             } else if (data.level_completed) {
                 console.log('Level finished');
                 socket.emit('request_level_advance_confirmation');
             }
         } else {
             setModalDisable(p2_modal);
+            setModalDisable(endGameModal);
             updateGrid(data.map, 'oponent');
             p2_name.innerText = data['name'];
             p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
+            p2_rounds_label.innerText = data.rounds_won;
         }
     });
 
@@ -134,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             p2_modal_text.innerText = 'All levels of this round completed.';
             setModalVisible(p2_modal);
         }
+        socket.emit('request_game_finished');
     });
 
     socket.on('response_player_finished_all_rounds', (data) => {
@@ -141,6 +152,25 @@ document.addEventListener('DOMContentLoaded', () => {
         setModalDisable(p1_modal);
         setModalDisable(p2_modal);
         setModalVisible(endGameModal);
+        if (data.winner_id == user_id) {
+            winnerLabel.innerText = 'You won.';
+        } else {
+            winnerLabel.innerText = 'The oponent won.';
+        }
+    });
+
+    socket.on('response_round_update', (data) => {
+        roundValue.innerText = data.round;
+    });
+
+    socket.on('response_score_update', (data) => {
+        if (data.user_id == user_id) {
+            p1_score.innerText = data.score;
+            p1_rounds_label.innerText = data.rounds_won;
+        } else {
+            p2_score.innerText = data.score;
+            p2_rounds_label.innerText = data.rounds_won;
+        }
     });
 
     socket.on('disconnect', () => {
@@ -174,6 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/';
     });
 
+    homePageButton.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+
+    restartGameButton.addEventListener('click', () => {
+        socket.emit('request_game_state_reset');
+    });
+
     function sendKeyPress(key) {
         if (readyToPlay) {
             socket.emit('request_update_data', { key: key });
@@ -203,7 +241,4 @@ document.addEventListener('DOMContentLoaded', () => {
     function setModalDisable(modal) {
         modal.style.display = 'none';
     }
-
-    function playerFinishedLevel() {}
-    function playerFinishedGame() {}
 });

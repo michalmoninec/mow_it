@@ -16,25 +16,37 @@ level_obstacles = [
         "level": 1,
         "name": "Hradec",
         "start": [0, 0],
-        "obstacles": [[col, 0] for col in range(0, 5)],
+        "obstacles": [[col, 0] for col in range(0, 2)],
     },
     {
         "level": 2,
         "name": "Opava",
         "start": [0, 0],
-        "obstacles": [[0, row] for row in range(0, 5)],
+        "obstacles": [[0, row] for row in range(0, 2)],
     },
     {
         "level": 3,
         "name": "Branka",
         "start": [0, 0],
-        "obstacles": [[col, 0] for col in range(0, 8)],
+        "obstacles": [[col, 0] for col in range(0, 3)],
     },
     {
         "level": 4,
         "name": "Otice",
         "start": [0, 0],
-        "obstacles": [[0, row] for row in range(0, 8)],
+        "obstacles": [[0, row] for row in range(0, 3)],
+    },
+    {
+        "level": 5,
+        "name": "Otice",
+        "start": [0, 0],
+        "obstacles": [[col, 0] for col in range(0, 4)],
+    },
+    {
+        "level": 6,
+        "name": "Otice",
+        "start": [0, 0],
+        "obstacles": [[0, row] for row in range(0, 4)],
     },
 ]
 

@@ -2,13 +2,11 @@ import json
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean, desc
-from typing import List
+from typing import List, Set
 
 from app.extensions import db
 from app.enums import Status
 from app.custom_types import NestedDictList
-
-MAX_LEVEL = 3
 
 
 class UserState(db.Model):
@@ -18,6 +16,7 @@ class UserState(db.Model):
     level = Column(Integer)
     achieved_level = Column(Integer)
     score = Column(Integer)
+    rounds_won = Column(Integer)
     name = Column(String)
     level_completed = Column(Boolean)
     game_completed = Column(Boolean)
@@ -86,6 +85,7 @@ def get_user_by_id(user_id: str) -> UserState:
 def create_user_state(user_id: str, level: int = 1) -> None:
     user_state = UserState(user_id=user_id, level=level, achieved_level=1, score=0)
     user_state.set_name("Anonymous")
+    user_state.rounds_won = 0
     user_state.set_default_state_by_level()
 
     db.session.add(user_state)
@@ -95,11 +95,19 @@ def create_user_state(user_id: str, level: int = 1) -> None:
 def advance_user_state_current_level(user_id: str, max_level: int | None) -> None:
     if max_level is None:
         max_level = get_max_level_of_maps()
-    UserState.query.filter_by(user_id=user_id).first().increase_level(max_level)
+    get_user_by_id(user_id).increase_level(max_level)
 
 
-def get_map_by_level(level: int) -> Response:
-    return Maps.query.filter_by(level=level).first().data
+def create_user_after_room_join(room_id: str, user_id: str) -> None:
+    game_state = GameState.query.filter_by(room_id=room_id).first()
+    level = game_state.level
+
+    user_state = get_user_by_id(user_id)
+    if user_state is None:
+        create_user_state(user_id, level=level)
+    else:
+        user_state.set_level(game_state.level)
+        user_state.set_default_state_by_level()
 
 
 class Maps(db.Model):
@@ -122,38 +130,8 @@ def get_max_level_of_maps() -> int:
     return Maps.query.order_by(desc(Maps.level)).first().level
 
 
-def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
-    # later will be randomized at creation
-    level = 1
-    game_state = GameState(room_id=room_id, level=level)
-    game_state.map = Maps.query.filter_by(level=level).first().data
-    game_state.status = Status.INIT.value
-    game_state.rounds = 2
-    game_state.levels_per_round = 2
-    game_state.current_round = 1
-    game_state.add_player(user_id)
-
-    user_state = get_user_by_id(user_id)
-    if user_state is None:
-        create_user_state(user_id, level=level)
-    else:
-        user_state.set_level(game_state.level)
-        user_state.set_default_state_by_level()
-
-    db.session.add(game_state)
-    db.session.commit()
-
-
-def create_user_after_room_join(room_id: str, user_id: str) -> None:
-    game_state = GameState.query.filter_by(room_id=room_id).first()
-    level = game_state.level
-
-    user_state = get_user_by_id(user_id)
-    if user_state is None:
-        create_user_state(user_id, level=level)
-    else:
-        user_state.set_level(game_state.level)
-        user_state.set_default_state_by_level()
+def get_map_by_level(level: int) -> Response:
+    return Maps.query.filter_by(level=level).first().data
 
 
 class GameState(db.Model):
@@ -199,7 +177,7 @@ class GameState(db.Model):
         self.status = status
         db.session.commit()
 
-    def get_players(self) -> List[Maps]:
+    def get_players(self) -> Set[UserState]:
         return get_user_by_id(self.player_1_id), get_user_by_id(self.player_2_id)
 
     def both_players_completed_level(self) -> bool:
@@ -220,8 +198,9 @@ class GameState(db.Model):
         if self.current_round != self.rounds:
             self.current_round += 1
 
-        print(f"Round: {self.current_round}")
-        self.level = 3
+        self.level += self.levels_per_round
+        if self.level > get_max_level_of_maps():
+            self.level = get_max_level_of_maps() - self.levels_per_round
 
         for player in p1, p2:
             player.set_level(self.level)
@@ -234,6 +213,41 @@ class GameState(db.Model):
 
     def get_max_level(self) -> int:
         return self.level + self.levels_per_round - 1
+
+    def reset_game_state(self):
+        p1, p2 = self.get_players()
+        self.level = 1
+        self.current_round = 1
+        self.p1_rounds_won = 0
+        self.p2_rounds_won = 0
+        self.winner_id = None
+        self.status = Status.READY.value
+
+        for player in p1, p2:
+            player.set_level(self.level)
+            player.rounds_won = 0
+            player.set_default_state_by_level()
+
+        db.session.commit()
+
+    def update_round_winner(self):
+        p1, p2 = self.get_players()
+        print(f"p1 score: {p1.score}")
+        print(f"p2 score: {p2.score}")
+        if p1.score > p2.score:
+            p1.rounds_won += 1
+        else:
+            p2.rounds_won += 1
+        db.session.commit()
+
+    def update_game_winner(self):
+        print("Checking who won.")
+        p1, p2 = self.get_players()
+        if p1.rounds_won > p2.rounds_won:
+            self.winner_id = p1.user_id
+        else:
+            self.winner_id = p2.user_id
+        db.session.commit()
 
 
 def get_game_state_by_room(room_id: str) -> GameState:
@@ -254,3 +268,28 @@ def game_state_next_round_ready(room_id: str) -> bool:
 
 def get_game_state_status(room_id: str) -> str:
     return get_game_state_by_room(room_id).status
+
+
+def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
+    # later will be randomized at creation
+    level = 1
+    game_state = GameState(room_id=room_id, level=level)
+    game_state.map = Maps.query.filter_by(level=level).first().data
+    game_state.status = Status.INIT.value
+    game_state.rounds = 3
+    game_state.levels_per_round = 2
+    game_state.current_round = 1
+    game_state.p1_rounds_won = 0
+    game_state.p2_rounds_won = 0
+    game_state.add_player(user_id)
+
+    user_state = get_user_by_id(user_id)
+    if user_state is None:
+        create_user_state(user_id, level=level)
+    else:
+        user_state.set_level(game_state.level)
+        user_state.rounds_won = 0
+        user_state.set_default_state_by_level()
+
+    db.session.add(game_state)
+    db.session.commit()
