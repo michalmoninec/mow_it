@@ -2,8 +2,7 @@ import json
 from enum import Enum
 
 
-# Load the enum definition from JSON
-def load_status_enum():
+def load_status_enum() -> Enum:
     with open("config/status_enum.json", "r") as f:
         enum_data = json.load(f)
 

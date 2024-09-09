@@ -1,6 +1,6 @@
 import json
 
-from typing import List, Tuple
+from typing import List, Tuple, Set
 
 from app.models import (
     advance_user_state_current_level,
@@ -51,9 +51,7 @@ level_obstacles = [
 ]
 
 
-def user_state_update(
-    key: str, user_id: str, max_level: int | None = None
-) -> dict | None:
+def user_state_update(key: str, user_id: str, max_level: int | None = None) -> None:
     """Check if move is valid and then updates game_state"""
     if max_level is None:
         max_level = get_max_level_of_maps()
@@ -65,9 +63,6 @@ def user_state_update(
     prev_pos_x, prev_pos_y = get_position_from_map(map)
 
     pos_x, pos_y = validate_move(key, map, prev_pos_x, prev_pos_y)
-
-    # user.set_game_completed(False)
-    # user.set_level_completed(False)
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
         diff = update_score(map, pos_x, pos_y)
@@ -86,13 +81,7 @@ def user_state_update(
                 level_condition = max_level
 
 
-def game_state_advance_current_level(
-    user_id: str, max_level: int | None = None
-) -> None:
-    advance_user_state_current_level(user_id, max_level)
-
-
-def user_get_achieved_levels(user_id: str) -> List:
+def user_get_achieved_levels(user_id: str) -> List[dict]:
     levels = []
     cnt_of_levels = get_user_by_id(user_id).achieved_level
 
@@ -103,7 +92,7 @@ def user_get_achieved_levels(user_id: str) -> List:
     return levels
 
 
-def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> dict | None:
+def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tuple:
     """Validates players move, return updated position or None"""
 
     if (
@@ -183,6 +172,7 @@ def create_maps() -> None:
         map = create_empty_map()
         start_pos_x, start_pos_y = level["start"]
         map[start_pos_x][start_pos_y]["active"] = True
+
         for x, y in level["obstacles"]:
             map[x][y]["blocker"] = False
 

@@ -3,11 +3,11 @@ import json
 from flask import session
 from flask_socketio import emit, join_room
 from app.scripts.game import (
-    game_state_advance_current_level,
     user_state_update,
 )
 from app.models import (
     GameState,
+    advance_user_state_current_level,
     game_state_advance_ready,
     get_game_state_status,
     get_game_state_by_room,
@@ -35,12 +35,12 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_maps_from_server")
-    def handle_maps_from_server():
+    def handle_maps_from_server() -> None:
         room = session["room_id"]
         emit("response_maps_from_server", to=room)
 
     @socketio.on("request_initial_maps")
-    def get_initial_maps():
+    def get_initial_maps() -> None:
         user_id = session["user_id"]
         room = session["room_id"]
 
@@ -68,7 +68,7 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_update_data")
-    def handle_update_values(data):
+    def handle_update_values(data: dict) -> None:
         user_id = session["user_id"]
         room = session["room_id"]
         key = data["key"]
@@ -77,7 +77,6 @@ def configure_socketio(socketio):
         user_state_update(key, user_id, max_level)
 
         user_state = get_user_by_id(user_id=user_id)
-        print(f"User completed level: {user_state.level_completed}")
 
         emit(
             "response_update_data",
@@ -95,7 +94,7 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_level_advance_confirmation")
-    def handle_level_advance_confirmation():
+    def handle_level_advance_confirmation() -> None:
         user_id = session["user_id"]
         room = session["room_id"]
 
@@ -118,14 +117,14 @@ def configure_socketio(socketio):
             )
 
     @socketio.on("request_level_advance")
-    def handle_level_advance():
+    def handle_level_advance() -> None:
         user_id = session["user_id"]
         room = session["room_id"]
+
         max_level = get_game_state_max_level_by_room(room)
-        print(f"Max level is: {max_level}")
-        game_state_advance_current_level(user_id, max_level)
+        advance_user_state_current_level(user_id, max_level)
+
         user_state = get_user_by_id(user_id=user_id)
-        user_state.reset_map()
 
         emit(
             "response_update_data",
@@ -143,7 +142,7 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_game_finished")
-    def handle_game_finished():
+    def handle_game_finished() -> None:
         game_state = get_game_state_by_room(session["room_id"])
         user_state = get_user_by_id(session["user_id"])
 
@@ -159,20 +158,19 @@ def configure_socketio(socketio):
                     to=session["room_id"],
                 )
             else:
-
                 game_state.advance_next_round()
-
                 emit("response_maps_from_server", to=session["room_id"])
         else:
             emit("response_player_finished_game", {"user_id": session["user_id"]})
-            user_state.set_score(300)
+            user_state.assign_level_bonus()
 
         emit("response_init_data_update", to=session["room_id"])
 
     @socketio.on("request_data_update")
-    def handle_data_update():
+    def handle_data_update() -> None:
         user_state = get_user_by_id(session["user_id"])
         game_state = get_game_state_by_room(session["room_id"])
+
         emit(
             "response_score_update",
             {
@@ -189,13 +187,13 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_game_state_reset")
-    def handle_game_state_reset():
+    def handle_game_state_reset() -> None:
         game_state = get_game_state_by_room(session["room_id"])
         game_state.reset_game_state()
         emit("response_maps_from_server", to=session["room_id"])
 
     @socketio.on("disconnect")
-    def handle_disconnect():
+    def handle_disconnect() -> None:
         user_id = session["user_id"]
 
         print(f"Player {user_id} disconnected")

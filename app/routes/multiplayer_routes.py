@@ -4,23 +4,16 @@ from flask import (
     render_template,
     redirect,
     url_for,
-    jsonify,
     session,
-    request,
     Blueprint,
     Response,
 )
 
 from app.enums import Status
 from app.models import (
-    Maps,
-    GameState,
-    UserState,
     create_multiplayer_game_state,
     create_user_after_room_join,
-    create_user_state,
     get_game_state_by_room,
-    get_user_by_id,
 )
 
 
@@ -29,7 +22,7 @@ multiplayer = Blueprint("multiplayer", __name__)
 
 @multiplayer.route("/multiplayer/create_game")
 def multiplayer_level_selection() -> str:
-    """Create multiplayer game"""
+    """Renders multiplayer game"""
     return render_template("multiplayer_create_game.html")
 
 

@@ -11,12 +11,12 @@ from flask import (
 
 
 from app.models import (
+    advance_user_state_current_level,
     create_user_state,
     get_user_by_id,
 )
 from app.scripts.game import (
     user_get_achieved_levels,
-    game_state_advance_current_level,
     user_state_update,
 )
 
@@ -34,8 +34,6 @@ def single_player_prepare() -> str:
 @singleplayer.route("/single_player/level_selection")
 def single_player_level_selection() -> str:
     """Render page for level selection"""
-    # for creating data into database when deleting db
-    # create_db_maps_data()
     return render_template("single_player_level_selection.html")
 
 
@@ -48,10 +46,9 @@ def single_player_level_data() -> Response:
     if "user_id" not in session:
         if user_id:
             session["user_id"] = user_id
-            create_user_state(user_id=session["user_id"])
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
-            create_user_state(user_id=session["user_id"])
+        create_user_state(user_id=session["user_id"])
 
     levels = user_get_achieved_levels(session["user_id"])
 
@@ -123,6 +120,6 @@ def single_player_move_handle() -> Response:
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
 
-    game_state_advance_current_level(session["user_id"])
+    advance_user_state_current_level(session["user_id"])
 
     return jsonify({})

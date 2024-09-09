@@ -2,11 +2,13 @@ import json
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean, desc
-from typing import List, Set
+from typing import Tuple
 
 from app.extensions import db
 from app.enums import Status
 from app.custom_types import NestedDictList
+
+LEVEL_BONUS = 300
 
 
 class UserState(db.Model):
@@ -77,6 +79,9 @@ class UserState(db.Model):
         self.set_game_completed(False)
         db.session.commit()
 
+    def assign_level_bonus(self) -> None:
+        self.set_score(LEVEL_BONUS)
+
 
 def get_user_by_id(user_id: str) -> UserState:
     return UserState.query.filter_by(user_id=user_id).first()
@@ -92,10 +97,14 @@ def create_user_state(user_id: str, level: int = 1) -> None:
     db.session.commit()
 
 
-def advance_user_state_current_level(user_id: str, max_level: int | None) -> None:
+def advance_user_state_current_level(
+    user_id: str, max_level: int | None = None
+) -> None:
     if max_level is None:
         max_level = get_max_level_of_maps()
-    get_user_by_id(user_id).increase_level(max_level)
+    user_state = get_user_by_id(user_id)
+    user_state.increase_level(max_level)
+    user_state.reset_map()
 
 
 def create_user_after_room_join(room_id: str, user_id: str) -> None:
@@ -130,7 +139,7 @@ def get_max_level_of_maps() -> int:
     return Maps.query.order_by(desc(Maps.level)).first().level
 
 
-def get_map_by_level(level: int) -> Response:
+def get_map_by_level(level: int) -> Text:
     return Maps.query.filter_by(level=level).first().data
 
 
@@ -161,7 +170,7 @@ class GameState(db.Model):
     def room_is_available(self) -> bool:
         return self.player_1_id == None or self.player_2_id == None
 
-    def add_player(self, user_id: str):
+    def add_player(self, user_id: str) -> None:
         if self.player_1_id == None:
             self.player_1_id = user_id
         elif self.player_2_id == None:
@@ -177,7 +186,7 @@ class GameState(db.Model):
         self.status = status
         db.session.commit()
 
-    def get_players(self) -> Set[UserState]:
+    def get_players(self) -> Tuple[UserState]:
         return get_user_by_id(self.player_1_id), get_user_by_id(self.player_2_id)
 
     def both_players_completed_level(self) -> bool:
@@ -214,7 +223,7 @@ class GameState(db.Model):
     def get_max_level(self) -> int:
         return self.level + self.levels_per_round - 1
 
-    def reset_game_state(self):
+    def reset_game_state(self) -> None:
         p1, p2 = self.get_players()
         self.level = 1
         self.current_round = 1
@@ -230,7 +239,7 @@ class GameState(db.Model):
 
         db.session.commit()
 
-    def update_round_winner(self):
+    def update_round_winner(self) -> None:
         p1, p2 = self.get_players()
         print(f"p1 score: {p1.score}")
         print(f"p2 score: {p2.score}")
@@ -240,7 +249,7 @@ class GameState(db.Model):
             p2.rounds_won += 1
         db.session.commit()
 
-    def update_game_winner(self):
+    def update_game_winner(self) -> None:
         print("Checking who won.")
         p1, p2 = self.get_players()
         if p1.rounds_won > p2.rounds_won:
