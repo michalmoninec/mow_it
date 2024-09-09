@@ -1,4 +1,4 @@
-import json, time
+import json
 
 from typing import List, Tuple
 from flask import session
@@ -8,6 +8,7 @@ from app.models import (
     GameState,
     UserState,
     advance_user_state_current_level,
+    create_maps_database,
     create_multiplayer_game_state,
     create_user_state,
     get_game_state_by_room,
@@ -17,8 +18,28 @@ from app.models import (
 )
 from app.extensions import db
 from app.enums import Status
+from app.custom_types import NestedDictList
 
-NestedDictList = List[List[dict[str, dict | int]]]
+level_obstacles = [
+    {
+        "level": 1,
+        "name": "Hradec",
+        "start": [0, 0],
+        "obstacles": [[col, 2] for col in range(0, 8)],
+    },
+    {
+        "level": 2,
+        "name": "Opava",
+        "start": [0, 0],
+        "obstacles": [[col, 3] for col in range(0, 8)],
+    },
+    {
+        "level": 3,
+        "name": "Branka",
+        "start": [0, 0],
+        "obstacles": [[col, 3] for col in range(0, 8)],
+    },
+]
 
 
 def game_state_advance_ready(room_id: str) -> bool:
@@ -143,7 +164,7 @@ def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
     return None, None
 
 
-def create_map() -> NestedDictList:
+def create_empty_map() -> NestedDictList:
     map = []
     for col in range(10):
         col_cell = []
@@ -152,160 +173,21 @@ def create_map() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": True,
+                "blocker": False,
                 "visited": False,
             }
             col_cell.append(cell)
         map.append(col_cell)
-    map[0][0]["active"] = True
-    map[0][0]["blocker"] = False
-    map[1][0]["blocker"] = False
-    map[2][0]["blocker"] = False
-    map[3][0]["blocker"] = False
-    map[4][0]["blocker"] = False
 
     return map
 
 
-def create_map_2() -> NestedDictList:
-    map = []
-    for col in range(10):
-        col_cell = []
-        for row in range(10):
-            cell = {
-                "x": col,
-                "y": row,
-                "active": False,
-                "blocker": True,
-                "visited": False,
-            }
-            col_cell.append(cell)
-        map.append(col_cell)
-    map[0][0]["active"] = True
-    map[0][0]["blocker"] = False
-    map[0][1]["blocker"] = False
-    map[0][2]["blocker"] = False
-    map[0][3]["blocker"] = False
-    map[0][4]["blocker"] = False
-    return map
+def create_maps() -> None:
+    for level in level_obstacles:
+        map = create_empty_map()
+        start_pos_x, start_pos_y = level["start"]
+        map[start_pos_x][start_pos_y]["active"] = True
+        for x, y in level["obstacles"]:
+            map[x][y]["blocker"] = True
 
-
-def create_map_3() -> NestedDictList:
-    map = []
-    for col in range(10):
-        col_cell = []
-        for row in range(10):
-            cell = {
-                "x": col,
-                "y": row,
-                "active": False,
-                "blocker": True,
-                "visited": False,
-            }
-            col_cell.append(cell)
-        map.append(col_cell)
-    map[0][0]["active"] = True
-    map[0][0]["blocker"] = False
-    map[1][0]["blocker"] = False
-    map[1][1]["blocker"] = False
-    map[1][2]["blocker"] = False
-    map[1][3]["blocker"] = False
-    return map
-
-
-def create_map_4() -> NestedDictList:
-    map = []
-    for col in range(10):
-        col_cell = []
-        for row in range(10):
-            cell = {
-                "x": col,
-                "y": row,
-                "active": False,
-                "blocker": True,
-                "visited": False,
-            }
-            col_cell.append(cell)
-        map.append(col_cell)
-    map[0][0]["active"] = True
-    map[0][0]["blocker"] = False
-    map[1][0]["blocker"] = False
-    map[1][1]["blocker"] = False
-    map[1][2]["blocker"] = False
-    map[1][3]["blocker"] = False
-    map[1][4]["blocker"] = False
-    map[1][5]["blocker"] = False
-    map[2][5]["blocker"] = False
-    map[3][5]["blocker"] = False
-    map[4][5]["blocker"] = False
-    map[5][5]["blocker"] = False
-    return map
-
-
-def create_db_maps_data() -> None:
-    if db.session.query(Maps).first():
-        return
-
-    map = create_map()
-    map_db = Maps(
-        name="Hradec",
-        data=json.dumps(map),
-        level=1,
-        start_position=json.dumps(
-            {
-                "x": 0,
-                "y": 0,
-            }
-        ),
-    )
-
-    db.session.add(map_db)
-    db.session.commit()
-
-    map = create_map_2()
-    map_db = Maps(
-        name="Hradec",
-        data=json.dumps(map),
-        level=2,
-        start_position=json.dumps(
-            {
-                "x": 0,
-                "y": 0,
-            }
-        ),
-    )
-
-    db.session.add(map_db)
-    db.session.commit()
-
-    map = create_map_3()
-    map_db = Maps(
-        name="Hradec",
-        data=json.dumps(map),
-        level=3,
-        start_position=json.dumps(
-            {
-                "x": 0,
-                "y": 0,
-            }
-        ),
-    )
-
-    db.session.add(map_db)
-    db.session.commit()
-
-    map = create_map_4()
-    map_db = Maps(
-        name="Hradec",
-        data=json.dumps(map),
-        level=4,
-        start_position=json.dumps(
-            {
-                "x": 0,
-                "y": 0,
-            }
-        ),
-    )
-
-    db.session.add(map_db)
-    db.session.commit()
+        create_maps_database(level["name"], map, level["level"])

@@ -22,13 +22,6 @@ from app.models import (
     get_game_state_by_room,
     get_user_by_id,
 )
-from app.extensions import db
-from app.scripts.game import (
-    game_get_achieved_levels,
-    game_state_advance_current_level,
-    game_state_update,
-    create_db_maps_data,
-)
 
 
 multiplayer = Blueprint("multiplayer", __name__)

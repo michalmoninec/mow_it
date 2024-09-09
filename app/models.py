@@ -6,6 +6,7 @@ from typing import List
 
 from app.extensions import db
 from app.enums import Status
+from app.custom_types import NestedDictList
 
 MAX_LEVEL = 3
 
@@ -109,6 +110,12 @@ class Maps(db.Model):
     start_position = Column(Text)
     level = Column(Integer)
     data = Column(Text)
+
+
+def create_maps_database(name: str, map: NestedDictList, level: int) -> None:
+    db_map = Maps(name=name, level=level, data=json.dumps(map))
+    db.session.add(db_map)
+    db.session.commit()
 
 
 def get_max_level_of_maps() -> int:
