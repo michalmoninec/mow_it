@@ -18,9 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allLevelsCompleted;
     let level;
     let userID = getUserID();
-    console.log(userID);
-    console.log(grid.offsetWidth);
-    console.log(grid.getBoundingClientRect().top);
+    let readyToPlay;
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -65,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 score = user_state.score;
                 completed = user_state.completed;
                 level = user_state.level;
+                readyToPlay = true;
                 updateGrid(map, 'player');
                 updateScoreAndLevel(score, level);
             })
@@ -102,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'CONGRATULATIONS, ALL LEVELS CLEARED';
                 }
                 if (game_state.completed) {
+                    readyToPlay = false;
                     levelCompletedModal.style.display = 'flex';
                 }
             })
@@ -134,7 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (event) => {
         const key = event.key;
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+        if (
+            ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key) &&
+            readyToPlay
+        ) {
             sendKeyPress(key);
         }
         if (['Enter'].includes(key)) {
