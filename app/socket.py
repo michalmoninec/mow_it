@@ -167,6 +167,12 @@ def configure_socketio(socketio):
             emit("response_player_finished_game", {"user_id": session["user_id"]})
             user_state.set_score(300)
 
+        emit("response_init_data_update", to=session["room_id"])
+
+    @socketio.on("request_data_update")
+    def handle_data_update():
+        user_state = get_user_by_id(session["user_id"])
+        game_state = get_game_state_by_room(session["room_id"])
         emit(
             "response_score_update",
             {

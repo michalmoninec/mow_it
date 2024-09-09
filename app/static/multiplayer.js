@@ -163,6 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
         roundValue.innerText = data.round;
     });
 
+    socket.on('response_init_data_update', () => {
+        socket.emit('request_data_update');
+    });
+
     socket.on('response_score_update', (data) => {
         if (data.user_id == user_id) {
             p1_score.innerText = data.score;
