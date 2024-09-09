@@ -4,12 +4,12 @@ from flask import session
 from flask_socketio import emit, join_room
 from app.scripts.game import (
     game_state_advance_current_level,
-    game_state_advance_ready,
-    game_state_status,
-    game_state_update,
+    user_state_update,
 )
 from app.models import (
     GameState,
+    game_state_advance_ready,
+    get_game_state_status,
     get_game_state_by_room,
     get_game_state_max_level_by_room,
     get_user_by_id,
@@ -26,7 +26,7 @@ def configure_socketio(socketio):
 
         join_room(room)
         print(f"Joined room: {room}")
-        game_status = game_state_status(room_id=room)
+        game_status = get_game_state_status(room_id=room)
 
         emit(
             "response_user_id_and_status",
@@ -66,7 +66,7 @@ def configure_socketio(socketio):
         key = data["key"]
         max_level = get_game_state_max_level_by_room(room)
 
-        game_state_update(key, user_id, max_level)
+        user_state_update(key, user_id, max_level)
 
         user_state = get_user_by_id(user_id=user_id)
 

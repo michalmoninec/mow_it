@@ -136,6 +136,7 @@ def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
     if user_state is None:
         create_user_state(user_id, level=level)
     else:
+        user_state.set_level(game_state.level)
         user_state.set_default_state_by_level()
 
     db.session.add(game_state)
@@ -237,3 +238,15 @@ def get_game_state_by_room(room_id: str) -> GameState:
 
 def get_game_state_max_level_by_room(room_id: str) -> int:
     return int(get_game_state_by_room(room_id).level) + 1
+
+
+def game_state_advance_ready(room_id: str) -> bool:
+    return get_game_state_by_room(room_id).both_players_completed_level()
+
+
+def game_state_next_round_ready(room_id: str) -> bool:
+    return get_game_state_by_room(room_id).both_players_completed_game()
+
+
+def get_game_state_status(room_id: str) -> str:
+    return get_game_state_by_room(room_id).status

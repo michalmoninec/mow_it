@@ -15,9 +15,9 @@ from app.models import (
     get_user_by_id,
 )
 from app.scripts.game import (
-    game_get_achieved_levels,
+    user_get_achieved_levels,
     game_state_advance_current_level,
-    game_state_update,
+    user_state_update,
 )
 
 
@@ -53,7 +53,7 @@ def single_player_level_data() -> Response:
             session["user_id"] = str(uuid.uuid4())[:8]
             create_user_state(user_id=session["user_id"])
 
-    levels = game_get_achieved_levels(session["user_id"])
+    levels = user_get_achieved_levels(session["user_id"])
 
     return jsonify({"user_id": session["user_id"], "levels": levels})
 
@@ -103,7 +103,7 @@ def single_player_move_handle() -> Response:
 
     key = request.get_json().get("key")
 
-    game_state_update(key, session["user_id"])
+    user_state_update(key, session["user_id"])
     user_state = get_user_by_id(session["user_id"])
 
     return jsonify(

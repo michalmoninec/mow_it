@@ -1,23 +1,14 @@
 import json
 
 from typing import List, Tuple
-from flask import session
 
 from app.models import (
-    Maps,
-    GameState,
-    UserState,
     advance_user_state_current_level,
     create_maps_database,
-    create_multiplayer_game_state,
-    create_user_state,
-    get_game_state_by_room,
     get_map_by_level,
     get_user_by_id,
     get_max_level_of_maps,
 )
-from app.extensions import db
-from app.enums import Status
 from app.custom_types import NestedDictList
 
 level_obstacles = [
@@ -42,20 +33,7 @@ level_obstacles = [
 ]
 
 
-def game_state_advance_ready(room_id: str) -> bool:
-    return get_game_state_by_room(room_id).both_players_completed_level()
-
-
-def game_state_next_round_ready(room_id: str) -> bool:
-    return get_game_state_by_room(room_id).both_players_completed_game()
-
-
-def game_state_status(room_id: str) -> str:
-
-    return get_game_state_by_room(room_id).status
-
-
-def game_state_update(
+def user_state_update(
     key: str, user_id: str, max_level: int | None = None
 ) -> dict | None:
     """Check if move is valid and then updates game_state"""
@@ -96,7 +74,7 @@ def game_state_advance_current_level(
     advance_user_state_current_level(user_id, max_level)
 
 
-def game_get_achieved_levels(user_id: str) -> List:
+def user_get_achieved_levels(user_id: str) -> List:
     levels = []
     cnt_of_levels = get_user_by_id(user_id).achieved_level
 
