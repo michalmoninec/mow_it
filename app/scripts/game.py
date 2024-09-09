@@ -16,19 +16,25 @@ level_obstacles = [
         "level": 1,
         "name": "Hradec",
         "start": [0, 0],
-        "obstacles": [[col, 2] for col in range(0, 8)],
+        "obstacles": [[col, 0] for col in range(0, 5)],
     },
     {
         "level": 2,
         "name": "Opava",
         "start": [0, 0],
-        "obstacles": [[col, 3] for col in range(0, 8)],
+        "obstacles": [[0, row] for row in range(0, 5)],
     },
     {
         "level": 3,
         "name": "Branka",
         "start": [0, 0],
-        "obstacles": [[col, 3] for col in range(0, 8)],
+        "obstacles": [[col, 0] for col in range(0, 8)],
+    },
+    {
+        "level": 4,
+        "name": "Otice",
+        "start": [0, 0],
+        "obstacles": [[0, row] for row in range(0, 8)],
     },
 ]
 
@@ -151,7 +157,7 @@ def create_empty_map() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": False,
+                "blocker": True,
                 "visited": False,
             }
             col_cell.append(cell)
@@ -166,6 +172,6 @@ def create_maps() -> None:
         start_pos_x, start_pos_y = level["start"]
         map[start_pos_x][start_pos_y]["active"] = True
         for x, y in level["obstacles"]:
-            map[x][y]["blocker"] = True
+            map[x][y]["blocker"] = False
 
         create_maps_database(level["name"], map, level["level"])

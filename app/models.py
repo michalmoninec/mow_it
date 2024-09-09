@@ -129,6 +129,7 @@ def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
     game_state.map = Maps.query.filter_by(level=level).first().data
     game_state.status = Status.INIT.value
     game_state.rounds = 2
+    game_state.levels_per_round = 2
     game_state.current_round = 1
     game_state.add_player(user_id)
 
@@ -151,6 +152,7 @@ def create_user_after_room_join(room_id: str, user_id: str) -> None:
     if user_state is None:
         create_user_state(user_id, level=level)
     else:
+        user_state.set_level(game_state.level)
         user_state.set_default_state_by_level()
 
 
@@ -163,6 +165,7 @@ class GameState(db.Model):
     rounds = Column(Integer)
     current_round = Column(Integer)
     levels_per_round = Column(Integer)
+    level = Column(Integer)
 
     player_1_id = Column(String)
     player_2_id = Column(String)
@@ -171,7 +174,6 @@ class GameState(db.Model):
     p2_rounds_won = Column(Integer)
 
     status = Column(String)
-    level = Column(String)
     winner_id = Column(String)
     map = Column(Text)
 
@@ -218,18 +220,20 @@ class GameState(db.Model):
         if self.current_round != self.rounds:
             self.current_round += 1
 
+        print(f"Round: {self.current_round}")
         self.level = 3
 
         for player in p1, p2:
             player.set_level(self.level)
-            player.set_level_completed(False)
-            player.set_game_completed(False)
-            player.reset_score()
+            player.set_default_state_by_level()
 
         db.session.commit()
 
     def final_round(self) -> bool:
         return self.current_round == self.rounds
+
+    def get_max_level(self) -> int:
+        return self.level + self.levels_per_round - 1
 
 
 def get_game_state_by_room(room_id: str) -> GameState:
@@ -237,7 +241,7 @@ def get_game_state_by_room(room_id: str) -> GameState:
 
 
 def get_game_state_max_level_by_room(room_id: str) -> int:
-    return int(get_game_state_by_room(room_id).level) + 1
+    return get_game_state_by_room(room_id).get_max_level()
 
 
 def game_state_advance_ready(room_id: str) -> bool:

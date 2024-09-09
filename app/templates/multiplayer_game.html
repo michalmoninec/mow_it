@@ -56,8 +56,11 @@ style_script %}
     <div id="oponent_modal_text" class="modal-text"></div>
 </div>
 <div id="end_game_modal" class="modal">
-    <div id="end_game_modal_text" class="modal-text">
-        Game completed, buttons below:
+    <div class="modal-content">
+        <div class="modal-text">Game completed</div>
+        <div class="modal-text">Winner value</div>
+        <button id="restart_game">RESTART GAME</button>
+        <button id="back_home">HOMEPAGE</button>
     </div>
 </div>
 {% endblock %}{% block scripts %}

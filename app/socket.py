@@ -99,6 +99,7 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
         max_level = get_game_state_max_level_by_room(room)
+        print(f"Max level is: {max_level}")
         game_state_advance_current_level(user_id, max_level)
         user_state = get_user_by_id(user_id=user_id)
         user_state.reset_map()
@@ -127,7 +128,6 @@ def configure_socketio(socketio):
         )
 
         if game_state.both_players_completed_game():
-            game_state.advance_next_round()
 
             if game_state.final_round():
                 game_state.set_status(Status.FINISHED.value)
@@ -137,8 +137,8 @@ def configure_socketio(socketio):
                     to=session["room_id"],
                 )
             else:
+                game_state.advance_next_round()
                 emit("response_maps_from_server", to=session["room_id"])
-                print("should move to next round")
 
     @socketio.on("disconnect")
     def handle_disconnect():
