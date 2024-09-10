@@ -8,6 +8,7 @@ from app.models import (
     get_map_by_level,
     get_user_by_id,
     get_max_level_of_maps,
+    is_map_table_empty,
 )
 from app.custom_types import NestedDictList
 
@@ -168,12 +169,13 @@ def create_empty_map() -> NestedDictList:
 
 
 def create_maps() -> None:
-    for level in level_obstacles:
-        map = create_empty_map()
-        start_pos_x, start_pos_y = level["start"]
-        map[start_pos_x][start_pos_y]["active"] = True
+    if is_map_table_empty():
+        for level in level_obstacles:
+            map = create_empty_map()
+            start_pos_x, start_pos_y = level["start"]
+            map[start_pos_x][start_pos_y]["active"] = True
 
-        for x, y in level["obstacles"]:
-            map[x][y]["blocker"] = False
+            for x, y in level["obstacles"]:
+                map[x][y]["blocker"] = False
 
-        create_maps_database(level["name"], map, level["level"])
+            create_maps_database(level["name"], map, level["level"])

@@ -77,6 +77,7 @@ class UserState(db.Model):
         self.reset_map()
         self.set_level_completed(False)
         self.set_game_completed(False)
+
         db.session.commit()
 
     def assign_level_bonus(self) -> None:
@@ -116,6 +117,7 @@ def create_user_after_room_join(room_id: str, user_id: str) -> None:
         create_user_state(user_id, level=level)
     else:
         user_state.set_level(game_state.level)
+        user_state.rounds_won = 0
         user_state.set_default_state_by_level()
 
 
@@ -186,7 +188,7 @@ class GameState(db.Model):
         self.status = status
         db.session.commit()
 
-    def get_players(self) -> Tuple[UserState]:
+    def get_players(self) -> Tuple[UserState, UserState]:
         return get_user_by_id(self.player_1_id), get_user_by_id(self.player_2_id)
 
     def both_players_completed_level(self) -> bool:
@@ -241,12 +243,11 @@ class GameState(db.Model):
 
     def update_round_winner(self) -> None:
         p1, p2 = self.get_players()
-        print(f"p1 score: {p1.score}")
-        print(f"p2 score: {p2.score}")
         if p1.score > p2.score:
             p1.rounds_won += 1
-        else:
+        elif p1.score < p2.score:
             p2.rounds_won += 1
+
         db.session.commit()
 
     def update_game_winner(self) -> None:
@@ -254,8 +255,10 @@ class GameState(db.Model):
         p1, p2 = self.get_players()
         if p1.rounds_won > p2.rounds_won:
             self.winner_id = p1.user_id
-        else:
+        elif p1.rounds_won < p2.rounds_won:
             self.winner_id = p2.user_id
+        else:
+            self.winner_id = None
         db.session.commit()
 
 
@@ -285,8 +288,8 @@ def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
     game_state = GameState(room_id=room_id, level=level)
     game_state.map = Maps.query.filter_by(level=level).first().data
     game_state.status = Status.INIT.value
-    game_state.rounds = 3
-    game_state.levels_per_round = 2
+    game_state.rounds = 2
+    game_state.levels_per_round = 3
     game_state.current_round = 1
     game_state.p1_rounds_won = 0
     game_state.p2_rounds_won = 0
@@ -302,3 +305,9 @@ def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
 
     db.session.add(game_state)
     db.session.commit()
+
+
+def is_map_table_empty():
+    if db.session.query(Maps).first() == None:
+        return True
+    return False

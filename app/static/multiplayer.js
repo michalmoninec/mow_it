@@ -156,8 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setModalVisible(endGameModal);
         if (data.winner_id == user_id) {
             winnerLabel.innerText = 'You won.';
+        } else if (data.winner_id == null) {
+            winnerLabel.innerText = 'It is a tie.';
         } else {
-            winnerLabel.innerText = 'The oponent won.';
+            winnerLabel.innerText = 'Oponent won.';
         }
     });
 
