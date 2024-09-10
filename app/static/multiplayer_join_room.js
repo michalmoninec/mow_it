@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const levelChoosed = document.getElementById('level_choosed');
-    const backButton = document.getElementById('back');
-
     let userID = getUserID();
 
     retrieveUserAndRoom();
@@ -11,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function retrieveUserAndRoom() {
-        fetch('/multiplayer/create_game/get_user_and_room', {
+        fetch('/join_room/set_user_and_room', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,14 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userID == null) {
                     localStorage.setItem('userID', data.user_id);
                 }
+                console.log(userID);
+                window.location.href = '/multiplayer_game/play';
             });
     }
-
-    levelChoosed.addEventListener('click', () => {
-        window.location.href = '/multiplayer/create_game/room';
-    });
-
-    backButton.addEventListener('click', () => {
-        window.location.href = '/';
-    });
 });

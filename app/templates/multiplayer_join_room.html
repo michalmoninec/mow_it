@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block content %}
+<div style="height: 100%" class="vertical center">
+    <h1 class="horizontal center">Connecting to room...</h1>
+</div>
+
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='multiplayer_join_room.js') }}"></script>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+{% endblock %}

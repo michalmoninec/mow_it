@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let winnerLabel = document.getElementById('winner_label');
     const grassBlock = document.getElementById('grass-block');
     let user_id;
+    let roomID;
     let gameStatus;
     let readyToPlay;
 
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('response_user_id_and_status', (data) => {
         user_id = data.user_id;
         gameStatus = data.game_status;
+        roomID = data.room_id;
 
         if (gameStatus == 'finished') {
             readyToPlay = false;
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function waitingForPlayerToJoin() {
         console.log('Game not ready yet..');
         readyToPlay = false;
-        p1_modal_text.innerText = 'Waiting for oponent to join.';
+        p1_modal_text.innerText = `Waiting for oponent to join. \n Link: \n http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID} `;
         setModalVisible(p1_modal);
     }
 

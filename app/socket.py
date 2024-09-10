@@ -31,7 +31,11 @@ def configure_socketio(socketio):
 
         emit(
             "response_user_id_and_status",
-            {"user_id": session["user_id"], "game_status": game_status},
+            {
+                "user_id": session["user_id"],
+                "game_status": game_status,
+                "room_id": room,
+            },
         )
 
     @socketio.on("request_maps_from_server")

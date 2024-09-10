@@ -4,7 +4,9 @@ from flask import (
     render_template,
     redirect,
     url_for,
+    jsonify,
     session,
+    request,
     Blueprint,
     Response,
 )
@@ -21,32 +23,60 @@ multiplayer = Blueprint("multiplayer", __name__)
 
 
 @multiplayer.route("/multiplayer/create_game")
-def multiplayer_level_selection() -> str:
+def multiplayer_create_game() -> str:
     """Renders multiplayer game"""
     return render_template("multiplayer_create_game.html")
+
+
+@multiplayer.route("/multiplayer/create_game/get_user_and_room", methods=["POST"])
+def multiplayer_get_user() -> Response:
+
+    user_id = request.get_json().get("user_id")
+    if user_id:
+        session["user_id"] = user_id
+    else:
+        session["user_id"] = str(uuid.uuid4())[:8]
+
+    session["room_id"] = str(uuid.uuid4())[:8]
+
+    return jsonify({"user_id": session["user_id"]})
 
 
 @multiplayer.route("/multiplayer/create_game/room")
 def create_multiplayer_game() -> Response:
     """
-    Sets flask session with user_id and room_id.
     Creates multiplayer game state.
     Redirects to multiplayer game with id in parameter.
     """
 
-    if "user_id" not in session:
-        session["user_id"] = str(uuid.uuid4())[:8]
-
-    session["room_id"] = str(uuid.uuid4())[:8]
     create_multiplayer_game_state(session["room_id"], session["user_id"])
 
-    return redirect(url_for("multiplayer.join_game", room_id=session["room_id"]))
+    return redirect(url_for("multiplayer.multiplayer_game_play"))
 
 
-@multiplayer.route("/multiplayer_game/<room_id>")
-def join_game(room_id) -> Response | str:
-    """TODO"""
-    if "user_id" not in session:
+@multiplayer.route("/multiplayer_game/join_room/<room_id>")
+def join_game(room_id) -> str:
+    """
+    Assigns room_id for client's session
+    Renders page for joining room
+    """
+
+    session["room_id"] = room_id
+
+    return render_template("multiplayer_join_room.html")
+
+
+@multiplayer.route("/join_room/set_user_and_room", methods=["POST"])
+def join_room_set_user_and_room() -> Response:
+    user_id = request.get_json().get("user_id")
+    try:
+        room_id = session["room_id"]
+    except Exception as e:
+        print(e)
+
+    if user_id:
+        session["user_id"] = user_id
+    else:
         session["user_id"] = str(uuid.uuid4())[:8]
 
     game_state = get_game_state_by_room(room_id)
@@ -61,11 +91,14 @@ def join_game(room_id) -> Response | str:
             print("Room is full.")
             return redirect(url_for("main.home"))
 
-    session["room_id"] = room_id
-
     create_user_after_room_join(
         session["room_id"],
         session["user_id"],
     )
 
+    return jsonify({"user_id": session["user_id"]})
+
+
+@multiplayer.route("/multiplayer_game/play")
+def multiplayer_game_play():
     return render_template("multiplayer_game.html")
