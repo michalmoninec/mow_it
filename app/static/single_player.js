@@ -180,4 +180,71 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreLabel.innerHTML = score;
         levelLabel.innerHTML = level;
     }
+    let prevButtonStates = [];
+
+    function pollGamepad() {
+        const gamepads = navigator.getGamepads();
+
+        if (gamepads[0]) {
+            // Check if at least one gamepad is connected
+            const gamepad = gamepads[0];
+
+            // Loop through all the buttons
+            gamepad.buttons.forEach((button, index) => {
+                // Check if the button was just pressed
+                if (button.pressed && !prevButtonStates[index]) {
+                    console.log(`Button ${index} pressed`);
+                }
+
+                // Check if the button was just released
+                if (!button.pressed && prevButtonStates[index]) {
+                    console.log(`Button ${index} released`);
+                }
+
+                // Store the current state for the next frame
+                prevButtonStates[index] = button.pressed;
+            });
+        }
+
+        // Keep polling the gamepad
+        requestAnimationFrame(pollGamepad);
+    }
+    let prevAxesStates = [];
+
+    function pollGamepadAxes() {
+        const gamepads = navigator.getGamepads();
+
+        if (gamepads[0]) {
+            // Check if at least one gamepad is connected
+            const gamepad = gamepads[0];
+
+            // Loop through all the axes
+            gamepad.axes.forEach((axisValue, index) => {
+                // Check if the axis value has changed significantly (to avoid noise)
+                const threshold = 0.1; // Define a threshold to detect significant movement
+                if (
+                    Math.abs(axisValue - (prevAxesStates[index] || 0)) >
+                    threshold
+                ) {
+                    console.log(`Axis ${index} moved: ${axisValue}`);
+                }
+
+                // Store the current state for the next frame
+                prevAxesStates[index] = axisValue;
+            });
+        }
+
+        // Keep polling the gamepad
+        requestAnimationFrame(pollGamepadAxes);
+    }
+
+    // Start polling when the gamepad is connected
+
+    // Start polling the gamepad when it is connected
+    // window.addEventListener('gamepadconnected', () => {
+    //     prevButtonStates = []; // Initialize the previous button states
+    //     prevAxesStates = []; // Initialize the previous axis states
+    //     requestAnimationFrame(pollGamepadAxes);
+    //     requestAnimationFrame(pollGamepad);
+    // });
 });
