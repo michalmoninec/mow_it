@@ -155,6 +155,7 @@ class GameState(db.Model):
     current_round = Column(Integer)
     levels_per_round = Column(Integer)
     level = Column(Integer)
+    default_level = Column(Integer)
 
     player_1_id = Column(String)
     player_2_id = Column(String)

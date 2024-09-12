@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let p1_modal = document.getElementById('player_modal');
     let p1_modal_text = document.getElementById('player_modal_text');
     let p1_rounds_label = document.getElementById('player_rounds');
+    let p1ModalLinkDiv = document.getElementById('link-div');
 
     let p2_name = document.getElementById('p2_name');
     let p2_score = document.getElementById('p2_score');
@@ -229,7 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function waitingForPlayerToJoin() {
         console.log('Game not ready yet..');
         readyToPlay = false;
-        p1_modal_text.innerText = `Waiting for oponent to join. \n Link: \n http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID} `;
+        p1_modal_text.innerText = `Waiting for oponent to join.`;
+        p1ModalLinkDiv.innerText = getRoomLink();
+
         setModalVisible(p1_modal);
     }
 
@@ -249,4 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function setModalDisable(modal) {
         modal.style.display = 'none';
     }
+
+    function getRoomLink() {
+        return `http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID}`;
+    }
+
+    p1ModalLinkDiv.addEventListener('click', () => {
+        console.log('button works');
+        let link = `http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID}`;
+        navigator.clipboard.writeText(link).then(() => {
+            console.log('copied to clipboard');
+        });
+    });
 });

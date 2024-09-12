@@ -12,14 +12,22 @@
     </head>
     <body>
         <div class="container">
-            <div class="navbar">
-                <h1>MOW_IT GAME</h1>
+            <div class="horizontal whole-width space-around navbar">
+                <div id='navbar-spacer'></div>
+                <h1 id='app-title''>MOW_IT GAME</h1>
+                <div id='app-login' class='horizontal'>
+                    <div>SIGN IN</div>
+                    <div>LOGIN</div>
+                </div>
             </div>
             <div class="content">
                 {% block content %} {% endblock %} {% block footer %}
             </div>
             <div class="footer">Powered by &copy; Anton's beer quality</div>
         </div>
-        {% endblock %} {% block scripts %} {% endblock %}
+        <script src="{{ url_for('static', filename='base.js') }}"></script>
+        {% endblock %} {% block scripts %}
+        {% endblock %}
     </body>
 </html>
+ 

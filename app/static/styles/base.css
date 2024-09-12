@@ -50,10 +50,28 @@ button {
 
 .between {
     justify-content: space-between;
+    align-items: center;
+}
+
+.space-around {
+    justify-content: space-around;
+    align-items: center;
 }
 
 .max_content {
     width: max-content;
+}
+
+.whole-width {
+    width: 100%;
+}
+
+.flex-end {
+    align-self: flex-end;
+}
+
+.navbar {
+    margin-top: 10vh;
 }
 
 .grass-block {
