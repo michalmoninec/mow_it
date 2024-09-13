@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const levelChoosed = document.getElementById('level_choosed');
     const backButton = document.getElementById('back');
-    const achievedLevels = document.getElementById('achieved_levels');
+    const achievedLevels = document.getElementById('achieved-levels');
 
     let userID = getUserID();
     console.log(userID);

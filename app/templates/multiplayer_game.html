@@ -10,26 +10,23 @@ style_script %}
         <div>ROUND:</div>
         <div id="round_value">PLACEHOLDER</div>
     </div>
+    <div class="horizontal center">
+        <div>LEVEL:</div>
+        <div id="level-value">PLACEHOLDER</div>
+    </div>
     <div class="game-whole">
-        <div id="player_container">
-            <div class="player-info">
-                <p>You:</p>
-                <p id="p1_name">NIC</p>
-            </div>
-            <div class="player-info">
+        <div id="player_container" class="vertical center">
+            <div id="p1_name">Player name</div>
+            <div class="horizontal between whole-width">
                 <p>Score:</p>
                 <p id="p1_score">NIC</p>
             </div>
-            <div class="player-info">
-                <p>Level:</p>
-                <p id="p1_level">NIC</p>
+            <div class="horizontal between whole-width">
+                <div>ROUNDS WON:</div>
+                <div id="player_rounds">VALUE</div>
             </div>
             <div id="grid-container-player">
                 <div class="grid" id="p1_grid"></div>
-            </div>
-            <div class="horizontal between">
-                <div>ROUNDS WON:</div>
-                <div id="player_rounds">VALUE</div>
             </div>
         </div>
         <div id="oponent_container">
@@ -41,16 +38,12 @@ style_script %}
                 <p>Score:</p>
                 <p id="p2_score">NIC</p>
             </div>
-            <div class="player-info">
-                <p>Level:</p>
-                <p id="p2_level">NIC</p>
-            </div>
-            <div id="grid-container-oponent">
-                <div class="grid" id="p2_grid"></div>
-            </div>
             <div class="horizontal between">
                 <div>ROUNDS WON:</div>
                 <div id="oponent_rounds">VALUE</div>
+            </div>
+            <div id="grid-container-oponent">
+                <div class="grid" id="p2_grid"></div>
             </div>
         </div>
     </div>
@@ -62,7 +55,7 @@ style_script %}
 <div id="player_modal" class="modal">
     <div class="modal-content" id="player_modal_content">
         <div id="player_modal_text" class="modal-text"></div>
-        <div id="link-div">COPY LINK</button>
+        <div id="link-div">COPY LINK</div>
     </div>
 </div>
 <div id="oponent_modal" class="modal">

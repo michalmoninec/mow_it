@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let userID = getUserID();
 
-    retrieveUserAndRoom();
-
     function getUserID() {
         return localStorage.getItem('userID');
     }
@@ -30,11 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userID == null) {
                     localStorage.setItem('userID', data.user_id);
                 }
+            })
+            .then(() => {
+                window.location.href = '/multiplayer/create_game/room';
             });
     }
 
     levelChoosed.addEventListener('click', () => {
-        window.location.href = '/multiplayer/create_game/room';
+        retrieveUserAndRoom();
     });
 
     backButton.addEventListener('click', () => {

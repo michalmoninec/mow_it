@@ -1,5 +1,5 @@
 body {
-    background-color: blueviolet;
+    background-color: rgb(218, 215, 205);
     margin: 0;
     padding: 0;
     height: 100%;
@@ -71,132 +71,65 @@ button {
 }
 
 .navbar {
-    margin-top: 10vh;
+    margin-top: 8vw;
+    margin-bottom: 2vw;
 }
 
-.grass-block {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    background-color: #4caf50;
-    /* overflow: hidden; */
-    /* border-radius: 5px; */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+.app-title {
+    cursor: pointer;
 }
 
-/* General blade styling with sharp end using clip-path */
-.grass-blade {
-    position: absolute;
-    width: 4px;
-    height: 50px;
-    background: linear-gradient(to top, #529712, #268529);
-    transform-origin: bottom center;
-    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
-    animation: sway 6s infinite ease-in-out;
-    clip-path: polygon(
-        50% 0%,
-        100% 100%,
-        0% 100%
-    ); /* Creates a triangle shape with a sharp tip */
+.game-whole {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    /* margin-left: 20px; */
+    /* margin-right: 20px; */
 }
 
-/* Front row: Largest and closest to viewer */
-.front-row {
-    position: relative;
-    height: 15px;
-    bottom: 5px;
-}
-
-.front-row .grass-blade {
-    width: 5px;
-    height: 55px;
-    z-index: 2;
-}
-
-.front-row .grass-blade:nth-child(1) {
-    left: 0px;
-    transform: rotate(10deg);
-}
-
-.front-row .grass-blade:nth-child(2) {
-    left: 5px;
-    transform: rotate(-8deg);
-}
-
-.front-row .grass-blade:nth-child(3) {
-    left: 10px;
-    transform: rotate(5deg);
-}
-
-.front-row .grass-blade:nth-child(4) {
-    left: 15px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(5) {
-    left: 20px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(6) {
-    left: 25px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(7) {
-    left: 30px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(8) {
-    left: 35px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(9) {
-    left: 40px;
-    transform: rotate(-6deg);
-}
-.front-row .grass-blade:nth-child(10) {
-    left: 45px;
-    transform: rotate(-6deg);
-}
-
-/* Middle row: Slightly smaller and starts above the front row */
-.middle-row {
-    position: relative;
-    height: 15px;
-    bottom: 5px;
-}
-
-.middle-row .grass-blade {
-    width: 4px;
+.menu-button {
+    font-size: larger;
+    border: none;
     height: 40px;
-    z-index: 1; /* Place behind the front row */
+    border-radius: 20px;
+    margin-top: 2vw;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
 }
 
-.middle-row .grass-blade:nth-child(1) {
-    left: 7px;
-    transform: rotate(-12deg);
+.modal {
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* margin: 50px; */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
-.middle-row .grass-blade:nth-child(2) {
-    left: 22px;
-    transform: rotate(7deg);
-}
-
-.middle-row .grass-blade:nth-child(3) {
-    left: 33px;
-    transform: rotate(-10deg);
-}
-
-.middle-row .grass-blade:nth-child(4) {
-    left: 42px;
-    transform: rotate(8deg);
-}
-
-/* Grass blade sway animation */
-@keyframes sway {
-    0%,
-    100% {
-        transform: rotate(0deg);
-    }
-    50% {
-        transform: rotate(5deg);
-    }
+/* Modal content */
+.modal-content {
+    /* background-color: #fefefe; */
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* margin: 15% auto; 15% from the top and centered */
+    /* padding: 20px; */
+    /* border: 1px solid #888; */
+    width: 50%;
+    height: 50%;
 }

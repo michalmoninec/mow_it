@@ -85,9 +85,7 @@ def join_room_set_user_and_room() -> Response:
         return redirect(url_for("main.home"))
 
     if game_state.user_not_in_room(session["user_id"]):
-        if game_state.room_is_available():
-            game_state.add_player(session["user_id"])
-        else:
+        if not game_state.room_is_available():
             print("Room is full.")
             return redirect(url_for("main.home"))
 

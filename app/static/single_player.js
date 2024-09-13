@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let level;
     let userID = getUserID();
     let readyToPlay;
+    let lastDirection = 'horizontal';
 
     //for now hardcoded 10x10 grid
     for (let row = 0; row < 10; row++) {
@@ -96,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // updatedMap = updateMap(map);
                 updateGrid(map, 'player', grassBlock);
                 updateScoreAndLevel(score, level);
+                rotateMower(key, lastDirection);
 
                 if (allLevelsCompleted) {
                     document.getElementById('level_advance_label').innerText =
@@ -133,6 +135,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function rotateMower(key, lastDirection) {
+        console.log(key);
+        console.log(lastDirection);
+        if (
+            ['ArrowLeft', 'ArrowRight'].includes(key) &&
+            lastDirection != 'horizontal'
+        ) {
+            console.log('Should rotate to horizontal');
+            document.querySelector('.active').style.transform = 'rotate(90deg)';
+            lastDirection = 'horizontal';
+        } else if (
+            ['ArrowUp', 'ArrowDown'].includes(key) &&
+            lastDirection != 'vertical'
+        ) {
+            console.log('Should rotate to vertical');
+            document.querySelector('.active').style.transform = 'rotate(90deg)';
+            lastDirection = 'vertical';
+        }
+    }
+
     document.addEventListener('keydown', (event) => {
         const key = event.key;
         if (
@@ -150,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', () => {
-        console.log('resize');
         setModalPosition(
             document.getElementById('single_content'),
             document.getElementById('my_modal_content')

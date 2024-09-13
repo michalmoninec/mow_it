@@ -1,0 +1,275 @@
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 13.229166 13.229167"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="obstacle.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="17.23266"
+     inkscape:cx="21.586917"
+     inkscape:cy="20.049139"
+     inkscape:window-width="2560"
+     inkscape:window-height="1387"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g37">
+    <inkscape:grid
+       id="grid2"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.99999995"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect26"
+       is_visible="true"
+       lpeversion="1.3"
+       scale_width="1"
+       interpolator_type="CentripetalCatmullRom"
+       interpolator_beta="0.75"
+       start_linecap_type="round"
+       end_linecap_type="round"
+       offset_points="35.962143,0.11515198"
+       linejoin_type="spiro"
+       miter_limit="4"
+       not_jump="true"
+       sort_points="true"
+       message="&lt;b&gt;Ctrl + click&lt;/b&gt; on existing node and move it" />
+    <inkscape:path-effect
+       effect="simplify"
+       id="path-effect25"
+       is_visible="true"
+       lpeversion="1.3"
+       threshold="0.012"
+       steps="1"
+       smooth_angles="0"
+       helper_size="0"
+       simplify_individual_paths="false"
+       simplify_just_coalesce="false"
+       step="1" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect24"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect22"
+       is_visible="true"
+       lpeversion="1.3"
+       scale_width="1"
+       interpolator_type="CentripetalCatmullRom"
+       interpolator_beta="0.75"
+       start_linecap_type="round"
+       end_linecap_type="round"
+       offset_points="10.670595,0.11515198"
+       linejoin_type="spiro"
+       miter_limit="4"
+       not_jump="true"
+       sort_points="true"
+       message="&lt;b&gt;Ctrl + click&lt;/b&gt; on existing node and move it" />
+    <inkscape:path-effect
+       effect="simplify"
+       id="path-effect21"
+       is_visible="true"
+       lpeversion="1.3"
+       threshold="0.012"
+       steps="1"
+       smooth_angles="0"
+       helper_size="0"
+       simplify_individual_paths="false"
+       simplify_just_coalesce="false"
+       step="1" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect20"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect19"
+       is_visible="true"
+       lpeversion="1.3"
+       scale_width="1"
+       interpolator_type="CentripetalCatmullRom"
+       interpolator_beta="0.75"
+       start_linecap_type="round"
+       end_linecap_type="round"
+       offset_points="17.335704,0.11515198"
+       linejoin_type="spiro"
+       miter_limit="4"
+       not_jump="true"
+       sort_points="true"
+       message="&lt;b&gt;Ctrl + click&lt;/b&gt; on existing node and move it" />
+    <inkscape:path-effect
+       effect="simplify"
+       id="path-effect18"
+       is_visible="true"
+       lpeversion="1.3"
+       threshold="0.012"
+       steps="1"
+       smooth_angles="0"
+       helper_size="0"
+       simplify_individual_paths="false"
+       simplify_just_coalesce="false"
+       step="1" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 6.6145835 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="13.229166 : 6.6145835 : 1"
+       inkscape:persp3d-origin="6.614583 : 4.4097223 : 1"
+       id="perspective7" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect5"
+       is_visible="true"
+       lpeversion="1.3"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false"
+       uniform="false" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect2"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+  </defs>
+  <g
+     inkscape:label="Vrstva 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#784421;fill-opacity:1;stroke-width:0.188423;stroke-dasharray:none;paint-order:normal"
+       id="rect4"
+       width="9.2824211"
+       height="1.8564842"
+       x="1.8781974"
+       y="3.2135634"
+       rx="0.26982355" />
+    <rect
+       style="fill:#784421;fill-opacity:1;stroke-width:0.188423;stroke-dasharray:none;paint-order:normal"
+       id="rect4-2"
+       width="9.2824211"
+       height="1.8564842"
+       x="1.8303701"
+       y="5.5671067"
+       rx="0.26982355" />
+    <rect
+       style="fill:#784421;fill-opacity:1;stroke-width:0.14835;stroke-dasharray:none;paint-order:normal"
+       id="rect4-2-3"
+       width="9.2824211"
+       height="1.150803"
+       x="-12.909838"
+       y="3.6462357"
+       rx="0.26982355"
+       transform="rotate(-90)" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.0932302;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 3.6458591,5.5200831 H 4.7929395"
+       id="path35-6-2-7" />
+    <rect
+       style="fill:#784421;fill-opacity:1;stroke-width:0.14835;stroke-dasharray:none;paint-order:normal"
+       id="rect4-2-3-9"
+       width="9.2824211"
+       height="1.150803"
+       x="-12.854716"
+       y="8.2672234"
+       rx="0.26982355"
+       transform="rotate(-90)" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.262109px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 2.0144411,4.9899194 H 11.055117"
+       id="path35" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.262109px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1.9349472,7.3306718 H 10.975623"
+       id="path35-6" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.0932302;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 8.2698562,5.5167211 H 9.4169366"
+       id="path35-6-2" />
+    <g
+       id="g37"
+       transform="translate(0.08444479,-0.06909119)">
+      <rect
+         style="fill:#ffccaa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0992619;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         id="rect36"
+         width="6.0877018"
+         height="2.9632444"
+         x="3.3163769"
+         y="3.784662"
+         rx="0"
+         ry="0.095141612" />
+      <text
+         xml:space="preserve"
+         style="font-size:1.41111px;white-space:pre;inline-size:14.3092;fill:#800000;fill-opacity:1;stroke-width:0.296;stroke-dasharray:none;paint-order:normal"
+         x="3.0860734"
+         y="4.1838555"
+         id="text5"
+         transform="translate(0.47596155,1.5123294)"><tspan
+           x="3.0860734"
+           y="4.1838555"
+           id="tspan1">CLOSED</tspan></text>
+    </g>
+  </g>
+</svg>

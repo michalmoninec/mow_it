@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let p1_name = document.getElementById('p1_name');
     let p1_score = document.getElementById('p1_score');
-    let p1_level = document.getElementById('p1_level');
+    // let p1_level = document.getElementById('p1_level');
     let p1_grid = document.getElementById('p1_grid');
     let p1_modal = document.getElementById('player_modal');
     let p1_modal_text = document.getElementById('player_modal_text');
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let p2_name = document.getElementById('p2_name');
     let p2_score = document.getElementById('p2_score');
-    let p2_level = document.getElementById('p2_level');
+    // let p2_level = document.getElementById('p2_level');
     let p2_grid = document.getElementById('p2_grid');
     let p2_modal = document.getElementById('oponent_modal');
     let p2_modal_text = document.getElementById('oponent_modal_text');
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(endGameModal);
             updateGrid(data.map, 'player', grassBlock);
             p1_name.innerText = data.name;
-            p1_level.innerText = data.level;
+            // p1_level.innerText = data.level;
             p1_score.innerText = data.score;
             p1_rounds_label.innerText = data.rounds_won;
             if (data.game_completed) {
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(endGameModal);
             updateGrid(data.map, 'oponent', grassBlock);
             p2_name.innerText = data['name'];
-            p2_level.innerText = data['level'];
+            // p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
             p2_rounds_label.innerText = data.rounds_won;
         }
@@ -182,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    socket.on('disconnect', () => {
-        console.log('disconnecting from server');
+    socket.on('response_player_disconnected', () => {
+        socket.emit('join_room');
     });
 
     document.addEventListener('keydown', (event) => {
@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', () => {
-        console.log('resize');
         setModalPosition(
             document.getElementById('player_container'),
             document.getElementById('player_modal_content')

@@ -185,8 +185,27 @@ class GameState(db.Model):
 
         db.session.commit()
 
+    def del_player(self, user_id: str):
+        if self.player_1_id == user_id:
+            self.player_1_id = None
+        elif self.player_2_id == user_id:
+            self.player_2_id = None
+
+        db.session.commit()
+
     def set_status(self, status: str) -> None:
         self.status = status
+        db.session.commit()
+
+    def update_status(self):
+        p1, p2 = self.get_players()
+        if p1 and p2:
+            self.status = Status.READY.value
+            if p1.game_completed and p2.game_completed:
+                self.status = Status.FINISHED.value
+        else:
+            self.status = Status.JOIN_WAIT.value
+
         db.session.commit()
 
     def get_players(self) -> Tuple[UserState, UserState]:
@@ -236,9 +255,10 @@ class GameState(db.Model):
         self.status = Status.READY.value
 
         for player in p1, p2:
-            player.set_level(self.level)
-            player.rounds_won = 0
-            player.set_default_state_by_level()
+            if player:
+                player.set_level(self.level)
+                player.rounds_won = 0
+                player.set_default_state_by_level()
 
         db.session.commit()
 

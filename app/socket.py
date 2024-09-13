@@ -27,7 +27,14 @@ def configure_socketio(socketio):
         # TODO check if room is available and user is alocated to this room
         join_room(room)
         print(f"Joined room: {room}")
-        game_status = get_game_state_status(room_id=room)
+        game_state = get_game_state_by_room(room)
+
+        if game_state.user_not_in_room(session["user_id"]):
+            if game_state.room_is_available():
+                game_state.add_player(session["user_id"])
+
+        game_state.update_status()
+        game_status = game_state.status
 
         emit(
             "response_user_id_and_status",
@@ -199,5 +206,13 @@ def configure_socketio(socketio):
     @socketio.on("disconnect")
     def handle_disconnect() -> None:
         user_id = session["user_id"]
+        room_id = session["room_id"]
+
+        game_state = get_game_state_by_room(room_id)
+        game_state.reset_game_state()
+        game_state.del_player(user_id)
+        game_state.set_status(Status.JOIN_WAIT.value)
+
+        emit("response_player_disconnected", to=room_id)
 
         print(f"Player {user_id} disconnected")
