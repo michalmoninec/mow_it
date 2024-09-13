@@ -15,6 +15,7 @@ export function updateGrid(map, player, grassBlock) {
                 gridItem.className = 'visited';
             } else if (cell.blocker) {
                 gridItem.className = 'blocked';
+                gridItem.style.transform = 'none';
             } else {
                 gridItem.className = 'grid-item';
             }
