@@ -49,8 +49,10 @@ def single_player_level_data() -> Response:
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
         create_user_state(user_id=session["user_id"])
-
-    levels = user_get_achieved_levels(session["user_id"])
+    try:
+        levels = user_get_achieved_levels(session["user_id"])
+    except:
+        return jsonify({"error": "User or map not found"}), 404
 
     return jsonify({"user_id": session["user_id"], "levels": levels})
 

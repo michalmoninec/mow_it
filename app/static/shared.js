@@ -1,4 +1,4 @@
-export function updateGrid(map, player, grassBlock) {
+export function updateGrid(map, player) {
     let idPrefix = '';
     if (player == 'oponent') {
         idPrefix = 'o';
@@ -13,11 +13,13 @@ export function updateGrid(map, player, grassBlock) {
                 gridItem.className = 'active';
             } else if (cell.visited) {
                 gridItem.className = 'visited';
+                gridItem.style.transform = 'none';
             } else if (cell.blocker) {
                 gridItem.className = 'blocked';
                 gridItem.style.transform = 'none';
             } else {
                 gridItem.className = 'grid-item';
+                gridItem.style.transform = 'none';
             }
         }
     }

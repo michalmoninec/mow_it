@@ -95,9 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 score = game_state.score;
                 level = game_state.level;
                 // updatedMap = updateMap(map);
-                updateGrid(map, 'player', grassBlock);
+                updateGrid(map, 'player');
+                rotateMower(key);
                 updateScoreAndLevel(score, level);
-                rotateMower(key, lastDirection);
+                console.log(`outer key: ${key}`);
 
                 if (allLevelsCompleted) {
                     document.getElementById('level_advance_label').innerText =
@@ -135,23 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function rotateMower(key, lastDirection) {
+    function rotateMower(key) {
         console.log(key);
         console.log(lastDirection);
-        if (
-            ['ArrowLeft', 'ArrowRight'].includes(key) &&
-            lastDirection != 'horizontal'
-        ) {
-            console.log('Should rotate to horizontal');
-            document.querySelector('.active').style.transform = 'rotate(90deg)';
+        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+            document.querySelector('.active').style.transform = 'rotate(0deg)';
             lastDirection = 'horizontal';
-        } else if (
-            ['ArrowUp', 'ArrowDown'].includes(key) &&
-            lastDirection != 'vertical'
-        ) {
-            console.log('Should rotate to vertical');
+        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
             document.querySelector('.active').style.transform = 'rotate(90deg)';
-            lastDirection = 'vertical';
+        } else {
+            console.log('Shouldn rotate.');
         }
     }
 
@@ -161,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key) &&
             readyToPlay
         ) {
+            event.preventDefault();
             sendKeyPress(key);
         }
         if (['Enter'].includes(key)) {

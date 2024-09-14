@@ -12,12 +12,33 @@ from app.models import (
 )
 from app.custom_types import NestedDictList
 
+
+def obstacle_col(row: int, start: int, end: int) -> List[List[int]]:
+    return [[row, col] for col in range(start, end)]
+
+
+def obstacle_row(col: int, start: int, end: int) -> List[List[int]]:
+    return [[row, col] for row in range(start, end)]
+
+
+def obstacle_cube(
+    row_start: int, row_end: int, col_start: int, col_end: int
+) -> List[List[int]]:
+    return [
+        [row, col]
+        for row in range(row_start, row_end)
+        for col in range(col_start, col_end)
+    ]
+
+
 level_obstacles = [
     {
         "level": 1,
         "name": "Hradec",
         "start": [0, 0],
-        "obstacles": [[col, 0] for col in range(0, 2)],
+        "obstacles": obstacle_col(1, 0, 7)
+        + obstacle_col(3, 1, 8)
+        + obstacle_cube(5, 8, 5, 8),
     },
     {
         "level": 2,
@@ -159,7 +180,7 @@ def create_empty_map() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": True,
+                "blocker": False,
                 "visited": False,
             }
             col_cell.append(cell)
@@ -176,6 +197,6 @@ def create_maps() -> None:
             map[start_pos_x][start_pos_y]["active"] = True
 
             for x, y in level["obstacles"]:
-                map[x][y]["blocker"] = False
+                map[x][y]["blocker"] = True
 
             create_maps_database(level["name"], map, level["level"])
