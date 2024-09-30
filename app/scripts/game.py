@@ -34,7 +34,7 @@ def obstacle_cube(
 level_obstacles = [
     {
         "level": 1,
-        "name": "Hradec",
+        "name": "name01",
         "start": [0, 0],
         "obstacles": obstacle_col(1, 0, 7)
         + obstacle_col(3, 1, 8)
@@ -42,33 +42,41 @@ level_obstacles = [
     },
     {
         "level": 2,
-        "name": "Opava",
+        "name": "name02",
         "start": [0, 0],
-        "obstacles": [[0, row] for row in range(0, 2)],
+        "obstacles": obstacle_cube(1, 5, 1, 5) + obstacle_cube(7, 9, 7, 9),
     },
     {
         "level": 3,
-        "name": "Branka",
+        "name": "name03",
         "start": [0, 0],
-        "obstacles": [[col, 0] for col in range(0, 3)],
+        "obstacles": obstacle_row(1, 1, 9)
+        + obstacle_row(3, 1, 9)
+        + obstacle_row(5, 1, 9)
+        + obstacle_row(7, 1, 9),
     },
     {
         "level": 4,
-        "name": "Otice",
+        "name": "name04",
         "start": [0, 0],
-        "obstacles": [[0, row] for row in range(0, 3)],
+        "obstacles": obstacle_col(0, 1, 9)
+        + obstacle_col(1, 2, 8)
+        + obstacle_col(2, 3, 7)
+        + obstacle_col(3, 4, 6)
+        + obstacle_col(4, 5, 5)
+        + obstacle_col(5, 6, 4),
     },
     {
         "level": 5,
-        "name": "Otice",
+        "name": "name05",
         "start": [0, 0],
-        "obstacles": [[col, 0] for col in range(0, 4)],
+        "obstacles": obstacle_cube(2, 8, 2, 8),
     },
     {
         "level": 6,
-        "name": "Otice",
+        "name": "name06",
         "start": [0, 0],
-        "obstacles": [[0, row] for row in range(0, 4)],
+        "obstacles": obstacle_cube(4, 6, 4, 6),
     },
 ]
 
