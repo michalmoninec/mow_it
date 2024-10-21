@@ -64,9 +64,11 @@ def single_player_set_selected_level() -> Response:
     if "user_id" not in session:
         return jsonify({"error": "User or map not found"}), 404
 
-    get_user_by_id(session["user_id"]).set_desired_level(desired_level)
+    valid_level_set = get_user_by_id(session["user_id"]).set_desired_level(
+        desired_level
+    )
 
-    return jsonify({})
+    return jsonify({"valid_level_set": valid_level_set})
 
 
 @singleplayer.route("/single_player/retrieve_map", methods=["POST", "GET"])
@@ -122,6 +124,6 @@ def single_player_move_handle() -> Response:
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
 
-    advance_user_state_current_level(session["user_id"])
+    valid_level_advance = advance_user_state_current_level(session["user_id"])
 
-    return jsonify({})
+    return jsonify({"valid_advance": valid_level_advance})

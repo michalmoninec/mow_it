@@ -112,6 +112,9 @@ def user_state_update(key: str, user_id: str, max_level: int | None = None) -> N
 
 
 def user_get_achieved_levels(user_id: str) -> List[dict]:
+    """
+    TODO - change with comprehension.
+    """
     levels = []
     cnt_of_levels = get_user_by_id(user_id).achieved_level
 
@@ -165,6 +168,9 @@ def update_score(map: NestedDictList, pos_x: int, pos_y: int) -> int:
 
 
 def level_completed(map: NestedDictList) -> bool:
+    """
+    Checks map for any unvisited cells.
+    """
     for row in map:
         if any(not cell["blocker"] and not cell["visited"] for cell in row):
             return False
@@ -172,6 +178,9 @@ def level_completed(map: NestedDictList) -> bool:
 
 
 def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
+    """
+    Iterates over map and returns cell that is active
+    """
     for row in range(len(map)):
         for col in range(len(map[row])):
             if map[row][col]["active"]:
@@ -180,6 +189,9 @@ def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
 
 
 def create_empty_map() -> NestedDictList:
+    """
+    Creates empty nested list of dict.
+    """
     map = []
     for col in range(10):
         col_cell = []
@@ -198,6 +210,9 @@ def create_empty_map() -> NestedDictList:
 
 
 def create_maps() -> None:
+    """
+    If database table of maps is empty, it creates maps by levels.
+    """
     if is_map_table_empty():
         for level in level_obstacles:
             map = create_empty_map()

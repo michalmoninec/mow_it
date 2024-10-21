@@ -88,23 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                let game_state = data.user_state;
-                allLevelsCompleted = game_state.game_completed;
+                let gameState = data.user_state;
+                allLevelsCompleted = gameState.game_completed;
 
-                map = game_state.map;
-                score = game_state.score;
-                level = game_state.level;
+                map = gameState.map;
+                score = gameState.score;
+                level = gameState.level;
                 // updatedMap = updateMap(map);
                 updateGrid(map, 'player');
                 rotateMower(key);
                 updateScoreAndLevel(score, level);
                 console.log(`outer key: ${key}`);
+                if (key == 'ArrowRight') {
+                    advanceCurrentLevel();
+                }
 
                 if (allLevelsCompleted) {
                     document.getElementById('level_advance_label').innerText =
                         'CONGRATULATIONS, ALL LEVELS CLEARED';
                 }
-                if (game_state.completed) {
+                if (gameState.completed) {
                     readyToPlay = false;
                     levelCompletedModal.style.display = 'flex';
                 }
@@ -129,8 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return response.json();
                 })
-                .then(() => {
-                    retrieveMap();
+                .then((data) => {
+                    if (data['valid_advance']) {
+                        retrieveMap();
+                    } else {
+                        console.log('Invalid level advance!');
+                    }
                 })
                 .catch((error) => console.error('Error:', error));
         }

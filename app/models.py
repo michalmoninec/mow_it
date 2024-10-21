@@ -67,10 +67,12 @@ class UserState(db.Model):
         self.map = get_map_by_level(self.level)
         db.session.commit()
 
-    def set_desired_level(self, desired_level: int) -> None:
+    def set_desired_level(self, desired_level: int) -> bool:
         if desired_level <= self.achieved_level:
             self.level = desired_level
-        db.session.commit()
+            db.session.commit()
+            return True
+        return False
 
     def set_default_state_by_level(self) -> None:
         self.reset_score()
@@ -104,8 +106,11 @@ def advance_user_state_current_level(
     if max_level is None:
         max_level = get_max_level_of_maps()
     user_state = get_user_by_id(user_id)
-    user_state.increase_level(max_level)
-    user_state.reset_map()
+    if user_state.level_completed:
+        user_state.increase_level(max_level)
+        user_state.reset_map()
+        return True
+    return False
 
 
 def create_user_after_room_join(room_id: str, user_id: str) -> None:

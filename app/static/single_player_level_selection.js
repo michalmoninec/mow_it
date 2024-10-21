@@ -49,7 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                window.location.href = '/single_player';
+                if (data['valid_level_set']) {
+                    window.location.href = '/single_player';
+                } else {
+                    console.log('Higher level than achieved!');
+                }
             });
     }
 
