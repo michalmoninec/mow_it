@@ -29,9 +29,11 @@ def configure_socketio(socketio):
         print(f"Joined room: {room}")
         game_state = get_game_state_by_room(room)
 
-        if game_state.user_not_in_room(session["user_id"]):
-            if game_state.room_is_available():
-                game_state.add_player(session["user_id"])
+        if (
+            game_state.user_not_in_room(session["user_id"])
+            and game_state.room_is_available()
+        ):
+            game_state.add_player(session["user_id"])
 
         game_state.update_status()
         game_status = game_state.status
@@ -209,7 +211,7 @@ def configure_socketio(socketio):
         room_id = session["room_id"]
 
         game_state = get_game_state_by_room(room_id)
-        game_state.reset_game_state()
+        # game_state.reset_game_state()
         game_state.del_player(user_id)
         game_state.set_status(Status.JOIN_WAIT.value)
 

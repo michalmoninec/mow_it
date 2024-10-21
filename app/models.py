@@ -308,7 +308,7 @@ def get_game_state_status(room_id: str) -> str:
     return get_game_state_by_room(room_id).status
 
 
-def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
+def create_multiplayer_game_state(room_id: str) -> None:
     # later will be randomized at creation
     level = 1
     game_state = GameState(room_id=room_id, level=level)
@@ -319,15 +319,6 @@ def create_multiplayer_game_state(room_id: str, user_id: str) -> None:
     game_state.current_round = 1
     game_state.p1_rounds_won = 0
     game_state.p2_rounds_won = 0
-    game_state.add_player(user_id)
-
-    user_state = get_user_by_id(user_id)
-    if user_state is None:
-        create_user_state(user_id, level=level)
-    else:
-        user_state.set_level(game_state.level)
-        user_state.rounds_won = 0
-        user_state.set_default_state_by_level()
 
     db.session.add(game_state)
     db.session.commit()
