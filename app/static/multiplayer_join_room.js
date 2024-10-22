@@ -28,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('userID', data.user_id);
                 }
                 console.log(userID);
-                window.location.href = '/multiplayer_game/play';
+                if (data.room_id) {
+                    window.location.href = '/multiplayer_game/play';
+                } else {
+                    window.location.href = '/';
+                }
             });
     }
 });

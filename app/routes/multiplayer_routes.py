@@ -21,9 +21,10 @@ from app.models import (
 multiplayer = Blueprint("multiplayer", __name__)
 
 
-@multiplayer.route("/multiplayer/create_game")
+@multiplayer.route("/multiplayer/creation")
 def multiplayer_create_game() -> str:
     """Renders multiplayer game"""
+    print(f"sess in creation: {session}")
     return render_template("multiplayer_create_game.html")
 
 
@@ -34,7 +35,7 @@ def multiplayer_get_user() -> Response:
     Assign random room_id.
     Returns user_id either from client or newly assigned.
     """
-
+    print("it gets redirected to creation")
     user_id = request.get_json().get("user_id")
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
@@ -75,24 +76,25 @@ def join_room_set_user_and_room() -> Response:
 
     game_state = get_game_state_by_room(room_id)
     if game_state is None:
-        return redirect(url_for("main.home"))
-
-    if (
+        session["room_id"] = None
+    elif (
         game_state.user_not_in_room(session["user_id"])
         and not game_state.room_is_available()
     ):
-        return redirect(url_for("main.home"))
+        session["room_id"] = None
+    else:
+        create_user_after_room_join(
+            session["room_id"],
+            session["user_id"],
+        )
 
-    create_user_after_room_join(
-        session["room_id"],
-        session["user_id"],
-    )
-
-    return jsonify({"user_id": session["user_id"]})
+    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]})
 
 
 @multiplayer.route("/multiplayer_game/play")
 def multiplayer_game_play() -> str:
+    print(f"session at play: {session}")
     if "user_id" in session and "room_id" in session:
+        print("user or room id is none")
         return render_template("multiplayer_game.html")
     return redirect(url_for("multiplayer.multiplayer_create_game"))

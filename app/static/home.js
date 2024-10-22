@@ -7,6 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     multiplayerButton.addEventListener('click', () => {
-        window.location.href = '/multiplayer/create_game';
+        window.location.href = '/multiplayer/creation';
     });
 });

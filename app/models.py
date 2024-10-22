@@ -196,6 +196,10 @@ class GameState(db.Model):
         elif self.player_2_id == user_id:
             self.player_2_id = None
 
+        if self.player_1_id is None and self.player_2_id is None:
+            game_state = get_game_state_by_room(self.room_id)
+            db.session.delete(game_state)
+
         db.session.commit()
 
     def set_status(self, status: str) -> None:

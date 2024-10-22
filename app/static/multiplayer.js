@@ -74,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gameStatus = data.game_status;
         roomID = data.room_id;
 
+        //remove after
+        console.log(`room_id in session: ${sessionStorage.getItem('room_id')}`);
+
         if (gameStatus == 'finished') {
             readyToPlay = false;
             setModalDisable(p1_modal);
@@ -183,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_player_disconnected', () => {
-        socket.emit('join_room');
+        // socket.emit('join_room');
+        console.log('someone disconnected');
     });
 
     document.addEventListener('keydown', (event) => {
@@ -207,6 +211,12 @@ document.addEventListener('DOMContentLoaded', () => {
             p2_modal
         );
     });
+
+    window.onbeforeunload = function () {
+        socket.disconnect();
+        console.log('before unload happens..');
+        socket.emit('disconnect');
+    };
 
     backButton.addEventListener('click', () => {
         window.location.href = '/';
@@ -258,9 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     p1ModalLinkDiv.addEventListener('click', () => {
         console.log('button works');
-        let link = `http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID}`;
-        navigator.clipboard.writeText(link).then(() => {
-            console.log('copied to clipboard');
-        });
+        // window.location.href = '/';
     });
 });
