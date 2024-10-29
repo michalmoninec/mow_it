@@ -6,4 +6,7 @@
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='multiplayer_join_room.js') }}"></script>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+    const roomID = '{{ room_id}}';
+</script>
 {% endblock %}

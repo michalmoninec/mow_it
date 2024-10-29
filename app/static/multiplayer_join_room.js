@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     let userID = getUserID();
 
+    console.log(roomID);
+
     retrieveUserAndRoom();
 
     function getUserID() {
@@ -8,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function retrieveUserAndRoom() {
-        fetch('/join_room/set_user_and_room', {
+        fetch(`/multiplayer/join/${roomID}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 console.log(userID);
                 if (data.room_id) {
-                    window.location.href = '/multiplayer_game/play';
+                    window.location.href = '/multiplayer/play';
                 } else {
                     window.location.href = '/';
                 }

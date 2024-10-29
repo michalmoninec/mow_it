@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function retrieveUserAndRoom() {
-        fetch('/multiplayer/create_game', {
+        fetch('/multiplayer/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userID == null) {
                     localStorage.setItem('userID', data.user_id);
                 }
-                window.location.href = `/multiplayer_game/join_room/${data.room_id}`;
+                window.location.href = `/multiplayer/play`;
             });
     }
 

@@ -2,15 +2,11 @@ import json
 
 from typing import List, Tuple, Set
 
-from app.models import (
-    advance_user_state_current_level,
-    create_maps_database,
-    get_map_by_level,
-    get_user_by_id,
-    get_max_level_of_maps,
-    is_map_table_empty,
-)
+
 from app.custom_types import NestedDictList
+
+from app.models.map_model import Maps
+from app.models.user_model import UserState
 
 
 def obstacle_col(row: int, start: int, end: int) -> List[List[int]]:
@@ -84,9 +80,9 @@ level_obstacles = [
 def user_state_update(key: str, user_id: str, max_level: int | None = None) -> None:
     """Check if move is valid and then updates game_state"""
     if max_level is None:
-        max_level = get_max_level_of_maps()
+        max_level = Maps.get_max_level_of_maps()
 
-    user = get_user_by_id(user_id)
+    user = UserState.get_user_by_id(user_id)
     map = json.loads(user.map)
     level = user.level
 
@@ -116,10 +112,10 @@ def user_get_achieved_levels(user_id: str) -> List[dict]:
     TODO - change with comprehension.
     """
     levels = []
-    cnt_of_levels = get_user_by_id(user_id).achieved_level
+    cnt_of_levels = UserState.get_user_by_id(user_id).achieved_level
 
     for level in range(1, cnt_of_levels + 1):
-        level_info = {"level": level, "data": get_map_by_level(level)}
+        level_info = {"level": level, "data": Maps.get_map_by_level(level)}
         levels.append(level_info)
 
     return levels
@@ -213,7 +209,7 @@ def create_maps() -> None:
     """
     If database table of maps is empty, it creates maps by levels.
     """
-    if is_map_table_empty():
+    if Maps.is_map_table_empty():
         for level in level_obstacles:
             map = create_empty_map()
             start_pos_x, start_pos_y = level["start"]
@@ -222,4 +218,4 @@ def create_maps() -> None:
             for x, y in level["obstacles"]:
                 map[x][y]["blocker"] = True
 
-            create_maps_database(level["name"], map, level["level"])
+            Maps.create_maps_database(level["name"], map, level["level"])

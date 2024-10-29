@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRoomLink() {
-        return `http://${document.domain}:${location.port}/multiplayer_game/join_room/${roomID}`;
+        return `http://${document.domain}:${location.port}/multiplayer/join/${roomID}`;
     }
 
     p1ModalLinkDiv.addEventListener('click', () => {

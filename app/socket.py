@@ -5,15 +5,8 @@ from flask_socketio import emit, join_room, leave_room
 from app.scripts.game import (
     user_state_update,
 )
-from app.models import (
-    GameState,
-    advance_user_state_current_level,
-    game_state_advance_ready,
-    get_game_state_status,
-    get_game_state_by_room,
-    get_game_state_max_level_by_room,
-    get_user_by_id,
-)
+
+from app.models.game_state_model import UserState, Maps, GameState
 
 from app.extensions import db
 from app.enums import Status
@@ -27,7 +20,7 @@ def configure_socketio(socketio):
         if room:
             join_room(room)
             print(f"Joined room: {room}")
-            game_state = get_game_state_by_room(room)
+            game_state = GameState.get_game_state_by_room(room)
 
             if (
                 game_state.user_not_in_room(session["user_id"])
@@ -57,7 +50,7 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
 
-        user_state = get_user_by_id(user_id)
+        user_state = UserState.get_user_by_id(user_id)
 
         emit(
             "response_update_data",
@@ -76,7 +69,11 @@ def configure_socketio(socketio):
 
         emit(
             "response_round_update",
-            {"round": get_game_state_by_room(session["room_id"]).current_round},
+            {
+                "round": GameState.get_game_state_by_room(
+                    session["room_id"]
+                ).current_round
+            },
             to=session["room_id"],
         )
 
@@ -85,11 +82,11 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
         key = data["key"]
-        max_level = get_game_state_max_level_by_room(room)
+        max_level = GameState.get_game_state_max_level_by_room(room)
 
         user_state_update(key, user_id, max_level)
 
-        user_state = get_user_by_id(user_id=user_id)
+        user_state = UserState.get_user_by_id(user_id=user_id)
 
         emit(
             "response_update_data",
@@ -111,11 +108,11 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
 
-        user_state = get_user_by_id(user_id)
+        user_state = UserState.get_user_by_id(user_id)
 
         emit("response_player_finished_level", {"user_id": user_id}, to=room)
 
-        if game_state_advance_ready(room_id=room):
+        if GameState.game_state_advance_ready(room_id=room):
             emit("response_advance_level_confirmation", to=room)
         else:
             user_state.set_score(300)
@@ -134,10 +131,10 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room = session["room_id"]
 
-        max_level = get_game_state_max_level_by_room(room)
-        advance_user_state_current_level(user_id, max_level)
+        max_level = GameState.get_game_state_max_level_by_room(room)
+        UserState.advance_user_state_current_level(user_id, max_level)
 
-        user_state = get_user_by_id(user_id=user_id)
+        user_state = UserState.get_user_by_id(user_id=user_id)
 
         emit(
             "response_update_data",
@@ -156,8 +153,8 @@ def configure_socketio(socketio):
 
     @socketio.on("request_game_finished")
     def handle_game_finished() -> None:
-        game_state = get_game_state_by_room(session["room_id"])
-        user_state = get_user_by_id(session["user_id"])
+        game_state = GameState.get_game_state_by_room(session["room_id"])
+        user_state = UserState.get_user_by_id(session["user_id"])
 
         if game_state.both_players_completed_game():
             game_state.update_round_winner()
@@ -181,8 +178,8 @@ def configure_socketio(socketio):
 
     @socketio.on("request_data_update")
     def handle_data_update() -> None:
-        user_state = get_user_by_id(session["user_id"])
-        game_state = get_game_state_by_room(session["room_id"])
+        user_state = UserState.get_user_by_id(session["user_id"])
+        game_state = GameState.get_game_state_by_room(session["room_id"])
 
         emit(
             "response_score_update",
@@ -201,7 +198,7 @@ def configure_socketio(socketio):
 
     @socketio.on("request_game_state_reset")
     def handle_game_state_reset() -> None:
-        game_state = get_game_state_by_room(session["room_id"])
+        game_state = GameState.get_game_state_by_room(session["room_id"])
         game_state.reset_game_state()
         emit("response_maps_from_server", to=session["room_id"])
 
@@ -210,7 +207,7 @@ def configure_socketio(socketio):
         user_id = session["user_id"]
         room_id = session["room_id"]
 
-        game_state = get_game_state_by_room(room_id)
+        game_state = GameState.get_game_state_by_room(room_id)
         # game_state.reset_game_state()
         game_state.del_player(user_id)
         game_state.set_status(Status.JOIN_WAIT.value)
