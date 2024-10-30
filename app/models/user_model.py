@@ -1,12 +1,9 @@
-import json
+import uuid
 
-from flask import Response
-from sqlalchemy import Text, Column, Integer, String, Boolean, desc
-from typing import Tuple
+from sqlalchemy import Text, Column, Integer, String, Boolean
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.extensions import db
-from app.enums import Status
-from app.custom_types import NestedDictList
 from app.models.map_model import Maps
 
 LEVEL_BONUS = 300
@@ -15,14 +12,16 @@ LEVEL_BONUS = 300
 class UserState(db.Model):
     __tablename__ = "user_state"
     id = Column(Integer, primary_key=True, unique=True)
+
     user_id = Column(String, nullable=False)
     level = Column(Integer)
     achieved_level = Column(Integer)
     score = Column(Integer)
     rounds_won = Column(Integer)
     name = Column(String)
-    level_completed = Column(Boolean)
     game_completed = Column(Boolean)
+
+    level_completed = Column(Boolean)
     map = Column(Text)
 
     def set_level(self, level: int) -> None:
@@ -48,7 +47,7 @@ class UserState(db.Model):
         self.name = name
         db.session.commit()
 
-    def set_score(self, diff: int):
+    def add_score(self, diff: int):
         self.score += diff
         db.session.commit()
 
@@ -84,7 +83,7 @@ class UserState(db.Model):
         db.session.commit()
 
     def assign_level_bonus(self) -> None:
-        self.set_score(LEVEL_BONUS)
+        self.add_score(LEVEL_BONUS)
 
     def advance_user_state_current_level(
         user_id: str, max_level: int | None = None
@@ -104,9 +103,14 @@ class UserState(db.Model):
 
     @classmethod
     def create_user_state(cls, user_id: str, level: int = 1) -> None:
-        user_state = cls(user_id=user_id, level=level, achieved_level=1, score=0)
-        user_state.set_name("Anonymous")
-        user_state.rounds_won = 0
+        user_state = cls(
+            user_id=user_id,
+            level=level,
+            achieved_level=1,
+            score=0,
+            name="Anonymous",
+            rounds_won=0,
+        )
         user_state.set_default_state_by_level()
 
         db.session.add(user_state)

@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameStatus;
     let readyToPlay;
 
+    let lastDirection = 'horizontal';
+
     const gridContainerPlayer = document.getElementById(
         'grid-container-player'
     );
@@ -74,9 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gameStatus = data.game_status;
         roomID = data.room_id;
 
-        //remove after
-        console.log(`room_id in session: ${sessionStorage.getItem('room_id')}`);
-
         if (gameStatus == 'finished') {
             readyToPlay = false;
             setModalDisable(p1_modal);
@@ -102,6 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
             updateGrid(data.map, 'player', grassBlock);
+            if (data.key) {
+                rotateMower(data.key);
+            }
             p1_name.innerText = data.name;
             // p1_level.innerText = data.level;
             p1_score.innerText = data.score;
@@ -117,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(p2_modal);
             setModalDisable(endGameModal);
             updateGrid(data.map, 'oponent', grassBlock);
+            if (data.key) {
+                rotateOponentMower(data.key);
+            }
             p2_name.innerText = data['name'];
             // p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
@@ -233,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendKeyPress(key) {
         if (readyToPlay) {
             socket.emit('request_update_data', { key: key });
+            lastDirection = key;
         }
     }
 
@@ -264,6 +270,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getRoomLink() {
         return `http://${document.domain}:${location.port}/multiplayer/join/${roomID}`;
+    }
+
+    function rotateMower(key) {
+        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+            document.querySelector('.active').style.transform = 'rotate(0deg)';
+        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
+            document.querySelector('.active').style.transform = 'rotate(90deg)';
+            console.log('should be vertical');
+        }
+    }
+
+    function rotateOponentMower(key) {
+        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
+            document.querySelector('.oactive').style.transform = 'rotate(0deg)';
+        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
+            document.querySelector('.oactive').style.transform =
+                'rotate(90deg)';
+        }
     }
 
     p1ModalLinkDiv.addEventListener('click', () => {

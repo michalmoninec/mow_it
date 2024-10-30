@@ -9,7 +9,6 @@ from flask import (
     Response,
 )
 
-from app.models.map_model import Maps
 from app.models.user_model import UserState
 
 from app.scripts.game import (
@@ -21,20 +20,13 @@ from app.scripts.game import (
 singleplayer = Blueprint("singleplayer", __name__)
 
 
-@singleplayer.route("/single_player/")
-def single_player_prepare() -> str:
-    """Render page for single player"""
-
-    return render_template("single_player.html")
-
-
-@singleplayer.route("/single_player/level_selection/")
+@singleplayer.get("/single_player/level_selection/")
 def single_player_level_selection() -> str:
     """Render page for level selection"""
     return render_template("single_player_level_selection.html")
 
 
-@singleplayer.route("/single_player/level_data/", methods=["POST"])
+@singleplayer.post("/single_player/level_data/")
 def single_player_level_data() -> Response:
     """Prepare level based on user's achieved level"""
 
@@ -46,36 +38,46 @@ def single_player_level_data() -> Response:
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
         UserState.create_user_state(user_id=session["user_id"])
+
     try:
         levels = user_get_achieved_levels(session["user_id"])
     except:
-        return jsonify({"error": "User or map not found"}), 404
+        return jsonify({"message": "User or map not found"}), 404
 
-    return jsonify({"user_id": session["user_id"], "levels": levels})
+    return jsonify({"user_id": session["user_id"], "levels": levels}), 200
 
 
-@singleplayer.route("/single_player/selected_level/", methods=["POST"])
+@singleplayer.post("/single_player/selected_level/")
 def single_player_set_selected_level() -> Response:
     desired_level = request.get_json().get("selected_level")
 
     if "user_id" not in session:
-        return jsonify({"error": "User or map not found"}), 404
+        return jsonify({"message": "User or map not found"}), 404
 
     valid_level_set = UserState.get_user_by_id(session["user_id"]).set_desired_level(
         desired_level
     )
 
-    return jsonify({"valid_level_set": valid_level_set})
+    return jsonify({"valid_level_set": valid_level_set}), 200
 
 
-@singleplayer.route("/single_player/retrieve_map/", methods=["POST", "GET"])
+@singleplayer.post("/single_player/retrieve_map/")
 def single_player_init_map() -> Response:
     """Returns prepared map when client connects, reloads, advance level"""
+
+    user_id = request.get_json().get("user_id")
+
+    if "user_id" not in session:
+        if user_id:
+            session["user_id"] = user_id
+        else:
+            session["user_id"] = str(uuid.uuid4())[:8]
+        UserState.create_user_state(user_id=session["user_id"])
 
     user_state = UserState.get_user_by_id(session["user_id"])
 
     if user_state is None:
-        return jsonify({"error": "User or map not found"}), 404
+        return jsonify({"message": "User or map not found"}), 404
 
     user_state.set_default_state_by_level()
 
@@ -92,7 +94,14 @@ def single_player_init_map() -> Response:
     )
 
 
-@singleplayer.route("/single_player/move/", methods=["POST"])
+@singleplayer.get("/single_player/")
+def single_player_prepare() -> str:
+    """Render page for single player"""
+
+    return render_template("single_player.html")
+
+
+@singleplayer.post("/single_player/move/")
 def single_player_move_handle() -> Response:
     """
     Receives key
@@ -117,7 +126,7 @@ def single_player_move_handle() -> Response:
     )
 
 
-@singleplayer.route("/single_player/advance_current_level/", methods=["POST"])
+@singleplayer.post("/single_player/advance_current_level/")
 def single_player_advance_current_level() -> Response:
     """Increase user's level by 1 and redirect to game preparation"""
 

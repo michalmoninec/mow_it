@@ -1,17 +1,16 @@
-import json
+import json, uuid
 
-from flask import Response
-from sqlalchemy import Text, Column, Integer, String, Boolean, desc
-from typing import Tuple
+
+from sqlalchemy import Text, Column, Integer, String, desc
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.extensions import db
-from app.enums import Status
 from app.custom_types import NestedDictList
 
 
 class Maps(db.Model):
     __tablename__ = "map_data"
-    id = Column(Integer, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     name = Column(String)
     start_position = Column(Text)

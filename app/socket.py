@@ -6,9 +6,7 @@ from app.scripts.game import (
     user_state_update,
 )
 
-from app.models.game_state_model import UserState, Maps, GameState
-
-from app.extensions import db
+from app.models.game_state_model import UserState, GameState
 from app.enums import Status
 
 
@@ -16,7 +14,6 @@ def configure_socketio(socketio):
     @socketio.on("join_room")
     def handle_join_room() -> None:
         room = session["room_id"]
-        print(f'session room id inside "joinroom": {session['room_id']}')
         if room:
             join_room(room)
             print(f"Joined room: {room}")
@@ -99,6 +96,7 @@ def configure_socketio(socketio):
                 "level_completed": user_state.level_completed,
                 "game_completed": user_state.game_completed,
                 "rounds_won": user_state.rounds_won,
+                "key": key,
             },
             to=room,
         )
@@ -115,7 +113,7 @@ def configure_socketio(socketio):
         if GameState.game_state_advance_ready(room_id=room):
             emit("response_advance_level_confirmation", to=room)
         else:
-            user_state.set_score(300)
+            user_state.add_score(300)
             emit(
                 "response_score_update",
                 {
@@ -211,6 +209,7 @@ def configure_socketio(socketio):
         # game_state.reset_game_state()
         game_state.del_player(user_id)
         game_state.set_status(Status.JOIN_WAIT.value)
+        print(f"Status print example: {Status.JOIN_WAIT.name}")
 
         print(f"Player {user_id} disconnected")
         leave_room(session["room_id"])

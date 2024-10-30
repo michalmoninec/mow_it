@@ -92,7 +92,7 @@ def user_state_update(key: str, user_id: str, max_level: int | None = None) -> N
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
         diff = update_score(map, pos_x, pos_y)
-        user.set_score(diff=diff)
+        user.add_score(diff=diff)
         map[pos_x][pos_y]["active"] = True
         map[pos_x][pos_y]["visited"] = True
         map[prev_pos_x][prev_pos_y]["active"] = False

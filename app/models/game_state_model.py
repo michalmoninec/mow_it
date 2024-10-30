@@ -1,7 +1,8 @@
-import json
+import uuid
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean, desc
+from sqlalchemy.dialects.postgresql import UUID
 from typing import Tuple
 
 from app.extensions import db
@@ -15,7 +16,7 @@ LEVEL_BONUS = 300
 
 class GameState(db.Model):
     __tablename__ = "game_state"
-    _id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
 
     room_id = Column(String)
 
@@ -48,7 +49,6 @@ class GameState(db.Model):
             self.player_2_id = user_id
 
         if self.player_1_id and self.player_2_id:
-            print("Passed check for status change.")
             self.status = Status.READY.value
 
         db.session.commit()

@@ -1,4 +1,5 @@
 import uuid
+
 from flask import (
     render_template,
     redirect,
@@ -10,9 +11,7 @@ from flask import (
     Response,
 )
 
-from app.enums import Status
-
-from app.models.game_state_model import Maps, UserState, GameState
+from app.models.game_state_model import GameState
 
 
 multiplayer = Blueprint("multiplayer", __name__)
@@ -41,8 +40,9 @@ def multiplayer_get_user() -> Response:
     session["room_id"] = str(uuid.uuid4())[:8]
 
     GameState.create_multiplayer_game_state(session["room_id"])
+    GameState.create_user_after_room_join(session["room_id"], session["user_id"])
 
-    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]})
+    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]}), 201
 
 
 @multiplayer.get("/multiplayer/join/<room_id>/")
@@ -74,7 +74,7 @@ def join_room_set_user_and_room(room_id) -> Response:
             session["user_id"],
         )
 
-    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]})
+    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]}), 201
 
 
 @multiplayer.route("/multiplayer/play/")

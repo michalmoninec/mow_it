@@ -10,7 +10,7 @@ export function updateGrid(map, player) {
                 `${idPrefix}${cell.x}${cell.y}`
             );
             if (cell.active) {
-                gridItem.className = 'active';
+                gridItem.className = idPrefix + 'active';
             } else if (cell.visited) {
                 gridItem.className = 'visited';
                 gridItem.style.transform = 'none';

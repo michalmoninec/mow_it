@@ -99,9 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotateMower(key);
                 updateScoreAndLevel(score, level);
                 console.log(`outer key: ${key}`);
-                if (key == 'ArrowRight') {
-                    advanceCurrentLevel();
-                }
 
                 if (allLevelsCompleted) {
                     document.getElementById('level_advance_label').innerText =
@@ -152,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
             document.querySelector('.active').style.transform = 'rotate(90deg)';
         } else {
-            console.log('Shouldn rotate.');
+            console.log('Shouldnt rotate.');
         }
     }
 
