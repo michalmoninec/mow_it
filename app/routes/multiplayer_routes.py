@@ -77,7 +77,7 @@ def join_room_set_user_and_room(room_id) -> Response:
     return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]}), 201
 
 
-@multiplayer.route("/multiplayer/play/")
+@multiplayer.get("/multiplayer/play/")
 def multiplayer_game_play() -> str:
     print(f"session at play: {session}")
     if "user_id" in session and "room_id" in session:

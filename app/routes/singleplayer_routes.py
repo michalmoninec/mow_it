@@ -30,19 +30,25 @@ def single_player_level_selection() -> str:
 def single_player_level_data() -> Response:
     """Prepare level based on user's achieved level"""
 
-    user_id = request.get_json().get("user_id")
+    data = request.get_json()
+
+    try:
+        user_id = data["user_id"]
+    except KeyError:
+        return jsonify({"message": "UserID not included."})
 
     if "user_id" not in session:
         if user_id:
             session["user_id"] = user_id
         else:
             session["user_id"] = str(uuid.uuid4())[:8]
-        UserState.create_user_state(user_id=session["user_id"])
+        if not UserState.get_user_by_id(session["user_id"]):
+            UserState.create_user_state(user_id=session["user_id"])
 
     try:
         levels = user_get_achieved_levels(session["user_id"])
     except:
-        return jsonify({"message": "User or map not found"}), 404
+        return jsonify({"message": "User or map not found."}), 404
 
     return jsonify({"user_id": session["user_id"], "levels": levels}), 200
 
@@ -51,8 +57,11 @@ def single_player_level_data() -> Response:
 def single_player_set_selected_level() -> Response:
     desired_level = request.get_json().get("selected_level")
 
+    if not desired_level:
+        return jsonify({"message": "Desired level not provided."}), 400
+
     if "user_id" not in session:
-        return jsonify({"message": "User or map not found"}), 404
+        return jsonify({"message": "User or map not found."}), 400
 
     valid_level_set = UserState.get_user_by_id(session["user_id"]).set_desired_level(
         desired_level
