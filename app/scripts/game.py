@@ -10,16 +10,27 @@ from app.models.user_model import UserState
 
 
 def obstacle_col(row: int, start: int, end: int) -> List[List[int]]:
+    """
+    Returns col of row, col coordinates of obstacles for provided row.
+    Row is populated with obstacles from start to end index.
+    """
     return [[row, col] for col in range(start, end)]
 
 
 def obstacle_row(col: int, start: int, end: int) -> List[List[int]]:
+    """
+    Returns row of row, col coordinates of obstacles for provided row.
+    Row is populated with obstacles from start to end index.
+    """
     return [[row, col] for row in range(start, end)]
 
 
 def obstacle_cube(
     row_start: int, row_end: int, col_start: int, col_end: int
 ) -> List[List[int]]:
+    """
+    Returns obstacles in cube pattern for provided start and end of both row and col.
+    """
     return [
         [row, col]
         for row in range(row_start, row_end)
@@ -106,6 +117,8 @@ def user_state_update(key: str, user_id: str, max_level: int | None = None) -> N
                 user.set_game_completed(True)
                 level_condition = max_level
 
+    return UserState.get_user_by_id(user_id)
+
 
 def user_get_achieved_levels(user_id: str) -> List[dict]:
     """
@@ -125,7 +138,9 @@ def user_get_achieved_levels(user_id: str) -> List[dict]:
 
 
 def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tuple:
-    """Validates players move, return updated position or None"""
+    """
+    Validates players move, return updated position or not altered position.
+    """
 
     if (
         key == "ArrowRight"
