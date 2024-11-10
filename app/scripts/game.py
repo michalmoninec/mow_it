@@ -109,16 +109,19 @@ def user_state_update(key: str, user_id: str, max_level: int | None = None) -> N
 
 def user_get_achieved_levels(user_id: str) -> List[dict]:
     """
-    TODO - change with comprehension.
+    TODO - test with comprehension.
     """
-    levels = []
+    # levels = []
     cnt_of_levels = UserState.get_user_by_id(user_id).achieved_level
 
-    for level in range(1, cnt_of_levels + 1):
-        level_info = {"level": level, "data": Maps.get_map_by_level(level)}
-        levels.append(level_info)
+    # for level in range(1, cnt_of_levels + 1):
+    #     level_info = {"level": level, "data": Maps.get_map_by_level(level)}
+    #     levels.append(level_info)
 
-    return levels
+    return [
+        {"level": level, "data": Maps.get_map_by_level(level)}
+        for level in range(1, cnt_of_levels + 1)
+    ]
 
 
 def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tuple:

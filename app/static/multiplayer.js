@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_maps_from_server', () => {
         readyToPlay = true;
-        //TODO - maybe needs modal disable
         socket.emit('request_initial_maps');
     });
 
