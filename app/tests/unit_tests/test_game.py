@@ -198,7 +198,6 @@ def test_get_position_from_map_multiple_active(test_maps):
     map[pos_x][pos_y]["active"] = True
     pos_x2, pos_y2 = 3, 4
     map[pos_x2][pos_y2]["active"] = True
-    print(get_position_from_map(map))
     assert get_position_from_map(map) == (pos_x, pos_y)
 
 

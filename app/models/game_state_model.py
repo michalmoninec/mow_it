@@ -146,7 +146,6 @@ class GameState(db.Model):
         db.session.commit()
 
     def update_game_winner(self) -> None:
-        print("Checking who won.")
         p1, p2 = self.get_players()
         if p1.rounds_won > p2.rounds_won:
             self.winner_id = p1.user_id

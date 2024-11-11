@@ -1,5 +1,7 @@
 import pytest
 
+from app.models.game_state_model import GameState
+
 
 def empty_map() -> None:
     map = [
@@ -83,3 +85,8 @@ def dirs():
         "down": down,
         "right": right,
     }
+
+
+@pytest.fixture
+def game_state():
+    return GameState()
