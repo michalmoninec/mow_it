@@ -72,21 +72,5 @@ def test_maps():
 
 
 @pytest.fixture
-def dirs():
-    up = "ArrowUp"
-    down = "ArrowDown"
-    left = "ArrowLeft"
-    right = "ArrowRight"
-
-    return {
-        "list": [up, down, left, right],
-        "up": up,
-        "left": left,
-        "down": down,
-        "right": right,
-    }
-
-
-@pytest.fixture
 def game_state():
     return GameState()

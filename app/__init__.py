@@ -5,10 +5,10 @@ from app.socket import configure_socketio
 from app.routes import main, singleplayer, multiplayer
 
 
-def create_app() -> Flask:
+def create_app(config_class="config.Config") -> Flask:
     app = Flask(__name__)
 
-    app.config.from_object("config.Config")
+    app.config.from_object(config_class)
     app.register_blueprint(main)
     app.register_blueprint(singleplayer)
     app.register_blueprint(multiplayer)

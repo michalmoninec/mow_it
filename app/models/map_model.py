@@ -25,11 +25,17 @@ class Maps(db.Model):
 
     @classmethod
     def get_max_level_of_maps(cls) -> int:
-        return cls.query.order_by(desc(cls.level)).first().level
+        max_level_map = cls.query.order_by(desc(cls.level)).first()
+        if max_level_map:
+            return max_level_map.level
+        return None
 
     @classmethod
     def get_map_by_level(cls, level: int) -> Text:
-        return cls.query.filter_by(level=level).first().data
+        map = cls.query.filter_by(level=level).first()
+        if map:
+            return map.data
+        return None
 
     @classmethod
     def is_map_table_empty(cls):
