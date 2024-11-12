@@ -5,14 +5,6 @@ from app.models.user_model import UserState
 
 
 @pytest.fixture
-def app_and_client():
-    app = create_app()
-    app.secret_key = "test_key_noodles"
-    with app.test_client() as client:
-        yield app, client
-
-
-@pytest.fixture
 def test_map_data():
     return {
         "name": "test_1",
@@ -57,15 +49,3 @@ def test_user_state(test_db, test_user_data):
     test_db.session.add(user_state)
     test_db.session.commit()
     return user_state
-
-
-@pytest.fixture
-def mock_method(mocker, request):
-    def mock_wrapper(obj, class_method, return_value=None, side_effect=None):
-        mock_method = mocker.patch.object(
-            obj, class_method, return_value=return_value, side_effect=side_effect
-        )
-        request.addfinalizer(lambda: mocker.stop(mock_method))
-        return mock_method
-
-    return mock_wrapper
