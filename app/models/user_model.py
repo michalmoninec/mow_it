@@ -10,6 +10,10 @@ LEVEL_BONUS = 300
 
 
 class UserState(db.Model):
+    """
+    Creates and handles UserState table and ORM to database.
+    """
+
     __tablename__ = "user_state"
     id = Column(Integer, primary_key=True, unique=True)
 
@@ -25,14 +29,24 @@ class UserState(db.Model):
     map = Column(Text)
 
     def set_level(self, level: int) -> None:
+        """
+        Sets level to provided value and commits it to db.
+        """
         self.level = level
         db.session.commit()
 
     def set_map(self, map: Text) -> None:
+        """
+        Sets map to provided value and commits it to db.
+        """
         self.map = map
         db.session.commit()
 
     def increase_level(self, max_level: int):
+        """
+        Increases level by value of 1 with boundary of max level.
+        Resets level and game completion.
+        """
         self.level += 1
         if self.level > max_level:
             self.level = max_level
@@ -44,30 +58,52 @@ class UserState(db.Model):
         db.session.commit()
 
     def set_name(self, name: str):
+        """
+        Sets and commit name to db.
+        """
         self.name = name
         db.session.commit()
 
     def add_score(self, diff: int):
+        """
+        Adds score with provided diff and commits to db.
+        """
         self.score += diff
         db.session.commit()
 
     def reset_score(self):
+        """
+        Resets score to 0 and commits to db.
+        """
         self.score = 0
         db.session.commit()
 
     def set_level_completed(self, value: bool):
+        """
+        Sets level completion and commits to db.
+        """
         self.level_completed = value
         db.session.commit()
 
     def set_game_completed(self, value: bool):
+        """
+        Sets game completion and commits to db.
+        """
         self.game_completed = value
         db.session.commit()
 
     def reset_map(self):
+        """
+        Resets map to default by level and commits to db.
+        """
         self.map = Maps.get_map_by_level(self.level)
         db.session.commit()
 
     def set_desired_level(self, desired_level: int) -> bool:
+        """
+        Sets desired level with boundary of achieved level and commits to db.
+        If in boundary, returns True, otherwise returns False.
+        """
         if desired_level <= self.achieved_level:
             self.level = desired_level
             db.session.commit()
@@ -75,6 +111,14 @@ class UserState(db.Model):
         return False
 
     def set_default_state_by_level(self) -> None:
+        """
+        Sets default state for:
+        - Score.
+        - Map.
+        - Level completion.
+        - Game completion.
+        And commits to db.
+        """
         self.reset_score()
         self.reset_map()
         self.set_level_completed(False)
@@ -83,15 +127,29 @@ class UserState(db.Model):
         db.session.commit()
 
     def assign_level_bonus(self) -> None:
+        """
+        Assigns level bonus.
+        """
         self.add_score(LEVEL_BONUS)
 
+    @classmethod
     def advance_user_state_current_level(
-        user_id: str, max_level: int | None = None
+        cls, user_id: str, max_level: int = None
     ) -> None:
+        """
+        Advances to next level.
+        If max level is not provided, it is set up as maximum level of all Maps.
+        Gets UserState by provided user_id.
+        If UserState is not None and level is completed, then it increases level
+        with boundary of max level.
+        Then map is reset by the new level.
+        If correct advance and UserState exists, returns True, otherwise returns False.
+        """
         if max_level is None:
             max_level = Maps.get_max_level_of_maps()
-        user_state = UserState.get_user_by_id(user_id)
-        if user_state.level_completed:
+
+        user_state = cls.get_user_by_id(user_id)
+        if user_state and user_state.level_completed:
             user_state.increase_level(max_level)
             user_state.reset_map()
             return True
@@ -99,10 +157,19 @@ class UserState(db.Model):
 
     @classmethod
     def get_user_by_id(cls, user_id: str) -> "UserState":
+        """
+        Returns UserState with matching user_id.
+        If not found, returns None.
+        If multiple matches, returns first.
+        """
         return cls.query.filter_by(user_id=user_id).first()
 
     @classmethod
     def create_user_state(cls, user_id: str, level: int = 1) -> None:
+        """
+        Creates new UserState model with provided user_id and level.
+        Sets default state for new UserState and commits to db.
+        """
         user_state = cls(
             user_id=user_id,
             level=level,
