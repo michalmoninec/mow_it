@@ -122,14 +122,16 @@ def user_state_update(key: str, user_id: str, max_level: int | None = None) -> N
 
 def user_get_achieved_levels(user_id: str) -> List[dict]:
     """
-    TODO - test with comprehension.
+    Returns list of dictionaries containing info:
+    - Level value.
+    - Data value, which represents map.
+    If user does not exist, returns None.
     """
-    # levels = []
-    cnt_of_levels = UserState.get_user_by_id(user_id).achieved_level
-
-    # for level in range(1, cnt_of_levels + 1):
-    #     level_info = {"level": level, "data": Maps.get_map_by_level(level)}
-    #     levels.append(level_info)
+    user_state = UserState.get_user_by_id(user_id)
+    if user_state:
+        cnt_of_levels = user_state.achieved_level
+    else:
+        return None
 
     return [
         {"level": level, "data": Maps.get_map_by_level(level)}
@@ -226,6 +228,7 @@ def create_empty_map() -> NestedDictList:
 def create_maps() -> None:
     """
     If database table of maps is empty, it creates maps by levels.
+    If table updated, returns True, otherwise returns False.
     """
     if Maps.is_map_table_empty():
         for level in level_obstacles:
@@ -237,3 +240,5 @@ def create_maps() -> None:
                 map[x][y]["blocker"] = True
 
             Maps.create_maps_database(level["name"], map, level["level"])
+        return True
+    return False
