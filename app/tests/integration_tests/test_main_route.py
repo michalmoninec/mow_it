@@ -1,7 +1,5 @@
 from flask import session, url_for
 
-from app.scripts.game import create_maps
-
 
 def test_home(app_and_client, mock_func):
     """

@@ -1,30 +1,15 @@
 from app.models.game_state_model import GameState
 
 
-def test_game_state_init():
+def test_game_state_init(game_data):
     """
     Tests, that init method behaves correctly.
     """
-    test_data = {
-        "room_id": "abcd",
-        "rounds": 1,
-        "current_round": 1,
-        "levels_per_round": 4,
-        "level": 2,
-        "default_level": 1,
-        "player_1_id": "john",
-        "player_2_id": "doe",
-        "p1_rounds_won": 0,
-        "p2_rounds_won": 1,
-        "status": "INIT",
-        "winner_id": str(None),
-        "map": "some_text",
-    }
 
-    game_state = GameState(**test_data)
+    game_state = GameState(**game_data)
 
-    for key in test_data:
-        assert game_state.__getattribute__(key) == test_data[key]
+    for key in game_data:
+        assert game_state.__getattribute__(key) == game_data[key]
 
 
 def test_user_not_in_room(game_state):

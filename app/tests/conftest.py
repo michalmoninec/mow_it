@@ -1,4 +1,4 @@
-import pytest
+import pytest, json
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -75,3 +75,48 @@ def mock_func(mocker, request):
         return mock_fn
 
     return mock_wrapper
+
+
+@pytest.fixture
+def game_data():
+    return {
+        "room_id": "abcd",
+        "rounds": 3,
+        "current_round": 1,
+        "levels_per_round": 4,
+        "level": 1,
+        "default_level": 1,
+        "player_1_id": None,
+        "player_2_id": None,
+        "p1_rounds_won": 0,
+        "p2_rounds_won": 1,
+        "status": "init",
+        "winner_id": None,
+        "map": "some_text",
+    }
+
+
+@pytest.fixture
+def test_map_data():
+    return {
+        "name": "test_1",
+        "map": json.dumps({"test_key": "test_value"}),
+        "level": 1,
+    }
+
+
+@pytest.fixture
+def test_map_init():
+    return {
+        "name": "test_1",
+        "data": json.dumps({"test_key": "test_value"}),
+        "level": 1,
+    }
+
+
+@pytest.fixture
+def test_map(test_db, test_map_init):
+    map = Maps(**test_map_init)
+    test_db.session.add(map)
+    test_db.session.commit()
+    return map
