@@ -30,8 +30,11 @@ def multiplayer_get_user() -> Response:
     Assign random room_id.
     Returns user_id either from client or newly assigned.
     """
-    request_data = request.get_json()
-    user_id = request_data["user_id"]
+    data = request.get_json()
+    if not data or "user_id" not in data:
+        return {"error": "User ID not included in request."}, 400
+
+    user_id = data["user_id"]
 
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
@@ -47,7 +50,7 @@ def multiplayer_get_user() -> Response:
 
 @multiplayer.get("/multiplayer/join/<room_id>/")
 def join_room_get_user(room_id) -> str:
-    return render_template("multiplayer_join_room.html", room_id=room_id)
+    return render_template("multiplayer_join_room.html", room_id=room_id), 200
 
 
 @multiplayer.post("/multiplayer/join/<room_id>/")
@@ -61,6 +64,7 @@ def join_room_set_user_and_room(room_id) -> Response:
     session["room_id"] = room_id
 
     game_state = GameState.get_game_state_by_room(room_id)
+
     if game_state is None:
         session["room_id"] = None
     elif (
@@ -79,8 +83,6 @@ def join_room_set_user_and_room(room_id) -> Response:
 
 @multiplayer.get("/multiplayer/play/")
 def multiplayer_game_play() -> str:
-    print(f"session at play: {session}")
     if "user_id" in session and "room_id" in session:
-        print("user or room id is none")
-        return render_template("multiplayer_game.html")
-    return redirect(url_for("multiplayer.multiplayer_create_game"))
+        return render_template("multiplayer_game.html"), 200
+    return redirect(url_for("multiplayer.multiplayer_create_game")), 307

@@ -12,7 +12,8 @@ def test_home(app_and_client, mock_func):
     """
     mock_create = mock_func("app.routes.main_route.create_maps")
     app, client = app_and_client
-    resp = client.get("/")
+    endpoint = "/"
+    resp = client.get(endpoint)
 
     assert resp.status_code == 200
     assert len(session.items()) == 0
