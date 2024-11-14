@@ -69,8 +69,8 @@ def mock_func(mocker, request):
     After user, stops mock.
     """
 
-    def mock_wrapper(func_name):
-        mock_fn = mocker.patch(func_name)
+    def mock_wrapper(func_name, return_value=None):
+        mock_fn = mocker.patch(func_name, return_value=return_value)
         request.addfinalizer(lambda: mocker.stop(mock_fn))
         return mock_fn
 

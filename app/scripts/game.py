@@ -88,12 +88,17 @@ level_obstacles = [
 ]
 
 
-def user_state_update(key: str, user_id: str, max_level: int | None = None) -> None:
+def user_state_update(
+    key: str, user_id: str, max_level: int | None = None
+) -> UserState | None:
     """Check if move is valid and then updates game_state"""
     if max_level is None:
         max_level = Maps.get_max_level_of_maps()
 
     user = UserState.get_user_by_id(user_id)
+    if user is None:
+        return None
+
     map = json.loads(user.map)
     level = user.level
 

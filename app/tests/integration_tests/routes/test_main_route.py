@@ -17,6 +17,4 @@ def test_home(app_and_client, mock_func):
     assert resp.status_code == 200
     assert len(session.items()) == 0
     assert mock_create.call_count == 1
-
-    with app.test_request_context("/"):
-        assert resp.request.path == url_for("main.home")
+    assert resp.request.path == url_for("main.home")

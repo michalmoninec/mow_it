@@ -24,7 +24,7 @@ def test_user_data():
 def test_creation_data(test_map_data):
     return {
         "user_id": "test_1234",
-        "level": 999,
+        "level": 1,
         "achieved_level": 1,
         "score": 0,
         "rounds_won": 0,
