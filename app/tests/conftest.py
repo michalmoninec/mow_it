@@ -1,9 +1,13 @@
 import pytest, json
 
+from flask_socketio import SocketIO
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app import create_app, db
+from app import create_app, db, test_app
+
+# from app.extensions import socketio
+from app.socket import configure_socketio
 from app.models.map_model import Maps
 from app.models.user_model import UserState
 from app.models.game_state_model import GameState
@@ -26,10 +30,8 @@ def dirs():
 
 
 @pytest.fixture
-def test_db(app_and_client):
-    app, _ = app_and_client
-
-    with app.app_context():
+def test_db(client):
+    with client.app_context():
         db.create_all()
         yield db
         db.session.remove()
@@ -37,11 +39,23 @@ def test_db(app_and_client):
 
 
 @pytest.fixture
-def app_and_client():
-    app = create_app(config_class="config.TestConfig")
-    app.secret_key = "test_key_noodles"
-    with app.test_client() as client:
-        yield app, client
+def client():
+    app = create_app()
+    app.testing = True
+    with app.app_context():
+        yield app
+
+
+@pytest.fixture
+def test_client(client):
+    with client.test_client() as test_client:
+        yield test_client
+
+
+@pytest.fixture
+def socket_client(client):
+    socketio = SocketIO(client, manage_session=True)
+    return socketio.test_client(client)
 
 
 @pytest.fixture

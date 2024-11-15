@@ -15,7 +15,18 @@ def create_app(config_class="config.Config") -> Flask:
 
     db.init_app(app)
 
-    socketio.init_app(app)
+    socketio.init_app(app, manage_session=True)
     configure_socketio(socketio)
 
+    return app
+
+
+def test_app(config_class="config.TestConfig") -> Flask:
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    app.register_blueprint(main)
+    app.register_blueprint(singleplayer)
+    app.register_blueprint(multiplayer)
+
+    db.init_app(app)
     return app

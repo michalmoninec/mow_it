@@ -1,7 +1,7 @@
 from flask import session, url_for
 
 
-def test_home(app_and_client, mock_func):
+def test_home(test_client, mock_func):
     """
     Tests, that home endpoint works correctly.
     Tests cover:
@@ -11,9 +11,9 @@ def test_home(app_and_client, mock_func):
     - Request path is correct.
     """
     mock_create = mock_func("app.routes.main_route.create_maps")
-    app, client = app_and_client
+
     endpoint = "/"
-    resp = client.get(endpoint)
+    resp = test_client.get(endpoint)
 
     assert resp.status_code == 200
     assert len(session.items()) == 0
