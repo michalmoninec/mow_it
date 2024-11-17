@@ -1,6 +1,7 @@
 import json
 
 from flask import session
+from flask import copy_current_request_context
 from flask_socketio import emit, join_room, leave_room
 from app.scripts.game import (
     user_state_update,
@@ -10,32 +11,33 @@ from app.models.game_state_model import UserState, GameState
 from app.enums import Status
 
 
-def configure_socketio(socketio):
+def configure_socketio(socketio, session=session):
     @socketio.on("join_room")
     def handle_join_room() -> None:
         room = session["room_id"]
+        print(f"room for tests: {room}")
         if room:
             join_room(room)
             print(f"Joined room: {room}")
             game_state = GameState.get_game_state_by_room(room)
+            if game_state:
+                if (
+                    game_state.user_not_in_room(session["user_id"])
+                    and game_state.room_is_available()
+                ):
+                    game_state.add_player(session["user_id"])
 
-            if (
-                game_state.user_not_in_room(session["user_id"])
-                and game_state.room_is_available()
-            ):
-                game_state.add_player(session["user_id"])
+                game_state.update_status()
+                game_status = game_state.status
 
-            game_state.update_status()
-            game_status = game_state.status
-
-            emit(
-                "response_user_id_and_status",
-                {
-                    "user_id": session["user_id"],
-                    "game_status": game_status,
-                    "room_id": room,
-                },
-            )
+                emit(
+                    "response_user_id_and_status",
+                    {
+                        "user_id": session["user_id"],
+                        "game_status": game_status,
+                        "room_id": room,
+                    },
+                )
 
     @socketio.on("request_maps_from_server")
     def handle_maps_from_server() -> None:

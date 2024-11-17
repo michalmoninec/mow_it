@@ -1,4 +1,7 @@
 from flask import Flask
+from flask_session import Session
+
+from redis import Redis
 
 from app.extensions import db, socketio
 from app.socket import configure_socketio
@@ -23,6 +26,7 @@ def create_app(config_class="config.Config") -> Flask:
 
 def test_app(config_class="config.TestConfig") -> Flask:
     app = Flask(__name__)
+
     app.config.from_object(config_class)
     app.register_blueprint(main)
     app.register_blueprint(singleplayer)

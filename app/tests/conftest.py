@@ -40,7 +40,7 @@ def test_db(client):
 
 @pytest.fixture
 def client():
-    app = create_app()
+    app = test_app()
     app.testing = True
     with app.app_context():
         yield app
@@ -54,8 +54,14 @@ def test_client(client):
 
 @pytest.fixture
 def socket_client(client):
-    socketio = SocketIO(client, manage_session=True)
-    return socketio.test_client(client)
+    def wrapper(session):
+        socketio = SocketIO(client, manage_session=False)
+        configure_socketio(socketio, session)
+        socketio_test_client = socketio.test_client(client)
+        return socketio_test_client
+        # socketio_test_client.disconnect()
+
+    return wrapper
 
 
 @pytest.fixture
