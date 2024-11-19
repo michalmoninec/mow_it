@@ -233,14 +233,20 @@ class GameState(db.Model):
         """
         Returns max level of GameState filtered by room_id.
         """
-        return cls.get_game_state_by_room(room_id).get_max_level()
+        game_state = cls.get_game_state_by_room(room_id)
+        if game_state:
+            return game_state.get_max_level()
+        return None
 
     @classmethod
     def game_state_advance_ready(cls, room_id: str) -> bool:
         """
         Returns information if both players of GameState filtered by room_id has completed level.
         """
-        return cls.get_game_state_by_room(room_id).both_players_completed_level()
+        game_state = cls.get_game_state_by_room(room_id)
+        if game_state:
+            return game_state.both_players_completed_level()
+        return False
 
     @classmethod
     def game_state_next_round_ready(cls, room_id: str) -> bool:

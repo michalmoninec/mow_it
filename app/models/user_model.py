@@ -135,7 +135,7 @@ class UserState(db.Model):
     @classmethod
     def advance_user_state_current_level(
         cls, user_id: str, max_level: int = None
-    ) -> None:
+    ) -> bool:
         """
         Advances to next level.
         If max level is not provided, it is set up as maximum level of all Maps.

@@ -1,5 +1,6 @@
 import pytest, json
 
+from flask import session
 from flask_socketio import SocketIO
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -53,15 +54,12 @@ def test_client(client):
 
 
 @pytest.fixture
-def socket_client(client):
-    def wrapper(session):
+def socket_client(client, test_client):
+    with test_client.session_transaction() as session:
         socketio = SocketIO(client, manage_session=False)
         configure_socketio(socketio, session)
         socketio_test_client = socketio.test_client(client)
         return socketio_test_client
-        # socketio_test_client.disconnect()
-
-    return wrapper
 
 
 @pytest.fixture

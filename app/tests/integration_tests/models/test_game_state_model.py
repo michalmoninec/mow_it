@@ -20,11 +20,11 @@ def test_get_players(test_db, game_state, p1_test, p2_test):
 
     game_state.player_1_id = p1_test.user_id
     p1, p2 = game_state.get_players()
-    assert p1 is not None and p2 is None
+    assert p1 and (p2 is None)
 
     game_state.player_2_id = p2_test.user_id
     p1, p2 = game_state.get_players()
-    assert p1 is not None and p2 is not None
+    assert (p1 is not None) and (p2 is not None)
 
 
 def test_update_status(test_db, game_state, p1_test, p2_test):
