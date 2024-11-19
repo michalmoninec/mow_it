@@ -2,6 +2,16 @@ import json
 
 from flask import session
 from flask_socketio import emit, join_room, leave_room
+
+from app.types_validation import (
+    RoomID,
+    validate_room_in_db,
+    validate_room_in_db_emit,
+    validate_socket_payload,
+    UserID,
+    RoomAndUserID,
+    UserRoomIDKey,
+)
 from app.scripts.game import (
     user_state_update,
 )
@@ -12,43 +22,34 @@ from app.enums import Status
 
 def configure_socketio(socketio, session=session):
     @socketio.on("join_room")
+    @validate_socket_payload(RoomAndUserID)
+    @validate_room_in_db_emit(GameState)
     def handle_join_room(data) -> None:
         room_id = data.get("room_id")
         user_id = data.get("user_id")
-        print(room_id, user_id)
-        if room_id and user_id:
-            join_room(room_id)
-            game_state = GameState.get_game_state_by_room(room_id)
-            if game_state:
-                if (
-                    game_state.user_not_in_room(user_id)
-                    and game_state.room_is_available()
-                ):
-                    game_state.add_player(user_id)
 
-                game_state.update_status()
-                game_status = game_state.status
+        join_room(room_id)
+        game_state = GameState.get_game_state_by_room(room_id)
 
-                emit(
-                    "response_user_id_and_status",
-                    {
-                        "user_id": user_id,
-                        "game_status": game_status,
-                        "room_id": room_id,
-                    },
-                )
-            else:
-                emit("error", {"message": "Invalid GameState."})
-        else:
-            emit("error", {"message": "No room or user ID in session."})
+        if game_state.user_not_in_room(user_id) and game_state.room_is_available():
+            game_state.add_player(user_id)
+            game_state.update_status()
+            game_status = game_state.status
+
+            emit(
+                "response_user_id_and_status",
+                {
+                    "user_id": user_id,
+                    "game_status": game_status,
+                    "room_id": room_id,
+                },
+            )
 
     @socketio.on("request_maps_from_server")
+    @validate_socket_payload(RoomID)
     def handle_maps_from_server(data) -> None:
         room = data.get("room_id")
-        if room:
-            emit("response_maps_from_server", to=room)
-        else:
-            emit("error", {"message": "No room ID in session."})
+        emit("response_maps_from_server", to=room)
 
     @socketio.on("request_initial_maps")
     def get_initial_maps(data) -> None:
