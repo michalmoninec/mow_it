@@ -71,6 +71,21 @@ def validate_user_in_db(user_model):
     return decorator
 
 
+def validate_user_in_db_emit(user_model):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(data, *args, **kwargs):
+            user_id = data.get("user_id")
+            if user_id and not user_model.get_user_by_id(user_id):
+                emit("error", {"message": "User not found in databse"})
+                return
+            return func(data, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 def validate_room_in_db(room_model):
     def decorator(func):
         @wraps(func)

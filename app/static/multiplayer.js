@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
+                console.log(data.valid);
                 if (data.valid) {
                     socket.emit('join_room', {
                         user_id: user_id,
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_advance_level_confirmation', () => {
+        console.log('server thinks he is ready to advance for this client');
         readyToPlay = true;
         socket.emit('request_level_advance', {
             user_id: user_id,
