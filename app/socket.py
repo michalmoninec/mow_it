@@ -12,13 +12,13 @@ from app.enums import Status
 
 def configure_socketio(socketio, session=session):
     @socketio.on("join_room")
-    def handle_join_room() -> None:
-        room = session.get("room_id")
-        user_id = session.get("user_id")
-        print(room, user_id)
-        if room and user_id:
-            join_room(room)
-            game_state = GameState.get_game_state_by_room(room)
+    def handle_join_room(data) -> None:
+        room_id = data.get("room_id")
+        user_id = data.get("user_id")
+        print(room_id, user_id)
+        if room_id and user_id:
+            join_room(room_id)
+            game_state = GameState.get_game_state_by_room(room_id)
             if game_state:
                 if (
                     game_state.user_not_in_room(user_id)
@@ -34,7 +34,7 @@ def configure_socketio(socketio, session=session):
                     {
                         "user_id": user_id,
                         "game_status": game_status,
-                        "room_id": room,
+                        "room_id": room_id,
                     },
                 )
             else:
@@ -43,19 +43,19 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "No room or user ID in session."})
 
     @socketio.on("request_maps_from_server")
-    def handle_maps_from_server() -> None:
-        room = session.get("room_id")
+    def handle_maps_from_server(data) -> None:
+        room = data.get("room_id")
         if room:
             emit("response_maps_from_server", to=room)
         else:
             emit("error", {"message": "No room ID in session."})
 
     @socketio.on("request_initial_maps")
-    def get_initial_maps() -> None:
-        user_id = session.get("user_id")
-        room = session.get("room_id")
+    def get_initial_maps(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
-        if user_id and room:
+        if user_id and room_id:
             user_state = UserState.get_user_by_id(user_id)
             if user_state:
                 emit(
@@ -70,17 +70,17 @@ def configure_socketio(socketio, session=session):
                         "game_completed": user_state.game_completed,
                         "rounds_won": user_state.rounds_won,
                     },
-                    to=room,
+                    to=room_id,
                 )
             else:
                 emit("error", {"message": "Invalid UserState."})
 
-            game_state = GameState.get_game_state_by_room(room)
+            game_state = GameState.get_game_state_by_room(room_id)
             if game_state:
                 emit(
                     "response_round_update",
                     {"round": game_state.current_round},
-                    to=room,
+                    to=room_id,
                 )
             else:
                 emit("error", {"message": "Invalid GameState."})
@@ -89,12 +89,12 @@ def configure_socketio(socketio, session=session):
 
     @socketio.on("request_update_data")
     def handle_update_values(data: dict) -> None:
-        user_id = session.get("user_id")
-        room = session.get("room_id")
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
         key = data.get("key")
 
-        if user_id and room:
-            max_level = GameState.get_game_state_max_level_by_room(room)
+        if user_id and room_id:
+            max_level = GameState.get_game_state_max_level_by_room(room_id)
 
             user_state_update(key, user_id, max_level)
 
@@ -113,7 +113,7 @@ def configure_socketio(socketio, session=session):
                         "rounds_won": user_state.rounds_won,
                         "key": key,
                     },
-                    to=room,
+                    to=room_id,
                 )
             else:
                 emit("error", {"message": "Invalid UserState."})
@@ -121,17 +121,17 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("request_level_advance_confirmation")
-    def handle_level_advance_confirmation() -> None:
-        user_id = session.get("user_id")
-        room = session.get("room_id")
+    def handle_level_advance_confirmation(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
-        if user_id and room:
+        if user_id and room_id:
             user_state = UserState.get_user_by_id(user_id)
             if user_state:
-                emit("response_player_finished_level", {"user_id": user_id}, to=room)
+                emit("response_player_finished_level", {"user_id": user_id}, to=room_id)
 
-                if GameState.game_state_advance_ready(room_id=room):
-                    emit("response_advance_level_confirmation", to=room)
+                if GameState.game_state_advance_ready(room_id=room_id):
+                    emit("response_advance_level_confirmation", to=room_id)
                 else:
                     user_state.add_score(300)
                     emit(
@@ -149,12 +149,12 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("request_level_advance")
-    def handle_level_advance() -> None:
-        user_id = session["user_id"]
-        room = session["room_id"]
+    def handle_level_advance(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
-        if user_id and room:
-            max_level = GameState.get_game_state_max_level_by_room(room)
+        if user_id and room_id:
+            max_level = GameState.get_game_state_max_level_by_room(room_id)
             UserState.advance_user_state_current_level(user_id, max_level)
 
             user_state = UserState.get_user_by_id(user_id=user_id)
@@ -171,7 +171,7 @@ def configure_socketio(socketio, session=session):
                         "game_completed": user_state.game_completed,
                         "rounds_won": user_state.rounds_won,
                     },
-                    to=room,
+                    to=room_id,
                 )
             else:
                 emit("error", {"message": "Invalid UserState."})
@@ -179,9 +179,9 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("request_game_finished")
-    def handle_game_finished() -> None:
-        user_id = session.get("user_id")
-        room_id = session.get("room_id")
+    def handle_game_finished(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
         if user_id and room_id:
             game_state = GameState.get_game_state_by_room(room_id)
@@ -213,9 +213,9 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("request_data_update")
-    def handle_data_update() -> None:
-        user_id = session.get("user_id")
-        room_id = session.get("room_id")
+    def handle_data_update(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
         if user_id and room_id:
             user_state = UserState.get_user_by_id(user_id)
@@ -241,8 +241,8 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("request_game_state_reset")
-    def handle_game_state_reset() -> None:
-        room_id = session.get("room_id")
+    def handle_game_state_reset(data) -> None:
+        room_id = data.get("room_id")
         if room_id:
             game_state = GameState.get_game_state_by_room(room_id)
             if game_state:
@@ -254,9 +254,9 @@ def configure_socketio(socketio, session=session):
             emit("error", {"message": "Invalid session data."})
 
     @socketio.on("disconnect")
-    def handle_disconnect() -> None:
-        user_id = session.get("user_id")
-        room_id = session.get("room_id")
+    def handle_disconnect(data) -> None:
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
 
         if user_id and room_id:
             game_state = GameState.get_game_state_by_room(room_id)

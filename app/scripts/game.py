@@ -3,7 +3,7 @@ import json
 from typing import List, Tuple, Set
 
 
-from app.custom_types import NestedDictList
+from app.types_validation import NestedDictList
 
 from app.models.map_model import Maps
 from app.models.user_model import UserState

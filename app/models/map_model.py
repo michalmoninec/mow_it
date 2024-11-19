@@ -5,7 +5,7 @@ from sqlalchemy import Text, Column, Integer, String, desc
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.extensions import db
-from app.custom_types import NestedDictList
+from app.types_validation import NestedDictList
 
 
 class Maps(db.Model):

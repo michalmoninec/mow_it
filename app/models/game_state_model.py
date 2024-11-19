@@ -7,7 +7,7 @@ from typing import Tuple
 
 from app.extensions import db
 from app.enums import Status
-from app.custom_types import NestedDictList
+from app.types_validation import NestedDictList
 
 from app.models.user_model import UserState, Maps
 

@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let roundValue = document.getElementById('round_value');
     let winnerLabel = document.getElementById('winner_label');
     const grassBlock = document.getElementById('grass-block');
-    let user_id;
-    let roomID;
+    let user_id = getUserID();
+    let room_id = getRoomID();
     let gameStatus;
     let readyToPlay;
 
@@ -68,13 +68,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', () => {
         console.log('Connected to server');
-        socket.emit('join_room');
+        fetch('/multiplayer/play', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: user_id,
+                room_id: room_id,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    console.log('ERROR OCCURED');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.valid) {
+                    socket.emit('join_room', {
+                        user_id: user_id,
+                        room_id: room_id,
+                    });
+                } else {
+                    window.location.href = `/`;
+                }
+            });
     });
 
     socket.on('response_user_id_and_status', (data) => {
         user_id = data.user_id;
         gameStatus = data.game_status;
-        roomID = data.room_id;
+        room_id = data.room_id;
 
         if (gameStatus == 'finished') {
             readyToPlay = false;
@@ -82,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(p2_modal);
             setModalVisible(endGameModal);
         } else if (gameStatus == 'ready') {
-            socket.emit('request_maps_from_server');
+            socket.emit('request_maps_from_server', { room_id: room_id });
         } else if (gameStatus == 'finished') {
             finishedGame();
         } else {
@@ -92,7 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_maps_from_server', () => {
         readyToPlay = true;
-        socket.emit('request_initial_maps');
+        socket.emit('request_initial_maps', {
+            user_id: user_id,
+            room_id: room_id,
+        });
     });
 
     socket.on('response_update_data', (data) => {
@@ -109,10 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
             p1_rounds_label.innerText = data.rounds_won;
             if (data.game_completed) {
                 console.log('Game finished');
-                socket.emit('request_game_finished');
+                socket.emit('request_game_finished', {
+                    user_id: user_id,
+                    room_id: room_id,
+                });
             } else if (data.level_completed) {
                 console.log('Level finished');
-                socket.emit('request_level_advance_confirmation');
+                socket.emit('request_level_advance_confirmation', {
+                    room_id: room_id,
+                    user_id: user_id,
+                });
             }
         } else {
             setModalDisable(p2_modal);
@@ -142,7 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_advance_level_confirmation', () => {
         readyToPlay = true;
-        socket.emit('request_level_advance');
+        socket.emit('request_level_advance', {
+            user_id: user_id,
+            room_id: room_id,
+        });
     });
 
     socket.on('response_player_finished_game', (data) => {
@@ -176,7 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_init_data_update', () => {
-        socket.emit('request_data_update');
+        socket.emit('request_data_update', {
+            user_id: user_id,
+            room_id: room_id,
+        });
     });
 
     socket.on('response_score_update', (data) => {
@@ -219,7 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.onbeforeunload = function () {
         socket.disconnect();
         console.log('before unload happens..');
-        socket.emit('disconnect');
+        socket.emit('disconnect', {
+            user_id: user_id,
+            room_id: room_id,
+        });
     };
 
     backButton.addEventListener('click', () => {
@@ -231,12 +274,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     restartGameButton.addEventListener('click', () => {
-        socket.emit('request_game_state_reset');
+        socket.emit('request_game_state_reset', {
+            room_id: room_id,
+        });
     });
 
     function sendKeyPress(key) {
         if (readyToPlay) {
-            socket.emit('request_update_data', { key: key });
+            socket.emit('request_update_data', {
+                key: key,
+                user_id: user_id,
+                room_id: room_id,
+            });
             lastDirection = key;
         }
     }
@@ -268,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRoomLink() {
-        return `http://${document.domain}:${location.port}/multiplayer/join/${roomID}`;
+        return `http://${document.domain}:${location.port}/multiplayer/join/${room_id}`;
     }
 
     function rotateMower(key) {
@@ -287,6 +336,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.oactive').style.transform =
                 'rotate(90deg)';
         }
+    }
+
+    function getUserID() {
+        return localStorage.getItem('userID');
+    }
+
+    function getRoomID() {
+        return localStorage.getItem('roomID');
     }
 
     p1ModalLinkDiv.addEventListener('click', () => {

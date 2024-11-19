@@ -17,6 +17,5 @@ def home() -> str:
     Clears session.
     """
     create_maps()
-    session.clear()
 
     return render_template("home.html")

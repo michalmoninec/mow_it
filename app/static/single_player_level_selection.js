@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((data) => {
                 if (userID == null) {
                     localStorage.setItem('userID', data.user_id);
+                    userID = data.user_id;
                 }
                 displayAchievedLevels(data.levels);
             });
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({
                 selected_level: level,
+                user_id: userID,
             }),
         })
             .then((response) => {

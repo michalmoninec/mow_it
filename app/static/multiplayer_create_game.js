@@ -25,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                if (userID == null) {
+                if (data.user_id && data.room_id) {
                     localStorage.setItem('userID', data.user_id);
+                    localStorage.setItem('roomID', data.room_id);
                 }
                 window.location.href = `/multiplayer/play`;
             });

@@ -10,7 +10,16 @@ from flask import (
     Blueprint,
     Response,
 )
-
+from app.models.user_model import UserState
+from app.types_validation import (
+    KeyAndUserID,
+    UserID,
+    LevelAndUserID,
+    RoomAndUserID,
+    validate_json,
+    validate_room_in_db,
+    validate_user_in_db,
+)
 from app.models.game_state_model import GameState
 
 
@@ -24,28 +33,23 @@ def multiplayer_create_game() -> str:
 
 
 @multiplayer.post("/multiplayer/create/")
-def multiplayer_get_user() -> Response:
+@validate_json(UserID)
+def multiplayer_get_user(data) -> Response:
     """
     Gets ID from client, if id is None, then it assign new random ID.
     Assign random room_id.
     Returns user_id either from client or newly assigned.
     """
-    data = request.get_json()
-    if not data or "user_id" not in data:
-        return {"error": "User ID not included in request."}, 400
-
     user_id = data["user_id"]
+    room_id = str(uuid.uuid4())[:8]
 
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
 
-    session["user_id"] = user_id
-    session["room_id"] = str(uuid.uuid4())[:8]
+    GameState.create_multiplayer_game_state(room_id)
+    GameState.create_user_after_room_join(room_id, user_id)
 
-    GameState.create_multiplayer_game_state(session["room_id"])
-    GameState.create_user_after_room_join(session["room_id"], session["user_id"])
-
-    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]}), 201
+    return jsonify({"user_id": user_id, "room_id": room_id}), 201
 
 
 @multiplayer.get("/multiplayer/join/<room_id>/")
@@ -54,35 +58,41 @@ def join_room_get_user(room_id) -> str:
 
 
 @multiplayer.post("/multiplayer/join/<room_id>/")
-def join_room_set_user_and_room(room_id) -> Response:
-    user_id = request.get_json().get("user_id")
+@validate_json(UserID)
+def join_room_set_user_and_room(data, room_id) -> Response:
+    user_id = data["user_id"]
 
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
 
-    session["user_id"] = user_id
-    session["room_id"] = room_id
-
     game_state = GameState.get_game_state_by_room(room_id)
 
     if game_state is None:
-        session["room_id"] = None
-    elif (
-        game_state.user_not_in_room(session["user_id"])
-        and not game_state.room_is_available()
-    ):
-        session["room_id"] = None
+        return jsonify({"error": "Invalid room ID."}), 400
+    elif game_state.user_not_in_room(user_id) and not game_state.room_is_available():
+        return jsonify({"error": "Room is full."}), 400
     else:
         GameState.create_user_after_room_join(
-            session["room_id"],
-            session["user_id"],
+            room_id,
+            user_id,
         )
 
-    return jsonify({"user_id": session["user_id"], "room_id": session["room_id"]}), 201
+    return jsonify({"user_id": user_id, "room_id": room_id}), 201
 
 
 @multiplayer.get("/multiplayer/play/")
 def multiplayer_game_play() -> str:
-    if "user_id" in session and "room_id" in session:
-        return render_template("multiplayer_game.html"), 200
-    return redirect(url_for("multiplayer.multiplayer_create_game")), 307
+    return render_template("multiplayer_game.html"), 200
+
+
+@multiplayer.post("/multiplayer/play/")
+@validate_json(RoomAndUserID)
+@validate_user_in_db(UserState)
+@validate_room_in_db(GameState)
+def multiplayer_game_play_fetch(data) -> str:
+    user_id = data["user_id"]
+    room_id = data["room_id"]
+    if user_id and room_id:
+        print("should be alright and connect")
+        return jsonify({"valid": True})
+    return jsonify({"valid": False})

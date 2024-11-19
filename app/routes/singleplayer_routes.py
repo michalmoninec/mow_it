@@ -9,6 +9,13 @@ from flask import (
     Response,
 )
 
+from app.types_validation import (
+    KeyAndUserID,
+    UserID,
+    LevelAndUserID,
+    validate_json,
+    validate_user_in_db,
+)
 from app.models.user_model import UserState
 
 from app.scripts.game import (
@@ -22,72 +29,58 @@ singleplayer = Blueprint("singleplayer", __name__)
 
 @singleplayer.get("/single_player/level_selection/")
 def single_player_level_selection() -> str:
-    """Render page for level selection"""
+    """
+    Render page for level selection.
+    """
     return render_template("single_player_level_selection.html")
 
 
 @singleplayer.post("/single_player/level_data/")
-def single_player_level_data() -> Response:
-    """Prepare level based on user's achieved level"""
-
-    data = request.get_json()
-
-    try:
-        user_id = data["user_id"]
-    except KeyError:
-        return jsonify({"message": "UserID not included."}), 400
-
-    if "user_id" not in session or user_id == None:
-        if user_id:
-            session["user_id"] = user_id
-        else:
-            session["user_id"] = str(uuid.uuid4())[:8]
-        if not UserState.get_user_by_id(session["user_id"]):
-            UserState.create_user_state(user_id=session["user_id"])
-
-    levels = user_get_achieved_levels(session["user_id"])
-    if levels is None:
-        return jsonify({"message": "User or map not found."}), 404
-
-    return jsonify({"user_id": session["user_id"], "levels": levels}), 200
+@validate_json(UserID)
+def single_player_level_data(data) -> Response:
+    """
+    Prepare level based on user's achieved level.
+    """
+    user_id = data["user_id"]
+    user_state = UserState.get_user_by_id(user_id)
+    if user_state is None:
+        user_id = str(uuid.uuid4())[:8]
+        UserState.create_user_state(user_id)
+    levels = user_get_achieved_levels(user_id)
+    return jsonify({"user_id": user_id, "levels": levels}), 200
 
 
 @singleplayer.post("/single_player/selected_level/")
-def single_player_set_selected_level() -> Response:
-    desired_level = request.get_json().get("selected_level")
-
-    if not desired_level:
-        return jsonify({"message": "Desired level not provided."}), 400
-
-    if "user_id" not in session:
-        return jsonify({"message": "User ID not in session."}), 400
-
-    valid_level_set = UserState.get_user_by_id(session["user_id"]).set_desired_level(
-        desired_level
-    )
-
+@validate_json(LevelAndUserID)
+@validate_user_in_db(UserState)
+def single_player_set_selected_level(data) -> Response:
+    """
+    Receives desired level, validate the level with boundary to max achieved level
+    and returns json with "valid_level_set" = True if level was set correctly, otherwise False.
+    """
+    user_id = data["user_id"]
+    desired_level = data["selected_level"]
+    print(f"user id: {user_id}")
+    user_state = UserState.get_user_by_id(user_id)
+    valid_level_set = user_state.set_desired_level(desired_level)
     return jsonify({"valid_level_set": valid_level_set}), 200
 
 
 @singleplayer.post("/single_player/retrieve_map/")
-def single_player_init_map() -> Response:
-    """Returns prepared map when client connects, reloads, advance level"""
+@validate_json(UserID)
+@validate_user_in_db(UserState)
+def single_player_init_map(data) -> Response:
+    """
+    Returns prepared map when client connects, reloads, advance level.
+    """
 
-    user_id = request.get_json().get("user_id")
+    user_id = data["user_id"]
 
-    if "user_id" not in session or user_id == None:
-        if user_id:
-            session["user_id"] = user_id
-        else:
-            session["user_id"] = str(uuid.uuid4())[:8]
-        if not UserState.get_user_by_id(session["user_id"]):
-            UserState.create_user_state(user_id=session["user_id"])
+    if user_id is None:
+        user_id = str(uuid.uuid4())[:8]
+        UserState.create_user_state(user_id)
 
-    user_state = UserState.get_user_by_id(session["user_id"])
-
-    if user_state is None:
-        return jsonify({"message": "User or map not found"}), 400
-
+    user_state = UserState.get_user_by_id(user_id)
     user_state.set_default_state_by_level()
 
     return (
@@ -99,7 +92,7 @@ def single_player_init_map() -> Response:
                     "completed": user_state.level_completed,
                     "level": user_state.level,
                 },
-                "user_id": session["user_id"],
+                "user_id": user_id,
             }
         ),
         200,
@@ -108,30 +101,25 @@ def single_player_init_map() -> Response:
 
 @singleplayer.get("/single_player/")
 def single_player_prepare() -> str:
-    """Render page for single player"""
+    """
+    Render page for single player.
+    """
 
     return render_template("single_player.html")
 
 
 @singleplayer.post("/single_player/move/")
-def single_player_move_handle() -> Response:
+@validate_json(KeyAndUserID)
+@validate_user_in_db(UserState)
+def single_player_move_handle(data) -> Response:
     """
-    Receives key
-    Updates game state
+    Receives key.
+    Updates game state.
     """
+    user_id = data["user_id"]
+    key = data["key"]
 
-    key = request.get_json().get("key")
-
-    if key is None:
-        return {"message": "Key was not provided."}, 400
-
-    user_id = session.get("user_id")
-    if user_id is None:
-        return {"message": "No User ID in session."}, 400
-
-    user_state = user_state_update(key, session["user_id"])
-    if user_state is None:
-        return {"message": "Invalid user."}, 400
+    user_state = user_state_update(key, user_id)
 
     return (
         jsonify(
@@ -150,12 +138,13 @@ def single_player_move_handle() -> Response:
 
 
 @singleplayer.post("/single_player/advance_current_level/")
-def single_player_advance_current_level() -> Response:
-    """Increase user's level by 1 and redirect to game preparation"""
-    user_id = session.get("user_id")
-    if user_id is None:
-        return {"message": "User ID not in session."}, 400
-
+@validate_user_in_db(UserState)
+@validate_json(UserID)
+def single_player_advance_current_level(data) -> Response:
+    """
+    Increase user's level by 1 and redirect to game preparation.
+    """
+    user_id = data["user_id"]
     valid_level_advance = UserState.advance_user_state_current_level(user_id)
 
     return jsonify({"valid_advance": valid_level_advance}), 200

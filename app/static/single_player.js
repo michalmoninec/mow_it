@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({
                 key: key,
+                user_id: userID,
             }),
         })
             .then((response) => response.json())
@@ -121,7 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: '',
+                body: JSON.stringify({
+                    user_id: userID,
+                }),
             })
                 .then((response) => {
                     if (!response.ok) {
@@ -227,36 +230,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Keep polling the gamepad
-        requestAnimationFrame(pollGamepad);
+        // requestAnimationFrame(pollGamepad);
     }
-    let prevAxesStates = [];
+    // let prevAxesStates = [];
 
-    function pollGamepadAxes() {
-        const gamepads = navigator.getGamepads();
+    // function pollGamepadAxes() {
+    //     const gamepads = navigator.getGamepads();
 
-        if (gamepads[0]) {
-            // Check if at least one gamepad is connected
-            const gamepad = gamepads[0];
+    //     if (gamepads[0]) {
+    //         // Check if at least one gamepad is connected
+    //         const gamepad = gamepads[0];
 
-            // Loop through all the axes
-            gamepad.axes.forEach((axisValue, index) => {
-                // Check if the axis value has changed significantly (to avoid noise)
-                const threshold = 0.1; // Define a threshold to detect significant movement
-                if (
-                    Math.abs(axisValue - (prevAxesStates[index] || 0)) >
-                    threshold
-                ) {
-                    console.log(`Axis ${index} moved: ${axisValue}`);
-                }
+    //         // Loop through all the axes
+    //         gamepad.axes.forEach((axisValue, index) => {
+    //             // Check if the axis value has changed significantly (to avoid noise)
+    //             const threshold = 0.1; // Define a threshold to detect significant movement
+    //             if (
+    //                 Math.abs(axisValue - (prevAxesStates[index] || 0)) >
+    //                 threshold
+    //             ) {
+    //                 console.log(`Axis ${index} moved: ${axisValue}`);
+    //             }
 
-                // Store the current state for the next frame
-                prevAxesStates[index] = axisValue;
-            });
-        }
+    //             // Store the current state for the next frame
+    //             prevAxesStates[index] = axisValue;
+    //         });
+    //     }
 
-        // Keep polling the gamepad
-        requestAnimationFrame(pollGamepadAxes);
-    }
+    //     // Keep polling the gamepad
+    //     requestAnimationFrame(pollGamepadAxes);
+    // }
 
     // Start polling when the gamepad is connected
 
