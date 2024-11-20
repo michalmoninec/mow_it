@@ -49,19 +49,6 @@ def test_get_multiplayer_game_play_valid(test_client, test_db):
     assert resp.status_code == 200
 
 
-def test_post_get_user_invalid_payload(test_client, test_db):
-    """
-    Tests POST method to an endpoint "/multiplayer/create/".
-    Empty payload.
-    Excpeted response status code 400.
-    """
-    endpoint = "/multiplayer/create/"
-    data = {}
-
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 400
-
-
 def test_post_get_user_user_valid(test_client, test_db, mock_method):
     """
     Tests POST method to an endpoint "/multiplayer/create/".

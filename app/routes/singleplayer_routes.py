@@ -60,7 +60,6 @@ def single_player_set_selected_level(data) -> Response:
     """
     user_id = data["user_id"]
     desired_level = data["selected_level"]
-    print(f"user id: {user_id}")
     user_state = UserState.get_user_by_id(user_id)
     valid_level_set = user_state.set_desired_level(desired_level)
     return jsonify({"valid_level_set": valid_level_set}), 200

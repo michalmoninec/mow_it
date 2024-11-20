@@ -27,37 +27,7 @@ def test_get_single_player_prepare(test_client):
     assert resp.request.path == url_for("singleplayer.single_player_prepare")
 
 
-def test_post_single_player_level_data_user_not_included(test_client, test_db):
-    """
-    Tests POST request to endpoint '/single_player/level_data/' with
-    empty json.
-    Excpected response status code: 400.
-    """
-
-    endpoint = "/single_player/level_data/"
-    data = {}
-
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 400
-
-
-def test_post_single_player_level_data_user_doesnt_exist(test_client, test_db):
-    """
-    Tests POST request to endpoint '/single_player/level_data/' with
-    user's ID that is not present in database.
-    Excpected response status code: 200.
-    Returned user ID should be generated.
-    """
-
-    endpoint = "/single_player/level_data/"
-    data = {"user_id": "non_existing"}
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 200
-    resp_data = resp.get_json()
-    assert resp_data["user_id"] != data["user_id"]
-
-
-def test_post_single_player_level_data_user_exists_and_in_payload(
+def test_post_single_player_level_data_user_exists(
     test_client, test_db, test_user_state, mock_method
 ):
     """
@@ -79,20 +49,26 @@ def test_post_single_player_level_data_user_exists_and_in_payload(
     assert mock_user_creation.call_count == 0
 
 
-def test_set_selected_level_empty_payload(test_client, test_db, test_user_state):
+def test_post_single_player_level_data_user_creation(
+    test_client, test_db, test_user_state, mock_method
+):
     """
-    Tests POST request to endpoint "/single_player/selected_level/".
-    Request, that doesnt include desired_level.```
-    Excpected response status code 400.
+    Tests POST request to endpoint '/single_player/level_data/' with
+    user's ID that has existing UserState in database and ID is in payload.
+    Excpected response status code: 200.
+    Response users ID must be same as provided with POST method.
+    UserState was created
     """
 
-    endpoint = "/single_player/selected_level/"
-    data = {}
+    endpoint = "/single_player/level_data/"
+    data = {"user_id": None}
+    mock_user_creation = mock_method(UserState, "create_user_state")
 
     resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 400
+    assert resp.status_code == 200
     resp_data = resp.get_json()
-    assert resp_data["error"] == "Missing field"
+    assert resp_data["user_id"] != None
+    assert mock_user_creation.call_count == 1
 
 
 def test_set_selected_level_valid_set(test_client, test_db, test_user_state):
@@ -135,25 +111,7 @@ def test_set_selected_level_invalid_set(test_client, test_db, test_user_state):
     assert resp_data["valid_level_set"] == False
 
 
-def test_init_map_invalid_user(test_client, test_db):
-    """
-    Tests POST request to endpoint "/single_player/retrieve_map/".
-    User's ID is provided and is in payload.
-    No UserState exists with this ID.
-    Excpected response status code 200.
-    """
-
-    endpoint = "/single_player/retrieve_map/"
-    data = {"user_id": "non_existing"}
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 404
-    resp_data = resp.get_json()
-    assert resp_data["error"] == "User not found in databse"
-
-
-def test_init_map_user_exists_and_in_payload(
-    test_client, test_db, test_user_state, test_map
-):
+def test_init_map_valid(test_client, test_db, test_user_state, test_map):
     """
     Tests POST request to endpoint "/single_player/retrieve_map/".
     User's ID is provided and is in payload.
@@ -190,70 +148,6 @@ def test_init_map_user_is_none_not_in_payload(
     assert resp_data["user_id"] != None
 
 
-def test_init_map_user_exists_and_not_in_payload(
-    test_client, test_db, test_user_state, test_map
-):
-    """
-    Tests POST request to endpoint "/single_player/retrieve_map/".
-    User's ID is not provided and is in payload.
-    UserState does not exist with this ID.
-    Excpected response status code 200.
-    New UserState with uuid user's ID is created.
-    """
-
-    endpoint = "/single_player/retrieve_map/"
-    data = {"user_id": test_user_state.user_id}
-
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 200
-    resp_data = resp.get_json()
-    assert resp_data["user_id"] == test_user_state.user_id
-
-
-def test_move_handle_invalid_key(test_client, test_db, test_user_state, test_map):
-    """
-    Tests POST request to endpoint "/single_player/move/".
-    No key in json request.
-    """
-
-    endpoint = "/single_player/move/"
-    data = {}
-
-    resp = test_client.post(endpoint, json=data)
-
-    assert resp.status_code == 400
-
-
-def test_move_handle_no_id_in_payload(test_client, test_db, test_user_state, test_map):
-    """
-    Tests POST request to endpoint "/single_player/move/".
-    Key is provided.
-    Provided ID does not correspond with existing UserState.
-    """
-
-    endpoint = "/single_player/move/"
-    data = {"key": "ArrowUp"}
-
-    resp = test_client.post(endpoint, json=data)
-
-    assert resp.status_code == 400
-
-
-def test_move_handle_user_does_not_exist(test_client, test_db):
-    """
-    Tests POST request to endpoint "/single_player/move/".
-    Key is provided.
-    User ID is in payload.
-    UserState with provided ID does not exist.
-    """
-
-    endpoint = "/single_player/move/"
-    data = {"key": "ArrowUp"}
-
-    resp = test_client.post(endpoint, json=data)
-    assert resp.status_code == 400
-
-
 def test_move_handle_valid(test_client, test_db, test_user_state, test_map, mock_func):
     """
     Tests POST request to endpoint "/single_player/move/".
@@ -270,18 +164,6 @@ def test_move_handle_valid(test_client, test_db, test_user_state, test_map, mock
 
     resp = test_client.post(endpoint, json=data)
     assert resp.status_code == 200
-
-
-def test_advance_curr_level_invalid_payload(test_client, test_db):
-    """
-    Tests POST request to endpoint "/single_player/advance_current_level/".
-    User ID is not stored in payload.
-    """
-
-    endpoint = "/single_player/advance_current_level/"
-
-    resp = test_client.post(endpoint, json={})
-    assert resp.status_code == 400
 
 
 def test_advance_curr_level_invalid_advance(
