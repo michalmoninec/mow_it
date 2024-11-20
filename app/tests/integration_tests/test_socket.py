@@ -37,7 +37,7 @@ def test_join_room_no_game_state(test_client, socket_client, test_db):
 
 
 def test_join_room_no_valid_game_state(
-    test_client, socket_client, test_db, game_state, p1_test
+    test_client, socket_client, test_db, test_game, p1_test
 ):
     """
     Tests socketio on event for event name: "join_room".
@@ -47,7 +47,7 @@ def test_join_room_no_valid_game_state(
     event_name = "join_room"
     payload = {
         "user_id": p1_test.user_id,
-        "room_id": game_state.room_id,
+        "room_id": test_game.room_id,
     }
 
     socket_client.emit(event_name, payload)
@@ -119,10 +119,27 @@ def test_handle_maps_from_server_valid(test_client, socket_client):
     ]
 
 
-def test_get_inital_maps_invalid_session_data(test_client, socket_client):
+def test_get_inital_maps(test_client, socket_client, test_game, test_user):
     """
     Tests socketio on event for event name: "request_initial_maps".
-    Session data is empty.
-    Expected number of received events is zero.
+    Expected number of received events is two:
+    response_update_data,
+    response_round_update.
     """
-    pass
+    event_name = "request_initial_maps"
+    join_event = "test_join_room"
+    payload = {
+        "user_id": test_user.user_id,
+        "room_id": test_game.room_id,
+    }
+
+    socket_client.emit(join_event, payload)
+    socket_client.emit(event_name, payload)
+    received_events = socket_client.get_received()
+    resp_user_data = received_events[0]["args"][0]
+    test_user.map = json.loads(test_user.map)
+    for key in resp_user_data:
+        assert resp_user_data[key] == test_user.__getattribute__(key)
+
+    resp_room_data = received_events[1]["args"][0]
+    assert resp_room_data["round"] == test_game.current_round

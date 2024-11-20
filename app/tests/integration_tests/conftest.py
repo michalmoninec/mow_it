@@ -3,6 +3,20 @@ import pytest, json
 from app import create_app
 from app.models.game_state_model import GameState
 from app.models.user_model import UserState
+from app.scripts.game import create_empty_map, obstacle_col, obstacle_cube
+
+default_obstacles = {
+    "level": 1,
+    "name": "name01",
+    "start": [0, 0],
+    "obstacles": obstacle_col(1, 0, 7)
+    + obstacle_col(3, 1, 8)
+    + obstacle_cube(5, 8, 5, 8),
+}
+
+default_map = create_empty_map()
+for x, y in default_obstacles["obstacles"]:
+    default_map[x][y]["blocker"] = True
 
 
 @pytest.fixture
@@ -16,7 +30,7 @@ def test_user_data():
         "name": "john doe",
         "game_completed": False,
         "level_completed": False,
-        "map": json.dumps({"init_key": "init_value"}),
+        "map": json.dumps({"key": "hole"}),
     }
 
 
@@ -50,7 +64,7 @@ def game_method_create(test_map_data):
 
 
 @pytest.fixture
-def test_user_state(test_db, test_user_data):
+def test_user(test_db, test_user_data):
     user_state = UserState(**test_user_data)
     test_db.session.add(user_state)
     test_db.session.commit()
@@ -58,7 +72,7 @@ def test_user_state(test_db, test_user_data):
 
 
 @pytest.fixture
-def game_state(test_db, game_data):
+def test_game(test_db, game_data):
     game_state = GameState(**game_data)
     test_db.session.add(game_state)
     test_db.session.commit()
@@ -66,7 +80,7 @@ def game_state(test_db, game_data):
 
 
 @pytest.fixture
-def p1_test(test_db, game_state):
+def p1_test(test_db, test_game):
     p1 = UserState(user_id="id1")
     test_db.session.add(p1)
     test_db.session.commit()
@@ -74,7 +88,7 @@ def p1_test(test_db, game_state):
 
 
 @pytest.fixture
-def p2_test(test_db, game_state):
+def p2_test(test_db, test_game):
     p2 = UserState(user_id="id2")
     test_db.session.add(p2)
     test_db.session.commit()

@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_update_data', (data) => {
+        console.log(`map: ${data.map}`);
         if (data.user_id == user_id) {
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);

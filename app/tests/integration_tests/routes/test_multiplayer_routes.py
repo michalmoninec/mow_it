@@ -80,7 +80,7 @@ def test_post_join_room_set_invalid_room_id(test_client, test_db, mock_method):
 
 
 def test_post_join_room_set_valid_room_full_room(
-    test_client, test_db, mock_method, game_state, p1_test, p2_test
+    test_client, test_db, mock_method, test_game, p1_test, p2_test
 ):
     """
     Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
@@ -88,11 +88,11 @@ def test_post_join_room_set_valid_room_full_room(
     Room with provided ID is full.
     Returned status 400.
     """
-    room_id = game_state.room_id
+    room_id = test_game.room_id
     endpoint = f"/multiplayer/join/{room_id}/"
     data = {"user_id": "test_user_id"}
-    game_state.add_player(p1_test.user_id)
-    game_state.add_player(p2_test.user_id)
+    test_game.add_player(p1_test.user_id)
+    test_game.add_player(p2_test.user_id)
 
     resp = test_client.post(endpoint, json=data)
     assert resp.status_code == 400
@@ -100,7 +100,7 @@ def test_post_join_room_set_valid_room_full_room(
 
 
 def test_post_join_room_set_valid_join(
-    test_client, test_db, mock_method, game_state, p1_test, p2_test
+    test_client, test_db, mock_method, test_game, p1_test, p2_test
 ):
     """
     Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
@@ -108,14 +108,14 @@ def test_post_join_room_set_valid_join(
     Room with provided ID is full.
     Returned room ID should be set to None.
     """
-    room_id = game_state.room_id
+    room_id = test_game.room_id
     endpoint = f"/multiplayer/join/{room_id}/"
     user_id = "test_user_id"
     data = {"user_id": user_id}
-    game_state.add_player(p1_test.user_id)
+    test_game.add_player(p1_test.user_id)
 
     resp = test_client.post(endpoint, json=data)
     assert resp.status_code == 201
     resp_data = resp.get_json()
-    assert resp_data["room_id"] == game_state.room_id
+    assert resp_data["room_id"] == test_game.room_id
     assert resp_data["user_id"] == user_id

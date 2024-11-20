@@ -8,7 +8,7 @@ def test_user_state_update(dirs):
     pass
 
 
-def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user_state):
+def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user):
     """
     Tests, that list of directories containing level and map data is returned correctly.
     """
@@ -16,13 +16,13 @@ def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user
 
     assert user_get_achieved_levels("non_exist") == None
 
-    test_user_state.achieved_level = 3
+    test_user.achieved_level = 3
     returned_levels = [
         {"level": level, "data": test_map_data}
-        for level in range(1, test_user_state.achieved_level + 1)
+        for level in range(1, test_user.achieved_level + 1)
     ]
 
-    assert user_get_achieved_levels(test_user_state.user_id) == returned_levels
+    assert user_get_achieved_levels(test_user.user_id) == returned_levels
 
 
 def test_create_maps_not_empty(test_db, test_map_data, mock_method):

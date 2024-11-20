@@ -133,7 +133,7 @@ def test_user_validation_in_db_user_none(apply_validation, test_client, test_db)
 
 
 def test_user_validation_in_db_user_found(
-    apply_validation, test_client, test_db, test_user_state
+    apply_validation, test_client, test_db, test_user
 ):
     """
     Tests, that user validation works correctly.
@@ -142,7 +142,7 @@ def test_user_validation_in_db_user_found(
     Resp status should be 200.
     """
     endpoint = "/"
-    data = {"user_id": test_user_state.user_id}
+    data = {"user_id": test_user.user_id}
     validated_func = apply_validation(validate_user_in_db, UserState, func_test)
 
     test_client.post(endpoint, json=data)
@@ -188,7 +188,7 @@ def test_room_validation_in_db_user_none(apply_validation, test_client, test_db)
 
 
 def test_room_validation_in_db_user_found(
-    apply_validation, test_client, test_db, game_state
+    apply_validation, test_client, test_db, test_game
 ):
     """
     Tests, that user validation works correctly.
@@ -197,7 +197,7 @@ def test_room_validation_in_db_user_found(
     Resp status should be 200.
     """
 
-    data = {"room_id": game_state.room_id}
+    data = {"room_id": test_game.room_id}
     validated_func = apply_validation(validate_room_in_db, GameState, func_test)
 
     resp, resp_code = validated_func(data)

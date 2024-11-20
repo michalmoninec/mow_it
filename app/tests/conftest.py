@@ -8,10 +8,25 @@ from sqlalchemy.orm import sessionmaker
 from app import create_app, db, test_app
 
 # from app.extensions import socketio
+from app.scripts.game import create_empty_map, obstacle_col, obstacle_cube
 from app.socket import configure_socketio
 from app.models.map_model import Maps
 from app.models.user_model import UserState
 from app.models.game_state_model import GameState
+
+
+default_obstacles = {
+    "level": 1,
+    "name": "name01",
+    "start": [0, 0],
+    "obstacles": obstacle_col(1, 0, 7)
+    + obstacle_col(3, 1, 8)
+    + obstacle_cube(5, 8, 5, 8),
+}
+
+default_map = create_empty_map()
+for x, y in default_obstacles["obstacles"]:
+    default_map[x][y]["blocker"] = True
 
 
 @pytest.fixture
@@ -109,7 +124,7 @@ def game_data():
         "p2_rounds_won": 1,
         "status": "init",
         "winner_id": None,
-        "map": "some_text",
+        "map": json.dumps(default_map),
     }
 
 
@@ -117,7 +132,7 @@ def game_data():
 def test_map_data():
     return {
         "name": "test_1",
-        "map": json.dumps({"test_key": "test_value"}),
+        "map": json.dumps(default_map),
         "level": 1,
     }
 
@@ -126,7 +141,7 @@ def test_map_data():
 def test_map_init():
     return {
         "name": "test_1",
-        "data": json.dumps({"test_key": "test_value"}),
+        "data": json.dumps(default_map),
         "level": 1,
     }
 
