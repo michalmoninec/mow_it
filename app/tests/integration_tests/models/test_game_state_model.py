@@ -1,3 +1,4 @@
+import json
 from app.models.game_state_model import GameState
 from app.enums import Status
 from app.models.user_model import UserState
@@ -286,6 +287,7 @@ def test_create_multiplayer_game_state(test_db, test_map, game_method_create):
     GameState.create_multiplayer_game_state(room_id)
 
     game_state = GameState.get_game_state_by_room(room_id)
+    game_state.map = json.loads(game_state.map)
 
     for key in game_method_create:
         assert game_state.__getattribute__(key) == game_method_create[key]

@@ -25,13 +25,13 @@ def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user
     assert user_get_achieved_levels(test_user.user_id) == returned_levels
 
 
-def test_create_maps_not_empty(test_db, test_map_data, mock_method):
+def test_create_maps_not_empty(test_db, test_map_init, mock_method):
     """
     Tests, that map creation and storing to database works correctly.
     Tests situation where table is not empty.
     Returned value should be False and no creation should be called.
     """
-    Maps.create_maps_database(**test_map_data)
+    Maps.create_maps_database(**test_map_init)
     mock_db_creation = mock_method(Maps, "create_maps_database")
     assert create_maps() == False
     assert mock_db_creation.call_count == 0

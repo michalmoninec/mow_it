@@ -53,7 +53,7 @@ def test_creation_data(test_map_data):
 def game_method_create(test_map_data):
     return {
         "level": 1,
-        "map": test_map_data["map"],
+        "map": test_map_data["data"],
         "status": "init",
         "rounds": 2,
         "levels_per_round": 3,

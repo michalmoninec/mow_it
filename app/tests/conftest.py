@@ -142,14 +142,23 @@ def test_map_data():
 def test_map_init():
     return {
         "name": "test_1",
+        "map": json.dumps(default_map),
+        "level": 1,
+    }
+
+
+@pytest.fixture
+def test_map_init_data():
+    return {
+        "name": "test_1",
         "data": json.dumps(default_map),
         "level": 1,
     }
 
 
 @pytest.fixture
-def test_map(test_db, test_map_init):
-    map = Maps(**test_map_init)
+def test_map(test_db, test_map_init_data):
+    map = Maps(**test_map_init_data)
     test_db.session.add(map)
     test_db.session.commit()
     return map
