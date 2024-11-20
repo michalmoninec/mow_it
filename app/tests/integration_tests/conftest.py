@@ -20,7 +20,7 @@ for x, y in default_obstacles["obstacles"]:
 
 
 @pytest.fixture
-def test_user_data():
+def test_user_data(test_map_data):
     return {
         "user_id": "abc",
         "level": 1,
@@ -30,7 +30,7 @@ def test_user_data():
         "name": "john doe",
         "game_completed": False,
         "level_completed": False,
-        "map": json.dumps({"key": "hole"}),
+        "map": json.dumps(test_map_data["data"]),
     }
 
 

@@ -107,6 +107,7 @@ def user_state_update(
     pos_x, pos_y = validate_move(key, map, prev_pos_x, prev_pos_y)
 
     if (pos_x, pos_y) != (prev_pos_x, prev_pos_y):
+        print(f"valid move!")
         diff = update_score(map, pos_x, pos_y)
         user.add_score(diff=diff)
         map[pos_x][pos_y]["active"] = True

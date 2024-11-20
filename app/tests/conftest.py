@@ -25,6 +25,7 @@ default_obstacles = {
 }
 
 default_map = create_empty_map()
+default_map[0][0]["active"] = True
 for x, y in default_obstacles["obstacles"]:
     default_map[x][y]["blocker"] = True
 
@@ -132,7 +133,7 @@ def game_data():
 def test_map_data():
     return {
         "name": "test_1",
-        "map": json.dumps(default_map),
+        "data": default_map,
         "level": 1,
     }
 

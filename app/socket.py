@@ -119,7 +119,6 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_level_advance_confirmation(data) -> None:
-        print("I am finished, waiting for another player.")
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         user_state = UserState.get_user_by_id(user_id)
@@ -169,7 +168,7 @@ def configure_socketio(socketio):
         )
 
     @socketio.on("request_game_finished")
-    @validate_socket_payload(UserRoomIDKey)
+    @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_game_finished(data) -> None:
@@ -200,7 +199,7 @@ def configure_socketio(socketio):
         emit("response_init_data_update", to=room_id)
 
     @socketio.on("request_data_update")
-    @validate_socket_payload(UserRoomIDKey)
+    @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_data_update(data) -> None:
@@ -235,7 +234,7 @@ def configure_socketio(socketio):
         emit("response_maps_from_server", to=room_id)
 
     @socketio.on("disconnect")
-    @validate_socket_payload(UserRoomIDKey)
+    @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_disconnect(data) -> None:
@@ -245,7 +244,6 @@ def configure_socketio(socketio):
 
         game_state.del_player(user_id)
         game_state.set_status(Status.JOIN_WAIT.value)
-        print(f"Status print example: {Status.JOIN_WAIT.name}")
 
         emit("response_player_disconnected", to=room_id)
 
