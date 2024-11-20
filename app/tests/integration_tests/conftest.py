@@ -79,3 +79,12 @@ def p2_test(test_db, game_state):
     test_db.session.add(p2)
     test_db.session.commit()
     return p2
+
+
+@pytest.fixture
+def apply_validation():
+    def wrapper(decorator, decorator_args, func):
+        actual_decorator = decorator(decorator_args)
+        return actual_decorator(func)
+
+    return wrapper
