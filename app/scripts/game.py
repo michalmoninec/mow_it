@@ -43,9 +43,7 @@ level_obstacles = [
         "level": 1,
         "name": "name01",
         "start": [0, 0],
-        "obstacles": obstacle_col(1, 0, 7)
-        + obstacle_col(3, 1, 8)
-        + obstacle_cube(5, 8, 5, 8),
+        "obstacles": obstacle_col(0, 3, 9) + obstacle_cube(1, 10, 0, 10),
     },
     {
         "level": 2,

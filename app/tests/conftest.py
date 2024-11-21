@@ -1,13 +1,9 @@
 import pytest, json
 
-from flask import session
 from flask_socketio import SocketIO
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from app import create_app, db, test_app
+from app import db, test_app
 
-# from app.extensions import socketio
 from app.scripts.game import create_empty_map, obstacle_col, obstacle_cube
 from app.socket import configure_socketio
 from app.models.map_model import Maps
@@ -19,13 +15,12 @@ default_obstacles = {
     "level": 1,
     "name": "name01",
     "start": [0, 0],
-    "obstacles": obstacle_col(1, 0, 7)
-    + obstacle_col(3, 1, 8)
-    + obstacle_cube(5, 8, 5, 8),
+    "obstacles": obstacle_col(0, 3, 10) + obstacle_cube(1, 10, 0, 10),
 }
 
 default_map = create_empty_map()
 default_map[0][0]["active"] = True
+default_map[0][0]["visited"] = True
 for x, y in default_obstacles["obstacles"]:
     default_map[x][y]["blocker"] = True
 
@@ -75,6 +70,14 @@ def socket_client(client):
     configure_socketio(socketio)
     socketio_test_client = socketio.test_client(client)
     return socketio_test_client
+
+
+@pytest.fixture
+def test_user(test_db, test_user_data):
+    user_state = UserState(**test_user_data)
+    test_db.session.add(user_state)
+    test_db.session.commit()
+    return user_state
 
 
 @pytest.fixture
@@ -162,3 +165,80 @@ def test_map(test_db, test_map_init_data):
     test_db.session.add(map)
     test_db.session.commit()
     return map
+
+
+@pytest.fixture
+def test_user_data(test_map_data):
+    return {
+        "user_id": "abc",
+        "level": 1,
+        "achieved_level": 1,
+        "score": 0,
+        "rounds_won": 0,
+        "name": "john doe",
+        "game_completed": False,
+        "level_completed": False,
+        "map": json.dumps(test_map_data["data"]),
+    }
+
+
+@pytest.fixture
+def test_creation_data(test_map_data):
+    return {
+        "user_id": "test_1234",
+        "level": 1,
+        "achieved_level": 1,
+        "score": 0,
+        "rounds_won": 0,
+        "name": "Anonymous",
+        "game_completed": False,
+        "level_completed": False,
+        "map": json.dumps(test_map_data),
+    }
+
+
+@pytest.fixture
+def game_method_create(test_map_data):
+    return {
+        "level": 1,
+        "map": test_map_data["data"],
+        "status": "init",
+        "rounds": 2,
+        "levels_per_round": 3,
+        "current_round": 1,
+        "p1_rounds_won": 0,
+        "p2_rounds_won": 0,
+    }
+
+
+@pytest.fixture
+def test_game(test_db, game_data):
+    game_state = GameState(**game_data)
+    test_db.session.add(game_state)
+    test_db.session.commit()
+    return game_state
+
+
+@pytest.fixture
+def p1_test(test_db, test_game):
+    p1 = UserState(user_id="id1")
+    test_db.session.add(p1)
+    test_db.session.commit()
+    return p1
+
+
+@pytest.fixture
+def p2_test(test_db, test_game):
+    p2 = UserState(user_id="id2")
+    test_db.session.add(p2)
+    test_db.session.commit()
+    return p2
+
+
+@pytest.fixture
+def apply_validation():
+    def wrapper(decorator, decorator_args, func):
+        actual_decorator = decorator(decorator_args)
+        return actual_decorator(func)
+
+    return wrapper

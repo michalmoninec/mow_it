@@ -150,7 +150,7 @@ def test_handle_update_values(socket_client, test_user, test_game):
     """
     Tests socketio on evenet for event name: "request_update_data".
     Excpected is one received event.
-    Assumed valid move with ArrowDown, returned map should differs with
+    Assumed valid move with ArrowDown, returned map should differs with provided map.
     """
     map = copy.deepcopy(json.loads(test_user.map))
     join_event = "test_join_room"
