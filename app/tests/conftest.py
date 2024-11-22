@@ -28,6 +28,9 @@ for x, y in default_obstacles["obstacles"]:
 
 @pytest.fixture
 def dirs():
+    """
+    Return list of directions.
+    """
     up = "ArrowUp"
     down = "ArrowDown"
     left = "ArrowLeft"
@@ -44,6 +47,10 @@ def dirs():
 
 @pytest.fixture
 def test_db(client):
+    """
+    Creates all tables inside database.
+    In teardwon, removes all data from session and drops all tables.
+    """
     with client.app_context():
         db.create_all()
         yield db
@@ -53,6 +60,9 @@ def test_db(client):
 
 @pytest.fixture
 def client():
+    """
+    Creates instance of Flask application.
+    """
     app = test_app()
     app.testing = True
     with app.app_context():
@@ -61,12 +71,27 @@ def client():
 
 @pytest.fixture
 def test_client(client):
+    """
+    Creates instance of test_client of Flask application.
+    """
     with client.test_client() as test_client:
         yield test_client
 
 
 @pytest.fixture
+def two_clients(client):
+    """
+    Creates two test client instance of Flask application.
+    """
+    with client.test_client() as client1, client.test_client() as client2:
+        yield client1, client2
+
+
+@pytest.fixture
 def socket_client(client):
+    """
+    Creates socketio instance, configures it and returns test_client.
+    """
     socketio = SocketIO(client, manage_session=False)
     configure_socketio(socketio)
     socketio_test_client = socketio.test_client(client)
@@ -75,6 +100,9 @@ def socket_client(client):
 
 @pytest.fixture
 def test_user(test_db, test_user_data):
+    """
+    Create, add and commit user to database.
+    """
     user_state = UserState(**test_user_data)
     test_db.session.add(user_state)
     test_db.session.commit()
@@ -135,6 +163,9 @@ def game_data():
 
 @pytest.fixture
 def test_map_data():
+    """
+    Return test map data.
+    """
     return {
         "name": "test_1",
         "data": default_map,
@@ -144,6 +175,9 @@ def test_map_data():
 
 @pytest.fixture
 def test_map_init():
+    """
+    Return test map data for initialization.
+    """
     return {
         "name": "test_1",
         "map": json.dumps(default_map),
@@ -162,6 +196,9 @@ def test_map_init_data():
 
 @pytest.fixture
 def test_map(test_db, test_map_init_data):
+    """
+    Create, add, commit map to databas.
+    """
     map = Maps(**test_map_init_data)
     test_db.session.add(map)
     test_db.session.commit()
@@ -170,6 +207,9 @@ def test_map(test_db, test_map_init_data):
 
 @pytest.fixture
 def test_user_data(test_map_data):
+    """
+    Returns test user init data.
+    """
     return {
         "user_id": "abc",
         "level": 1,
@@ -214,6 +254,9 @@ def game_method_create(test_map_data):
 
 @pytest.fixture
 def test_game(test_db, game_data):
+    """
+    Creates, adds, commits game state to database.
+    """
     game_state = GameState(**game_data)
     test_db.session.add(game_state)
     test_db.session.commit()
@@ -238,6 +281,10 @@ def p2_test(test_db, test_game):
 
 @pytest.fixture
 def apply_validation():
+    """
+    Applies validattion with provided decorator, decorator_args and func.
+    """
+
     def wrapper(decorator, decorator_args, func):
         actual_decorator = decorator(decorator_args)
         return actual_decorator(func)
