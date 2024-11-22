@@ -177,10 +177,17 @@ def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tupl
 
 
 def cell_not_blocked(map: NestedDictList, x: int, y: int) -> bool:
+    """
+    Check if cell is blocker and returns this information.
+    """
     return not map[x][y]["blocker"]
 
 
 def update_score(map: NestedDictList, pos_x: int, pos_y: int) -> int:
+    """
+    Updates score for cell at provided coordinates and return this value.
+    If cell was already visited, score is negative, otherwise it is positive.
+    """
     if map[pos_x][pos_y]["visited"]:
         return -100
     else:

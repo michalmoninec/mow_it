@@ -10,7 +10,7 @@ from app.types_validation import NestedDictList
 
 class Maps(db.Model):
     """
-    Creates and handles Maps table and ORM to database.
+    Class, that handles ORM with map_data table in sqlalchemy.
     """
 
     __tablename__ = "map_data"

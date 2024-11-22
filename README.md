@@ -1,5 +1,9 @@
 # MOW_IT - lawn mowing web browser game
 
+Simple web browser game.
+
+Tests should be taken with caution because they served as a way to learn and try to test different things.
+
 ### Dependencies
 
 ```bash
@@ -10,6 +14,12 @@ pip install -r requirements.txt
 
 ```bash
 python manage.py
+```
+
+### Run tests
+
+```bash
+pytest [-v] [-s]
 ```
 
 ## Progress:
@@ -27,7 +37,7 @@ Current state functionality:
 -   Singleplayer mode.
 -   Multiplayer mode.
 -   Mode against AI (not implemented - will use refactored "coverage-optimization" project).
--   Map creation followed by finding optimal cover path.
+-   Map creation followed by finding optimal cover path (not implemented).
 
 ## Stack
 

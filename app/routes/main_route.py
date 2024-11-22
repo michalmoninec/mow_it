@@ -25,7 +25,7 @@ test_main = Blueprint("test_main", __name__)
 @test_main.route("/")
 def test_home() -> str:
     """
-    Renders test omepage.
+    Renders test homepage.
     """
 
     return render_template("home.html")

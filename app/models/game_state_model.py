@@ -15,6 +15,10 @@ LEVEL_BONUS = 300
 
 
 class GameState(db.Model):
+    """
+    Class, that handles ORM with game_state table in sqlalchemy.
+    """
+
     __tablename__ = "game_state"
     id = Column(Integer, primary_key=True)
 
@@ -51,6 +55,9 @@ class GameState(db.Model):
         return self.player_1_id == None or self.player_2_id == None
 
     def get_players(self) -> Tuple[UserState, UserState]:
+        """
+        Gets and return player 1 and 2.
+        """
         return UserState.get_user_by_id(self.player_1_id), UserState.get_user_by_id(
             self.player_2_id
         )

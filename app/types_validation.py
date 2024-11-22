@@ -31,6 +31,13 @@ class UserRoomIDKey(TypedDict, KeyAndUserID, RoomID):
 
 
 def validate_json(typed_dict):
+    """
+    Validates json data with provided typed_dict.
+    Checks field presence and type validation.
+    If any exception is raised, return error message.
+    Otherwise returns decorated function witch validated_data.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -57,6 +64,12 @@ def validate_json(typed_dict):
 
 
 def validate_user_in_db(user_model):
+    """
+    Validates user presence inside db.
+    If user is not None and it is not inside db, error is returned.
+    Otherwise original function is returned.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -72,6 +85,12 @@ def validate_user_in_db(user_model):
 
 
 def validate_user_in_db_emit(user_model):
+    """
+    Validates user presence inside db.
+    If user is not None and it is not inside db, error is emitted.
+    Otherwise original function is returned.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(data, *args, **kwargs):
@@ -87,6 +106,12 @@ def validate_user_in_db_emit(user_model):
 
 
 def validate_room_in_db(room_model):
+    """
+    Validates room presence inside db.
+    If room is not None and it is not inside db, error is returned.
+    Otherwise original function is returned.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(data, *args, **kwargs):
@@ -101,6 +126,12 @@ def validate_room_in_db(room_model):
 
 
 def validate_room_in_db_emit(room_model):
+    """
+    Validates room presence inside db.
+    If room is not None and it is not inside db, error is emitted.
+    Otherwise original function is returned.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(data, *args, **kwargs):
@@ -116,6 +147,13 @@ def validate_room_in_db_emit(room_model):
 
 
 def validate_socket_payload(typed_dict):
+    """
+    Validates json socket data with provided typed_dict.
+    Checks field presence and type validation.
+    If any exception is raised, emits error message.
+    Otherwise returns decorated function witch validated_data.
+    """
+
     def decorator(func):
         @wraps(func)
         def wrapper(data, *args, **kwargs):

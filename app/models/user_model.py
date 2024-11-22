@@ -11,7 +11,7 @@ LEVEL_BONUS = 300
 
 class UserState(db.Model):
     """
-    Creates and handles UserState table and ORM to database.
+    Class, that handles ORM with user_state table in sqlalchemy.
     """
 
     __tablename__ = "user_state"
