@@ -13,7 +13,7 @@ from app.models.game_state_model import GameState
 
 default_obstacles = {
     "level": 1,
-    "name": "name01",
+    "name": "name_conftest",
     "start": [0, 0],
     "obstacles": obstacle_col(0, 3, 10) + obstacle_cube(1, 10, 0, 10),
 }
@@ -23,6 +23,7 @@ default_map[0][0]["active"] = True
 default_map[0][0]["visited"] = True
 for x, y in default_obstacles["obstacles"]:
     default_map[x][y]["blocker"] = True
+    default_map[x][y]["visited"] = True
 
 
 @pytest.fixture

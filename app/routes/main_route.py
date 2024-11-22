@@ -1,7 +1,6 @@
 from flask import (
     render_template,
     Blueprint,
-    session,
 )
 
 from app.scripts.game import create_maps
@@ -14,8 +13,19 @@ def home() -> str:
     """
     Renders homepage.
     Creates maps database data.
-    Clears session.
     """
     create_maps()
+
+    return render_template("home.html")
+
+
+test_main = Blueprint("test_main", __name__)
+
+
+@test_main.route("/")
+def test_home() -> str:
+    """
+    Renders test omepage.
+    """
 
     return render_template("home.html")

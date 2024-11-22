@@ -1,9 +1,12 @@
-def test_home(test_client, test_user):
+def test_home(test_client, test_map):
     """
     Tests singleplayer gameplay.
     Starts at home page, then folows to level selection.
     Selects first level.
-    Play few moves, finishes level, advance to another level.
+    Play few moves with ArrowDown, finishes level, advance to another level.
+    Test covers only one map, after finishing level:
+    level is completed,
+    game is completed.
     """
     endpoint = "/"
     test_client.get(endpoint)
@@ -41,24 +44,12 @@ def test_home(test_client, test_user):
     resp_data = resp.get_json()
     user_state = resp_data["user_state"]
 
-    endpoint = "/single_player/move/"
-    payload = {"user_id": user_id, "key": "ArrowDown"}
-    resp = test_client.post(endpoint, json=payload)
-    resp_data = resp.get_json()
-    user_state = resp_data["user_state"]
-    print(f"level completed: {user_state['completed']}")
+    while not user_state["completed"]:
+        endpoint = "/single_player/move/"
+        payload = {"user_id": user_id, "key": "ArrowDown"}
+        resp = test_client.post(endpoint, json=payload)
+        resp_data = resp.get_json()
+        user_state = resp_data["user_state"]
 
-    endpoint = "/single_player/move/"
-    payload = {"user_id": user_id, "key": "ArrowDown"}
-    resp = test_client.post(endpoint, json=payload)
-    resp_data = resp.get_json()
-    user_state = resp_data["user_state"]
-    print(f"level completed: {user_state['completed']}")
-
-    endpoint = "/single_player/move/"
-    payload = {"user_id": user_id, "key": "ArrowDown"}
-    resp = test_client.post(endpoint, json=payload)
-    resp_data = resp.get_json()
-    user_state = resp_data["user_state"]
-
-    print(f"level completed: {user_state['completed']}")
+    assert user_state["completed"]
+    assert user_state["game_completed"]
