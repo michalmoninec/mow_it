@@ -22,6 +22,10 @@ from app.enums import Status
 
 
 def configure_socketio(socketio):
+    """
+    Configures socketio events.
+    """
+
     @socketio.on("join_room")
     @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)

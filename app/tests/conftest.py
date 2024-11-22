@@ -99,6 +99,18 @@ def socket_client(client):
 
 
 @pytest.fixture
+def two_socket_clients(client):
+    """
+    Creates socketio instances, configures it and returns test_clients.
+    """
+    socketio = SocketIO(client, manage_session=False)
+    configure_socketio(socketio)
+    socketio_test_client_1 = socketio.test_client(client)
+    socketio_test_client_2 = socketio.test_client(client)
+    return socketio_test_client_1, socketio_test_client_2
+
+
+@pytest.fixture
 def test_user(test_db, test_user_data):
     """
     Create, add and commit user to database.

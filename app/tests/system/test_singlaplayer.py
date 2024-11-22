@@ -1,4 +1,4 @@
-def test_home(test_client, test_map):
+def test_singleplayer(test_client, test_map):
     """
     Tests singleplayer gameplay.
     Starts at home page, then folows to level selection.
