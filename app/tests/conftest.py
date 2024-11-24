@@ -186,7 +186,7 @@ def test_map_data():
 
 
 @pytest.fixture
-def test_map_init():
+def test_map_create():
     """
     Return test map data for initialization.
     """
@@ -203,6 +203,7 @@ def test_map_init_data():
         "name": "test_1",
         "data": json.dumps(default_map),
         "level": 1,
+        "start_position": "(0,0)",
     }
 
 

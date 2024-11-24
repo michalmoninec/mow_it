@@ -1,11 +1,5 @@
-from app.scripts.game import user_state_update, user_get_achieved_levels, create_maps
-from app.models.user_model import UserState
+from app.scripts.game import user_get_achieved_levels, create_maps
 from app.models.map_model import Maps
-from app.models.game_state_model import GameState
-
-
-def test_user_state_update(dirs):
-    pass
 
 
 def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user):
@@ -25,13 +19,13 @@ def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user
     assert user_get_achieved_levels(test_user.user_id) == returned_levels
 
 
-def test_create_maps_not_empty(test_db, test_map_init, mock_method):
+def test_create_maps_not_empty(test_db, test_map_create, mock_method):
     """
     Tests, that map creation and storing to database works correctly.
     Tests situation where table is not empty.
     Returned value should be False and no creation should be called.
     """
-    Maps.create_maps_database(**test_map_init)
+    Maps.create_maps_database(**test_map_create)
     mock_db_creation = mock_method(Maps, "create_maps_database")
     assert create_maps() == False
     assert mock_db_creation.call_count == 0

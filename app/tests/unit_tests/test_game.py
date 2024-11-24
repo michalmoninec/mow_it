@@ -1,5 +1,3 @@
-import pytest
-
 from app.scripts.game import (
     cell_not_blocked,
     get_position_from_map,

@@ -12,24 +12,24 @@ def test_game_state_init(game_data):
         assert game_state.__getattribute__(key) == game_data[key]
 
 
-def test_user_not_in_room(game_state):
+def test_user_not_in_room(game_state, p1_test, p2_test):
     """
     Test, that checks presence of user in GameState.
     """
 
-    user_1 = "abcd"
-    user_2 = "1234"
+    p1_id = p1_test.user_id
+    p2_id = p2_test.user_id
 
-    assert game_state.user_not_in_room(user_1) == True
-    assert game_state.user_not_in_room(user_2) == True
+    assert game_state.user_not_in_room(p1_id) == True
+    assert game_state.user_not_in_room(p2_id) == True
 
-    game_state.player_1_id = user_1
-    assert game_state.user_not_in_room(user_1) == False
-    assert game_state.user_not_in_room(user_2) == True
+    game_state.player_1_id = p1_id
+    assert game_state.user_not_in_room(p1_id) == False
+    assert game_state.user_not_in_room(p2_id) == True
 
-    game_state.player_2_id = user_2
-    assert game_state.user_not_in_room(user_1) == False
-    assert game_state.user_not_in_room(user_2) == False
+    game_state.player_2_id = p2_id
+    assert game_state.user_not_in_room(p1_id) == False
+    assert game_state.user_not_in_room(p2_id) == False
 
 
 def test_room_is_available(game_state):
