@@ -3,8 +3,6 @@ import uuid, json
 from flask import (
     render_template,
     jsonify,
-    session,
-    request,
     Blueprint,
     Response,
 )

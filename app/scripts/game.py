@@ -1,10 +1,8 @@
 import json
 
-from typing import List, Tuple, Set
-
+from typing import List, Tuple
 
 from app.types_validation import NestedDictList
-
 from app.models.map_model import Maps
 from app.models.user_model import UserState
 

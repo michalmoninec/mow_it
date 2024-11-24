@@ -1,16 +1,13 @@
 import json
 
-from flask_socketio import emit, join_room, leave_room
+from flask_socketio import emit, join_room
 
 from app.types_validation import (
     RoomID,
-    validate_room_in_db,
     validate_room_in_db_emit,
     validate_socket_payload,
-    UserID,
     RoomAndUserID,
     UserRoomIDKey,
-    validate_user_in_db,
     validate_user_in_db_emit,
 )
 from app.scripts.game import (

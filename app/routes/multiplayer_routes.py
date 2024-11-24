@@ -2,19 +2,13 @@ import uuid
 
 from flask import (
     render_template,
-    redirect,
-    url_for,
     jsonify,
-    session,
-    request,
     Blueprint,
     Response,
 )
 from app.models.user_model import UserState
 from app.types_validation import (
-    KeyAndUserID,
     UserID,
-    LevelAndUserID,
     RoomAndUserID,
     validate_json,
     validate_room_in_db,
