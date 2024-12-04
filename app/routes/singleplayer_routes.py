@@ -27,18 +27,14 @@ singleplayer = Blueprint("singleplayer", __name__)
 
 @singleplayer.get("/single_player/level_selection/")
 def single_player_level_selection() -> str:
-    """
-    Render page for level selection.
-    """
+    """Renders page for level selection."""
     return render_template("single_player_level_selection.html")
 
 
 @singleplayer.post("/single_player/level_data/")
 @validate_json(UserID)
 def single_player_level_data(data) -> Response:
-    """
-    Prepare level based on user's achieved level.
-    """
+    """Prepare level based on user's achieved level."""
     user_id = data["user_id"]
     user_state = UserState.get_user_by_id(user_id)
     if user_state is None:
@@ -52,9 +48,9 @@ def single_player_level_data(data) -> Response:
 @validate_json(LevelAndUserID)
 @validate_user_in_db(UserState)
 def single_player_set_selected_level(data) -> Response:
-    """
-    Receives desired level, validate the level with boundary to max achieved level
-    and returns json with "valid_level_set" = True if level was set correctly, otherwise False.
+    """Receives desired level, validate the level with boundary to max achieved level
+    and returns json with "valid_level_set" = True if level was set
+    correctly, otherwise False.
     """
     user_id = data["user_id"]
     desired_level = data["selected_level"]
@@ -67,9 +63,7 @@ def single_player_set_selected_level(data) -> Response:
 @validate_json(UserID)
 @validate_user_in_db(UserState)
 def single_player_init_map(data) -> Response:
-    """
-    Returns prepared map when client connects, reloads, advance level.
-    """
+    """Returns prepared map when client connects, reloads, advance level."""
 
     user_id = data["user_id"]
 
@@ -98,9 +92,7 @@ def single_player_init_map(data) -> Response:
 
 @singleplayer.get("/single_player/")
 def single_player_prepare() -> str:
-    """
-    Render page for single player.
-    """
+    """Render page for single player."""
 
     return render_template("single_player.html")
 
@@ -109,8 +101,7 @@ def single_player_prepare() -> str:
 @validate_json(KeyAndUserID)
 @validate_user_in_db(UserState)
 def single_player_move_handle(data) -> Response:
-    """
-    Receives key.
+    """Receives key.
     Updates game state.
     """
     user_id = data["user_id"]
@@ -138,9 +129,7 @@ def single_player_move_handle(data) -> Response:
 @validate_user_in_db(UserState)
 @validate_json(UserID)
 def single_player_advance_current_level(data) -> Response:
-    """
-    Increase user's level by 1 and redirect to game preparation.
-    """
+    """Increase user's level by 1 and redirect to game preparation."""
     user_id = data["user_id"]
     valid_level_advance = UserState.advance_user_state_current_level(user_id)
 

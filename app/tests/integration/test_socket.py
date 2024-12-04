@@ -5,8 +5,7 @@ from app.models.game_state_model import GameState
 
 
 def test_join_room_no_id(socket_client, test_db):
-    """
-    Tests socketio on event for event name: "join_room".
+    """Tests socketio on event for event name: "join_room".
     Session data is empty.
     Expected received event name is "error".
     Message included inside received event should be concerned about invalid session data.
@@ -23,8 +22,7 @@ def test_join_room_no_id(socket_client, test_db):
 
 
 def test_join_room_no_game_state(socket_client, test_db):
-    """
-    Tests socketio on event for event name: "join_room".
+    """Tests socketio on event for event name: "join_room".
     Session data is set to non-existent values.
     Expected received event name is "error".
     """
@@ -40,8 +38,7 @@ def test_join_room_no_game_state(socket_client, test_db):
 
 
 def test_join_room_no_valid_game_state(socket_client, test_db, test_game, p1_test):
-    """
-    Tests socketio on event for event name: "join_room".
+    """Tests socketio on event for event name: "join_room".
     Session data is valid.
     Expected received event name is "response_user_id_and_status".
     """
@@ -63,8 +60,7 @@ def test_join_room_no_valid_game_state(socket_client, test_db, test_game, p1_tes
 
 
 def test_handle_maps_from_server_invalid_payload(socket_client):
-    """
-    Tests socketio on event for event name: "request_maps_from_server".
+    """Tests socketio on event for event name: "request_maps_from_server".
     Session data is empty.
     Expected received event name is "error".
     """
@@ -78,8 +74,7 @@ def test_handle_maps_from_server_invalid_payload(socket_client):
 
 
 def test_handle_maps_from_server_not_joined(socket_client):
-    """
-    Tests socketio on event for event name: "request_maps_from_server".
+    """Tests socketio on event for event name: "request_maps_from_server".
     Session data is valid.
     Expected number of received events is zero, because room is not joined.
     """
@@ -96,8 +91,7 @@ def test_handle_maps_from_server_not_joined(socket_client):
 
 
 def test_handle_maps_from_server_valid(socket_client):
-    """
-    Tests socketio on event for event name: "request_maps_from_server".
+    """Tests socketio on event for event name: "request_maps_from_server".
     Session data is empty.
     Expected number of received events is zero.
     """
@@ -121,8 +115,7 @@ def test_handle_maps_from_server_valid(socket_client):
 
 
 def test_get_inital_maps(socket_client, test_game, test_user):
-    """
-    Tests socketio on event for event name: "request_initial_maps".
+    """Tests socketio on event for event name: "request_initial_maps".
     Expected number of received events is two:
     response_update_data,
     response_round_update.
@@ -147,8 +140,7 @@ def test_get_inital_maps(socket_client, test_game, test_user):
 
 
 def test_handle_update_values(socket_client, test_user, test_game):
-    """
-    Tests socketio on evenet for event name: "request_update_data".
+    """Tests socketio on evenet for event name: "request_update_data".
     Excpected is one received event.
     Assumed valid move with ArrowDown, returned map should differs with provided map.
     """
@@ -171,8 +163,7 @@ def test_handle_update_values(socket_client, test_user, test_game):
 def test_handle_level_advance_confirmation_first_player(
     socket_client, test_user, test_game, test_db
 ):
-    """
-    Tests socketio on event for event name: request_level_advance_confirmation.
+    """Tests socketio on event for event name: request_level_advance_confirmation.
     Test covers situation, where player, that finishes level is first one to do it.
     Game is not ready to advance and player is assigned level bonus.
     """
@@ -195,8 +186,7 @@ def test_handle_level_advance_confirmation_first_player(
 def test_handle_level_advance_confirmation_advance(
     socket_client, test_user, test_game, mock_method
 ):
-    """
-    Tests socketio on event for event name: request_level_advance_confirmation.
+    """Tests socketio on event for event name: request_level_advance_confirmation.
     Test covers situation, where player, that finishes level is first one to do it.
     Game is ready to advance.
     """
@@ -216,8 +206,7 @@ def test_handle_level_advance_confirmation_advance(
 
 
 def test_handle_level_advance(socket_client, test_user, test_game):
-    """
-    Tests socketio on event for event name: request_level_advance_confirmation.
+    """Tests socketio on event for event name: request_level_advance_confirmation.
     Users level should be increased and map set to correspond with map with the same level.
     """
     join_event = "test_join_room"
@@ -236,8 +225,7 @@ def test_handle_level_advance(socket_client, test_user, test_game):
 def test_handle_game_finished_not_finished(
     socket_client, test_user, test_game, mock_method
 ):
-    """
-    Tests socketio on event for event name: request_game_finished.
+    """Tests socketio on event for event name: request_game_finished.
     Only one player finished.
     Bonus should be assigned.
     First received event name should be: response_player_finished_game
@@ -259,8 +247,7 @@ def test_handle_game_finished_not_finished(
 def test_handle_game_finished_regular_round(
     socket_client, test_user, test_game, mock_method
 ):
-    """
-    Tests socketio on event for event name: request_game_finished.
+    """Tests socketio on event for event name: request_game_finished.
     Both players finished, but it is not final round.
     First received event name should be: response_player_finished_game
     """
@@ -284,8 +271,7 @@ def test_handle_game_finished_regular_round(
 def test_handle_game_finished_final_round(
     socket_client, test_user, test_game, mock_method
 ):
-    """
-    Tests socketio on event for event name: request_game_finished.
+    """Tests socketio on event for event name: request_game_finished.
     Both players finished and it is final round.
     First received event name should be: response_player_finished_game
     """
@@ -307,8 +293,7 @@ def test_handle_game_finished_final_round(
 
 
 def test_handle_data_update(socket_client, test_user, test_game):
-    """
-    Tests socketio on event for event name: request_data_update.
+    """Tests socketio on event for event name: request_data_update.
     Received events should be:
     "response_score_update"
     "response_round_update"
@@ -328,8 +313,7 @@ def test_handle_data_update(socket_client, test_user, test_game):
 
 
 def test_handle_game_state_reset(socket_client, test_user, test_game):
-    """
-    Tests socketio on event for event name: request_game_state_reset.
+    """Tests socketio on event for event name: request_game_state_reset.
     Received events should be:
     "response_maps_from_server"
     """
@@ -347,8 +331,7 @@ def test_handle_game_state_reset(socket_client, test_user, test_game):
 
 
 def test_handle_disconnect(socket_client, test_user, test_game):
-    """
-    Tests socketio on event for event name: disconnect.
+    """Tests socketio on event for event name: disconnect.
     Received events should be:
     "response_player_disconnected"
     """

@@ -29,8 +29,7 @@ def multiplayer_create_game() -> str:
 @multiplayer.post("/multiplayer/create/")
 @validate_json(UserID)
 def multiplayer_get_user(data) -> Response:
-    """
-    Gets ID from client, if id is None, then it assign new random ID.
+    """Gets ID from client, if id is None, then it assign new random ID.
     Assign random room_id.
     Returns user_id either from client or newly assigned.
     """
@@ -48,17 +47,14 @@ def multiplayer_get_user(data) -> Response:
 
 @multiplayer.get("/multiplayer/join/<room_id>/")
 def join_room_get_user(room_id) -> str:
-    """
-    Renders page and passes room_id parameter.
-    """
+    """Renders page and passes room_id parameter."""
     return render_template("multiplayer_join_room.html", room_id=room_id), 200
 
 
 @multiplayer.post("/multiplayer/join/<room_id>/")
 @validate_json(UserID)
 def join_room_set_user_and_room(data, room_id) -> Response:
-    """
-    Handles joining room.
+    """Handles joining room.
     If neccesarry, creates new User.
     If provided room_id doesn't exist, or is full, return bad request status code.
     If valid room_id, returns user and room ID as confirmation.
@@ -85,9 +81,7 @@ def join_room_set_user_and_room(data, room_id) -> Response:
 
 @multiplayer.get("/multiplayer/play/")
 def multiplayer_game_play() -> str:
-    """
-    Renders page for multiplayer game.
-    """
+    """Renders page for multiplayer game."""
     return render_template("multiplayer_game.html"), 200
 
 
@@ -96,8 +90,7 @@ def multiplayer_game_play() -> str:
 @validate_user_in_db(UserState)
 @validate_room_in_db(GameState)
 def multiplayer_game_play_fetch(data) -> str:
-    """
-    Checks, wether user and room ID correspond with user and room in db.
+    """Checks, wether user and room ID correspond with user and room in db.
     If not, return validity with False value.
     Otherwise retusn validity with True value.
     """

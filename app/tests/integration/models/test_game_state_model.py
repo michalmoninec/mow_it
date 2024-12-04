@@ -5,16 +5,14 @@ from app.models.user_model import UserState
 
 
 def db_obj_is_same(state: GameState) -> bool:
-    """
-    Checks if GameState object is the same as an object from database with matching room_id.
+    """Checks if GameState object is the same as an object from
+    database with matching room_id.
     """
     return GameState.query.filter_by(room_id=state.room_id).first() == state
 
 
 def test_get_players(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that getting players from GameState works correctly.
-    """
+    """Tests, that getting players from GameState works correctly."""
 
     p1, p2 = test_game.get_players()
     assert p1 is None and p2 is None
@@ -29,9 +27,7 @@ def test_get_players(test_db, test_game, p1_test, p2_test):
 
 
 def test_update_status(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that status is updating correctly.
-    """
+    """Tests, that status is updating correctly."""
     assert test_game.update_status() == Status.INIT.value
 
     test_game.player_1_id = p1_test.user_id
@@ -48,17 +44,14 @@ def test_update_status(test_db, test_game, p1_test, p2_test):
 
 
 def test_add_player(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that player addition works correctly.
-    """
+    """Tests, that player addition works correctly."""
     assert test_game.add_player(p1_test.user_id) == True
     assert test_game.add_player(p2_test.user_id) == True
     assert test_game.add_player(p1_test.user_id) == False
 
 
 def test_del_player(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that player deletion works correctly.
+    """Tests, that player deletion works correctly.
     After both players are deleted, table GameState should be empty.
     """
     test_game.add_player(p1_test.user_id)
@@ -77,9 +70,7 @@ def test_del_player(test_db, test_game, p1_test, p2_test):
 
 
 def test_set_status(test_db, test_game):
-    """
-    Tests, that setting GameState status works correctly.
-    """
+    """Tests, that setting GameState status works correctly."""
     assert test_game.status == Status.INIT.value
 
     status = "another_status"
@@ -88,8 +79,8 @@ def test_set_status(test_db, test_game):
 
 
 def test_both_players_completed_level(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that evaluation of level completion for both players works correctly.
+    """Tests, that evaluation of level completion for
+    both players works correctly.
     """
     test_game.add_player(p1_test.user_id)
     test_game.add_player(p2_test.user_id)
@@ -104,8 +95,8 @@ def test_both_players_completed_level(test_db, test_game, p1_test, p2_test):
 
 
 def test_both_players_completed_game(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that evaluation of level completion for both players works correctly.
+    """Tests, that evaluation of level completion
+    for both players works correctly.
     """
     test_game.add_player(p1_test.user_id)
     test_game.add_player(p2_test.user_id)
@@ -120,9 +111,7 @@ def test_both_players_completed_game(test_db, test_game, p1_test, p2_test):
 
 
 def test_advance_next_round(test_db, test_game, p1_test, p2_test, test_map):
-    """
-    Tests, that GameState round advance works correctly.
-    """
+    """Tests, that GameState round advance works correctly."""
     test_game.add_player(p1_test.user_id)
     test_game.add_player(p2_test.user_id)
 
@@ -145,9 +134,7 @@ def test_advance_next_round(test_db, test_game, p1_test, p2_test, test_map):
 
 
 def test_reset_game_state(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that GameState reset works correctly.
-    """
+    """Tests, that GameState reset works correctly."""
     test_game.add_player(p1_test.user_id)
     test_game.add_player(p2_test.user_id)
     level = 3
@@ -175,9 +162,7 @@ def test_reset_game_state(test_db, test_game, p1_test, p2_test):
 
 
 def test_update_round_winner(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that round winner evaluation is correct.
-    """
+    """Tests, that round winner evaluation is correct."""
     p1_test.rounds_won = 0
     p2_test.rounds_won = 0
     p1_test.score = 100
@@ -196,9 +181,7 @@ def test_update_round_winner(test_db, test_game, p1_test, p2_test):
 
 
 def test_update_game_winner(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that update of game winner is correct.
-    """
+    """Tests, that update of game winner is correct."""
     p1_test.rounds_won = 3
     p2_test.rounds_won = 2
     test_game.add_player(p1_test.user_id)
@@ -215,8 +198,8 @@ def test_update_game_winner(test_db, test_game, p1_test, p2_test):
 
 
 def test_get_game_state_max_level_by_room(test_db, test_game):
-    """
-    Tests, that GameState with matching room_id gets its max level correctly.
+    """Tests, that GameState with matching room_id
+    ets its max level correctly.
     """
     level = 1
     levels_per_round = 5
@@ -230,8 +213,8 @@ def test_get_game_state_max_level_by_room(test_db, test_game):
 
 
 def test_game_state_advance_ready(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that GameState with matching room_id evaluates level advance correctly.
+    """Tests, that GameState with matching room_id
+    evaluates level advance correctly.
     """
     p1_test.level_completed = True
     p2_test.level_completed = True
@@ -244,8 +227,8 @@ def test_game_state_advance_ready(test_db, test_game, p1_test, p2_test):
 
 
 def test_game_state_next_round_ready(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that GameState with matching room_id evaluates round advance correctly.
+    """Tests, that GameState with matching room_id
+    evaluates round advance correctly.
     """
     p1_test.game_completed = True
     p2_test.game_completed = True
@@ -258,8 +241,8 @@ def test_game_state_next_round_ready(test_db, test_game, p1_test, p2_test):
 
 
 def test_get_game_state_status(test_db, test_game, game_data):
-    """
-    Tests, that GameState with matching room_id gets its status correctly.
+    """Tests, that GameState with matching room_id
+    gets its status correctly.
     """
     assert GameState.get_game_state_status(test_game.room_id) == game_data["status"]
     status = Status.READY.value
@@ -268,8 +251,8 @@ def test_get_game_state_status(test_db, test_game, game_data):
 
 
 def test_get_game_state_by_room(test_db, test_game, p1_test, p2_test):
-    """
-    Tests, that GameState with matching room_id is returned correctly.
+    """Tests, that GameState with matching room_id
+    is returned correctly.
     """
     assert GameState.get_game_state_by_room(test_game.room_id) == test_game
 
@@ -279,9 +262,7 @@ def test_get_game_state_by_room(test_db, test_game, p1_test, p2_test):
 
 
 def test_create_multiplayer_game_state(test_db, test_map, game_method_create):
-    """
-    Tests, that GameState with matching room_id is created correctly.
-    """
+    """Tests, that GameState with matching room_id is created correctly."""
     test_map.level = 1
     room_id = "some_room_id"
     GameState.create_multiplayer_game_state(room_id)
@@ -294,8 +275,7 @@ def test_create_multiplayer_game_state(test_db, test_map, game_method_create):
 
 
 def test_create_user_after_room_join(test_db, test_game, p1_test, test_map):
-    """
-    Tests, that GameState with matching room_id gets user by provided ID.
+    """Tests, that GameState with matching room_id gets user by provided ID.
     Then it checks if user exist.
     If user does not exists, it is created with GameState properties.
     If user exists, its properties is set by GameState properties.
@@ -312,8 +292,7 @@ def test_create_user_after_room_join(test_db, test_game, p1_test, test_map):
 
 
 def test_create_user_after_room_join(test_db, test_game, p1_test, test_map):
-    """
-    Tests, that GameState with matching room_id gets user by provided ID.
+    """Tests, that GameState with matching room_id gets user by provided ID.
     Then it checks if user exist.
     If user does not exists, it is created with GameState properties.
     If user exists, its properties is set by GameState properties.

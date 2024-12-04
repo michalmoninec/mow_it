@@ -4,9 +4,7 @@ from app.models.user_model import UserState
 
 
 def test_get_single_player_level_selection(test_client):
-    """
-    Tests, that endpoint '/single_player/level_selection/' works correctly.
-    """
+    """Tests, that endpoint '/single_player/level_selection/' works correctly."""
 
     endpoint = "/single_player/level_selection/"
 
@@ -16,9 +14,7 @@ def test_get_single_player_level_selection(test_client):
 
 
 def test_get_single_player_prepare(test_client):
-    """
-    Tests, that endpoint '/single_player/' works correctly.
-    """
+    """Tests, that endpoint '/single_player/' works correctly."""
 
     endpoint = "/single_player/"
 
@@ -30,8 +26,7 @@ def test_get_single_player_prepare(test_client):
 def test_post_single_player_level_data_user_exists(
     test_client, test_db, test_user, mock_method
 ):
-    """
-    Tests POST request to endpoint '/single_player/level_data/' with
+    """Tests POST request to endpoint '/single_player/level_data/' with
     user's ID that has existing UserState in database and ID is in payload.
     Excpected response status code: 200.
     Response users ID must be same as provided with POST method.
@@ -52,8 +47,7 @@ def test_post_single_player_level_data_user_exists(
 def test_post_single_player_level_data_user_creation(
     test_client, test_db, test_user, mock_method
 ):
-    """
-    Tests POST request to endpoint '/single_player/level_data/' with
+    """Tests POST request to endpoint '/single_player/level_data/' with
     user's ID that has existing UserState in database and ID is in payload.
     Excpected response status code: 200.
     Response users ID must be same as provided with POST method.
@@ -72,8 +66,7 @@ def test_post_single_player_level_data_user_creation(
 
 
 def test_set_selected_level_valid_set(test_client, test_db, test_user):
-    """
-    Tests POST request to endpoint "/single_player/selected_level/".
+    """Tests POST request to endpoint "/single_player/selected_level/".
     Selected level and user ID are correct.
     Selected level is less or equal to achieved level.
     Excpected response status code 200, valid_level_set = True.
@@ -92,8 +85,7 @@ def test_set_selected_level_valid_set(test_client, test_db, test_user):
 
 
 def test_set_selected_level_invalid_set(test_client, test_db, test_user):
-    """
-    Tests POST request to endpoint "/single_player/selected_level/".
+    """Tests POST request to endpoint "/single_player/selected_level/".
     Selected level and user ID are correct.
     Selected level is greater than achieved level.
     Excpected response status code 200, valid_level_set = False.
@@ -112,8 +104,7 @@ def test_set_selected_level_invalid_set(test_client, test_db, test_user):
 
 
 def test_init_map_valid(test_client, test_db, test_user, test_map):
-    """
-    Tests POST request to endpoint "/single_player/retrieve_map/".
+    """Tests POST request to endpoint "/single_player/retrieve_map/".
     User's ID is provided and is in payload.
     UserState exists with this ID.
     Excpected response status code 200.
@@ -131,8 +122,7 @@ def test_init_map_valid(test_client, test_db, test_user, test_map):
 def test_init_map_user_is_none_not_in_payload(
     test_client, test_db, test_user, test_map
 ):
-    """
-    Tests POST request to endpoint "/single_player/retrieve_map/".
+    """Tests POST request to endpoint "/single_player/retrieve_map/".
     User's ID is not provided and is in payload.
     UserState does not exist with this ID.
     Excpected response status code 200.
@@ -149,8 +139,7 @@ def test_init_map_user_is_none_not_in_payload(
 
 
 def test_move_handle_valid(test_client, test_db, test_user, test_map, mock_func):
-    """
-    Tests POST request to endpoint "/single_player/move/".
+    """Tests POST request to endpoint "/single_player/move/".
     Key is provided.
     User ID is in payload.
     UserState with provided ID exists.
@@ -169,8 +158,7 @@ def test_move_handle_valid(test_client, test_db, test_user, test_map, mock_func)
 def test_advance_curr_level_invalid_advance(
     test_client, test_db, mock_method, test_user
 ):
-    """
-    Tests POST request to endpoint "/single_player/advance_current_level/".
+    """Tests POST request to endpoint "/single_player/advance_current_level/".
     User ID is not stored in payload.
     """
 
@@ -184,8 +172,7 @@ def test_advance_curr_level_invalid_advance(
 
 
 def test_advance_curr_level_valid_advance(test_client, test_db, mock_method, test_user):
-    """
-    Tests POST request to endpoint "/single_player/advance_current_level/".
+    """Tests POST request to endpoint "/single_player/advance_current_level/".
     User ID is not stored in payload.
     """
 

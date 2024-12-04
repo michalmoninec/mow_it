@@ -15,8 +15,7 @@ def func_test(*args):
 
 
 def test_json_validation_not_instance(apply_validation, test_client):
-    """
-    Tests json validation decorator with empty payload.
+    """Tests json validation decorator with empty payload.
     Response error should be "Invalid JSON payload."
     Resp status should be 400.
     """
@@ -33,8 +32,7 @@ def test_json_validation_not_instance(apply_validation, test_client):
 
 
 def test_json_validation_empty_json(apply_validation, test_client):
-    """
-    Tests json validation decorator with empty payload.
+    """Tests json validation decorator with empty payload.
     Response error should be "Missing field"
     Resp status should be 400.
     """
@@ -51,8 +49,7 @@ def test_json_validation_empty_json(apply_validation, test_client):
 
 
 def test_json_validation_invalid_type(apply_validation, test_client):
-    """
-    Tests json validation decorator with empty payload.
+    """Tests json validation decorator with empty payload.
     Response error should be "Invalid type."
     Resp status should be 400.
     """
@@ -69,8 +66,7 @@ def test_json_validation_invalid_type(apply_validation, test_client):
 
 
 def test_json_validation_valid(apply_validation, test_client):
-    """
-    Tests json validation decorator with empty payload.
+    """Tests json validation decorator with empty payload.
     Response error should be "Invalid type."
     Resp status should be 400.
     """
@@ -87,8 +83,7 @@ def test_json_validation_valid(apply_validation, test_client):
 
 
 def test_user_validation_in_db_not_found(apply_validation, test_client, test_db):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is not inside db.
     Response error should be: "User not found in databse".
     Resp status should be 404.
@@ -106,8 +101,7 @@ def test_user_validation_in_db_not_found(apply_validation, test_client, test_db)
 
 
 def test_user_validation_in_db_user_none(apply_validation, test_client, test_db):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is None.
     Response error should be: "FALSE".
     Resp status should be 200.
@@ -127,8 +121,7 @@ def test_user_validation_in_db_user_none(apply_validation, test_client, test_db)
 def test_user_validation_in_db_user_found(
     apply_validation, test_client, test_db, test_user
 ):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is inside db.
     Response error should be: "FALSE".
     Resp status should be 200.
@@ -146,8 +139,7 @@ def test_user_validation_in_db_user_found(
 
 
 def test_room_validation_in_db_not_found(apply_validation, test_client, test_db):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is not inside db.
     Response error should be: "User not found in databse".
     Resp status should be 404.
@@ -163,8 +155,7 @@ def test_room_validation_in_db_not_found(apply_validation, test_client, test_db)
 
 
 def test_room_validation_in_db_user_none(apply_validation, test_client, test_db):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is None.
     Response error should be: "FALSE".
     Resp status should be 404.
@@ -182,8 +173,7 @@ def test_room_validation_in_db_user_none(apply_validation, test_client, test_db)
 def test_room_validation_in_db_user_found(
     apply_validation, test_client, test_db, test_game
 ):
-    """
-    Tests, that user validation works correctly.
+    """Tests, that user validation works correctly.
     Provided user ID is  inside db.
     Response error should be: "FALSE".
     Resp status should be 200.

@@ -10,8 +10,7 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def home() -> str:
-    """
-    Renders homepage.
+    """Renders homepage.
     Creates maps database data.
     """
     create_maps()
@@ -24,8 +23,6 @@ test_main = Blueprint("test_main", __name__)
 
 @test_main.route("/")
 def test_home() -> str:
-    """
-    Renders test homepage.
-    """
+    """Renders test homepage."""
 
     return render_template("home.html")

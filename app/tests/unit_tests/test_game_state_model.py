@@ -2,9 +2,7 @@ from app.models.game_state_model import GameState
 
 
 def test_game_state_init(game_data):
-    """
-    Tests, that init method behaves correctly.
-    """
+    """Tests, that init method behaves correctly."""
 
     game_state = GameState(**game_data)
 
@@ -13,9 +11,7 @@ def test_game_state_init(game_data):
 
 
 def test_user_not_in_room(game_state, p1_test, p2_test):
-    """
-    Test, that checks presence of user in GameState.
-    """
+    """Test, that checks presence of user in GameState."""
 
     p1_id = p1_test.user_id
     p2_id = p2_test.user_id
@@ -33,9 +29,7 @@ def test_user_not_in_room(game_state, p1_test, p2_test):
 
 
 def test_room_is_available(game_state):
-    """
-    Tests, that availability in room is decided correctly.
-    """
+    """Tests, that availability in room is decided correctly."""
     assert game_state.room_is_available() == True
 
     game_state.player_1_id = "abcd"
@@ -49,9 +43,7 @@ def test_room_is_available(game_state):
 
 
 def test_final_round(game_state):
-    """
-    Tests, if evaluation of final round behaves correctly.
-    """
+    """Tests, if evaluation of final round behaves correctly."""
     game_state.rounds = 10
     game_state.current_round = 1
 
@@ -65,9 +57,7 @@ def test_final_round(game_state):
 
 
 def test_get_max_level(game_state):
-    """
-    Tests, that max level for evaluation is the last level for current round.
-    """
+    """Tests, that max level for evaluation is the last level for current round."""
     curr = 1
     max = 4
     game_state.level = 1

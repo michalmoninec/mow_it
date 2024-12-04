@@ -8,23 +8,20 @@ from app.scripts.game import create_empty_map
 
 
 def reset_mocks(*mocks) -> None:
-    """
-    Reset all provided mocks.
-    """
+    """Reset all provided mocks."""
     for mock in mocks:
         mock.reset_mock()
 
 
 def object_is_same_in_db(state: UserState) -> bool:
-    """
-    Checks if state object is the same as an object from database with matching user_id.
+    """Checks if state object is the same as an object
+    from database with matching user_id.
     """
     return UserState.query.filter_by(user_id=state.user_id).first() == state
 
 
 def test_set_level(test_db, test_user, test_user_data):
-    """
-    Tests, that setting user's level is correct.
+    """Tests, that setting user's level is correct.
     Checks that UserState object and match from db.query are correctly set.
     """
     assert test_user.level == test_user_data["level"]
@@ -43,8 +40,7 @@ def test_set_level(test_db, test_user, test_user_data):
 
 
 def test_set_map(test_db, test_user, test_user_data):
-    """
-    Tests, that setting user's map is correct.
+    """Tests, that setting user's map is correct.
     Checks that UserState object and match from db.query are correctly set.
     """
     assert test_user.map == test_user_data["map"]
@@ -62,8 +58,7 @@ def test_set_map(test_db, test_user, test_user_data):
 
 
 def test_increase_level(test_db, test_user, test_user_data):
-    """
-    Tests, that level increase is working correctly.
+    """Tests, that level increase is working correctly.
     Tests. that level is increased at UserState object and also in db query.
     """
     max_level = 2
@@ -82,8 +77,7 @@ def test_increase_level(test_db, test_user, test_user_data):
 
 
 def test_set_name(test_db, test_user, test_user_data):
-    """
-    Tests, that setting user's name is correct.
+    """Tests, that setting user's name is correct.
     Checks that UserState object and match from db.query are correctly set.
     """
     assert test_user.name == test_user_data["name"]
@@ -99,8 +93,7 @@ def test_set_name(test_db, test_user, test_user_data):
 
 
 def test_add_score(test_db, test_user, test_user_data):
-    """
-    Tests, that score addition is working correctly.
+    """Tests, that score addition is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     assert test_user.score == test_user_data["score"]
@@ -112,8 +105,7 @@ def test_add_score(test_db, test_user, test_user_data):
 
 
 def test_reset_score(test_db, test_user_data, test_user):
-    """
-    Tests, that reset of user's score is working correctly.
+    """Tests, that reset of user's score is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     test_user.score == 1000
@@ -124,8 +116,7 @@ def test_reset_score(test_db, test_user_data, test_user):
 
 
 def test_set_level_completed(test_db, test_user, test_user_data):
-    """
-    Tests, that setting of level completion is working correctly.
+    """Tests, that setting of level completion is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     assert test_user.level_completed == False
@@ -138,8 +129,7 @@ def test_set_level_completed(test_db, test_user, test_user_data):
 
 
 def test_set_game_completed(test_db, test_user, test_user_data):
-    """
-    Tests, that setting of game completion is working correctly.
+    """Tests, that setting of game completion is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     assert test_user.game_completed == False
@@ -152,8 +142,7 @@ def test_set_game_completed(test_db, test_user, test_user_data):
 
 
 def test_reset_map(test_db, test_user, mock_method):
-    """
-    Tests, that map reset is working correctly.
+    """Tests, that map reset is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     return_map = json.dumps({"test": "test_return_map"})
@@ -166,8 +155,7 @@ def test_reset_map(test_db, test_user, mock_method):
 
 
 def test_set_desired_level(test_db, test_user):
-    """
-    Tests, that setting desired level is working correctly.
+    """Tests, that setting desired level is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     des_level = test_user.achieved_level + 1
@@ -183,8 +171,7 @@ def test_set_desired_level(test_db, test_user):
 
 
 def test_set_default_state_by_level(test_db, test_user, mock_method):
-    """
-    Tests, that map reset is working correctly.
+    """Tests, that map reset is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     return_map = json.dumps({"test": "test_return_map"})
@@ -204,8 +191,7 @@ def test_set_default_state_by_level(test_db, test_user, mock_method):
 
 
 def test_assign_level_bonus(test_db, test_user):
-    """
-    Tests, that bonus was assigned to score.
+    """Tests, that bonus was assigned to score.
     Checks, that UserState object and match from db.query are correctly set.
     """
     init_value = 1000
@@ -217,8 +203,7 @@ def test_assign_level_bonus(test_db, test_user):
 
 
 def test_advance_user_state_current_level(test_db, test_user, mock_method):
-    """
-    Tests, that user state advance is working correctly.
+    """Tests, that user state advance is working correctly.
     Checks, that UserState object and match from db.query are correctly set.
     """
     return_level = 3
@@ -265,9 +250,7 @@ def test_advance_user_state_current_level(test_db, test_user, mock_method):
 
 
 def test_get_user_by_id(test_db, test_user):
-    """
-    Tests, that getting user by id from database works correctly.
-    """
+    """Tests, that getting user by id from database works correctly."""
     assert UserState.get_user_by_id(test_user.user_id) == test_user
     assert UserState.get_user_by_id("non_existing_id") == None
 
@@ -278,9 +261,7 @@ def test_create_user_state(
     mock_method,
     test_map_data,
 ):
-    """
-    Tests, that user state creation works correctly.
-    """
+    """Tests, that user state creation works correctly."""
     user_id = test_creation_data["user_id"]
     level = test_creation_data["level"]
     mock_method(Maps, "get_map_by_level", return_value=json.dumps(test_map_data))

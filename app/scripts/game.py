@@ -8,16 +8,14 @@ from app.models.user_model import UserState
 
 
 def obstacle_col(row: int, start: int, end: int) -> List[List[int]]:
-    """
-    Returns col of row, col coordinates of obstacles for provided row.
+    """Returns col of row, col coordinates of obstacles for provided row.
     Row is populated with obstacles from start to end index.
     """
     return [[row, col] for col in range(start, end)]
 
 
 def obstacle_row(col: int, start: int, end: int) -> List[List[int]]:
-    """
-    Returns row of row, col coordinates of obstacles for provided row.
+    """Returns row of row, col coordinates of obstacles for provided row.
     Row is populated with obstacles from start to end index.
     """
     return [[row, col] for row in range(start, end)]
@@ -26,8 +24,8 @@ def obstacle_row(col: int, start: int, end: int) -> List[List[int]]:
 def obstacle_cube(
     row_start: int, row_end: int, col_start: int, col_end: int
 ) -> List[List[int]]:
-    """
-    Returns obstacles in cube pattern for provided start and end of both row and col.
+    """Returns obstacles in cube pattern for provided start
+    and end of both row and col.
     """
     return [
         [row, col]
@@ -122,8 +120,7 @@ def user_state_update(
 
 
 def user_get_achieved_levels(user_id: str) -> List[dict]:
-    """
-    Returns list of dictionaries containing info:
+    """Returns list of dictionaries containing info:
     - Level value.
     - Data value, which represents map.
     If user does not exist, returns None.
@@ -141,9 +138,7 @@ def user_get_achieved_levels(user_id: str) -> List[dict]:
 
 
 def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tuple:
-    """
-    Validates players move, return updated position or not altered position.
-    """
+    """Validates players move, return updated position or not altered position."""
 
     if (
         key == "ArrowRight"
@@ -174,15 +169,12 @@ def validate_move(key: str, map: NestedDictList, pos_x: int, pos_y: int) -> Tupl
 
 
 def cell_not_blocked(map: NestedDictList, x: int, y: int) -> bool:
-    """
-    Check if cell is blocker and returns this information.
-    """
+    """Check if cell is blocker and returns this information."""
     return not map[x][y]["blocker"]
 
 
 def update_score(map: NestedDictList, pos_x: int, pos_y: int) -> int:
-    """
-    Updates score for cell at provided coordinates and return this value.
+    """Updates score for cell at provided coordinates and return this value.
     If cell was already visited, score is negative, otherwise it is positive.
     """
     if map[pos_x][pos_y]["visited"]:
@@ -192,9 +184,7 @@ def update_score(map: NestedDictList, pos_x: int, pos_y: int) -> int:
 
 
 def level_completed(map: NestedDictList) -> bool:
-    """
-    Checks map for any unvisited cells.
-    """
+    """Checks map for any unvisited cells."""
     for row in map:
         if any(not cell["blocker"] and not cell["visited"] for cell in row):
             return False
@@ -202,9 +192,7 @@ def level_completed(map: NestedDictList) -> bool:
 
 
 def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
-    """
-    Iterates over map and returns cell that is active
-    """
+    """Iterates over map and returns cell that is active"""
     for row in range(len(map)):
         for col in range(len(map[row])):
             if map[row][col]["active"]:
@@ -213,9 +201,7 @@ def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
 
 
 def create_empty_map() -> NestedDictList:
-    """
-    Creates empty nested list of dict.
-    """
+    """Creates empty nested list of dict."""
     map = []
     for col in range(10):
         col_cell = []
@@ -234,8 +220,7 @@ def create_empty_map() -> NestedDictList:
 
 
 def create_maps() -> None:
-    """
-    If database table of maps is empty, it creates maps by levels.
+    """If database table of maps is empty, it creates maps by levels.
     If table updated, returns True, otherwise returns False.
     """
     if Maps.is_map_table_empty():

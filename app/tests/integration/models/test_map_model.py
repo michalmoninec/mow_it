@@ -6,9 +6,7 @@ from app.models.map_model import Maps
 
 
 def test_create_maps_database(test_db, test_map_create):
-    """
-    Tests, that creation and store to db is correct.
-    """
+    """Tests, that creation and store to db is correct."""
     Maps.create_maps_database(**test_map_create)
 
     map = test_db.session.query(Maps).filter_by(name="test_1").first()
@@ -19,9 +17,7 @@ def test_create_maps_database(test_db, test_map_create):
 
 
 def test_get_max_level_of_maps(test_db, test_map_create):
-    """
-    Tests, that maximal level of maps is correct.
-    """
+    """Tests, that maximal level of maps is correct."""
     assert Maps.get_max_level_of_maps() is None
 
     for level in range(1, 10):
@@ -31,9 +27,7 @@ def test_get_max_level_of_maps(test_db, test_map_create):
 
 
 def test_get_map_by_level(test_db, test_map_create):
-    """
-    Tests, that getting map by level is correct.
-    """
+    """Tests, that getting map by level is correct."""
     assert Maps.get_map_by_level(test_map_create["level"]) == None
 
     Maps.create_maps_database(**test_map_create)
@@ -44,9 +38,7 @@ def test_get_map_by_level(test_db, test_map_create):
 
 
 def test_is_map_table_empty(test_db, test_map_create):
-    """
-    Tests, that evaluation of an empty table is correct.
-    """
+    """Tests, that evaluation of an empty table is correct."""
     assert Maps.is_map_table_empty() == True
 
     Maps.create_maps_database(**test_map_create)

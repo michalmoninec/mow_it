@@ -1,6 +1,5 @@
 def test_singleplayer(test_client, test_map):
-    """
-    Tests singleplayer gameplay.
+    """Tests singleplayer gameplay.
     Starts at home page, then folows to level selection.
     Selects first level.
     Play few moves with ArrowDown, finishes level, advance to another level.

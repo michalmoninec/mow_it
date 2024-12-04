@@ -3,8 +3,8 @@ from app.models.map_model import Maps
 
 
 def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user):
-    """
-    Tests, that list of directories containing level and map data is returned correctly.
+    """Tests, that list of directories containing
+    level and map data is returned correctly.
     """
     mock_method(Maps, "get_map_by_level", return_value=test_map_data)
 
@@ -20,8 +20,7 @@ def test_user_get_achieved_levels(test_db, mock_method, test_map_data, test_user
 
 
 def test_create_maps_not_empty(test_db, test_map_create, mock_method):
-    """
-    Tests, that map creation and storing to database works correctly.
+    """Tests, that map creation and storing to database works correctly.
     Tests situation where table is not empty.
     Returned value should be False and no creation should be called.
     """
@@ -32,8 +31,7 @@ def test_create_maps_not_empty(test_db, test_map_create, mock_method):
 
 
 def test_create_maps_empty(test_db, mock_method):
-    """
-    Tests, that map creation and storing to database works correctly.
+    """Tests, that map creation and storing to database works correctly.
     For empty Maps table, for every level, map should be created with
     method create_maps_database.
     Returned value should be True and mocked method should be called for every

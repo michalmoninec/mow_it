@@ -4,8 +4,7 @@ from app.models.game_state_model import GameState
 
 
 def test_get_create_game(test_client, test_db):
-    """
-    Tests, that GET method to an endpoint "/multiplayer/create/" works correctly.
+    """Tests, that GET method to an endpoint "/multiplayer/create/" works correctly.
     Tests cover:
     - Response status code.
     - Request path is correct.
@@ -18,8 +17,7 @@ def test_get_create_game(test_client, test_db):
 
 
 def test_get_join_room_get_user(test_client, test_db):
-    """
-    Tests, that GET method to an endpoint "/multiplayer/join/<room_id>/" works correctly.
+    """Tests, that GET method to an endpoint "/multiplayer/join/<room_id>/" works correctly.
     Tests cover:
     - Response status code.
     - Request path is correct.
@@ -36,8 +34,7 @@ def test_get_join_room_get_user(test_client, test_db):
 
 
 def test_get_multiplayer_game_play_valid(test_client, test_db):
-    """
-    TestsGET method to an endpoint "/multiplayer/play/".
+    """TestsGET method to an endpoint "/multiplayer/play/".
     Tests cover:
     - Response status code.
     - Request path is correct.
@@ -50,8 +47,7 @@ def test_get_multiplayer_game_play_valid(test_client, test_db):
 
 
 def test_post_get_user_user_valid(test_client, test_db, mock_method):
-    """
-    Tests POST method to an endpoint "/multiplayer/create/".
+    """Tests POST method to an endpoint "/multiplayer/create/".
     Payload valid.
     Excpeted response status code 201.
     """
@@ -65,8 +61,7 @@ def test_post_get_user_user_valid(test_client, test_db, mock_method):
 
 
 def test_post_join_room_set_invalid_room_id(test_client, test_db, mock_method):
-    """
-    Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
+    """Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
     Provided room ID is invalid.
     Returned status 400.
     """
@@ -82,8 +77,7 @@ def test_post_join_room_set_invalid_room_id(test_client, test_db, mock_method):
 def test_post_join_room_set_valid_room_full_room(
     test_client, test_db, mock_method, test_game, p1_test, p2_test
 ):
-    """
-    Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
+    """Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
     Provided room ID is valid.
     Room with provided ID is full.
     Returned status 400.
@@ -102,8 +96,7 @@ def test_post_join_room_set_valid_room_full_room(
 def test_post_join_room_set_valid_join(
     test_client, test_db, mock_method, test_game, p1_test, p2_test
 ):
-    """
-    Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
+    """Tests POST method to an endpoint "/multiplayer/join/<room_id>/".
     Provided room ID is valid.
     Room with provided ID is full.
     Returned room ID should be set to None.

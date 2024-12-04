@@ -2,8 +2,7 @@ from flask import url_for
 
 
 def test_home(test_client, mock_func):
-    """
-    Tests, that home endpoint works correctly.
+    """Tests, that home endpoint works correctly.
     Tests cover:
     - Response status code.
     - Checking that session is empty.

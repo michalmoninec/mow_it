@@ -2,8 +2,7 @@ from app.enums import Status
 
 
 def test_multiplayer(two_clients, two_socket_clients, test_map):
-    """
-    Tests multiplayer game.
+    """Tests multiplayer game.
     One player creates game, other joins it.
     Test cover one level completion.
     """
