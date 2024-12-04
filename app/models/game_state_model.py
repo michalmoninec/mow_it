@@ -1,4 +1,5 @@
 import uuid
+import random
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean, desc
@@ -258,12 +259,19 @@ class GameState(db.Model):
         Sets initial values to attributes.
         Add instance to session and commits it to databse.
         """
-        level = 1
+
+        rounds = 3
+        levels_per_round = 3
+        max_level = Maps.query.order_by(desc(Maps.level)).first().level
+        if max_level < (rounds * levels_per_round):
+            level = 1
+        else:
+            level = random.randint(1, max_level - (rounds * levels_per_round))
         game_state = cls(room_id=room_id, level=level)
+        game_state.rounds = rounds
+        game_state.levels_per_round = levels_per_round
         game_state.map = Maps.query.filter_by(level=level).first().data
         game_state.status = Status.INIT.value
-        game_state.rounds = 2
-        game_state.levels_per_round = 3
         game_state.current_round = 1
         game_state.p1_rounds_won = 0
         game_state.p2_rounds_won = 0

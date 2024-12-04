@@ -78,7 +78,7 @@ def configure_socketio(socketio):
         )
         emit(
             "response_round_update",
-            {"round": game_state.current_round},
+            {"round": game_state.current_round, "level": game_state.level},
             to=room_id,
         )
 
@@ -218,7 +218,7 @@ def configure_socketio(socketio):
         )
         emit(
             "response_round_update",
-            {"round": game_state.current_round},
+            {"round": game_state.current_round, "level": game_state.level},
             to=room_id,
         )
 

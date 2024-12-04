@@ -1,10 +1,13 @@
 import json
+import random
 
 from typing import List, Tuple
 
 from app.types_validation import NestedDictList
 from app.models.map_model import Maps
 from app.models.user_model import UserState
+
+MAX_LEVEL = 50
 
 
 def obstacle_col(row: int, start: int, end: int) -> List[List[int]]:
@@ -200,7 +203,7 @@ def get_position_from_map(map: NestedDictList) -> Tuple[int | None, int | None]:
     return None, None
 
 
-def create_empty_map() -> NestedDictList:
+def create_empty_map(inverted: bool = False) -> NestedDictList:
     """Creates empty nested list of dict."""
     map = []
     for col in range(10):
@@ -210,7 +213,7 @@ def create_empty_map() -> NestedDictList:
                 "x": col,
                 "y": row,
                 "active": False,
-                "blocker": False,
+                "blocker": inverted,
                 "visited": False,
             }
             col_cell.append(cell)
@@ -224,14 +227,55 @@ def create_maps() -> None:
     If table updated, returns True, otherwise returns False.
     """
     if Maps.is_map_table_empty():
-        for level in level_obstacles:
-            map = create_empty_map()
-            start_pos_x, start_pos_y = level["start"]
-            map[start_pos_x][start_pos_y]["active"] = True
-
-            for x, y in level["obstacles"]:
-                map[x][y]["blocker"] = True
-
-            Maps.create_maps_database(level["name"], map, level["level"])
+        for level in range(1, MAX_LEVEL + 1):
+            map = generative_map_creation(level)
+            invert_non_visited(map)
+            name = f"name{level:02}"
+            Maps.create_maps_database(name, map, level)
         return True
     return False
+
+
+def generative_map_creation(level: int) -> NestedDictList:
+    """Generatively creates maps.
+    Each map is created in way, that is valid to play and complete.
+    Starting position is choosed randomly.
+    Then direction and depth in that direction is also choosed randomly
+    and then those cells are visited.
+    Coverage determinates how many cells are to be populated with visited tag.
+    """
+    start_pos_x = random.randint(0, 9)
+    start_pos_y = random.randint(0, 9)
+    number_of_cells = random.randint(20, 80)
+    directions = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]
+    map = create_empty_map()
+    map[start_pos_x][start_pos_y]["active"] = True
+
+    curr = 1
+    while curr < number_of_cells:
+        dir = directions[random.randint(0, 3)]
+        depth = random.randint(1, 7)
+        for _ in range(1, depth):
+            curr_pos_x, curr_pos_y = get_position_from_map(map)
+            next_pos_x, next_post_y = validate_move(dir, map, curr_pos_x, curr_pos_y)
+            if (curr_pos_x, curr_pos_y) != (next_pos_x, next_post_y):
+                if not map[next_pos_x][next_post_y]["visited"]:
+                    curr += 1
+                map[next_pos_x][next_post_y]["active"] = True
+                map[next_pos_x][next_post_y]["visited"] = True
+                map[curr_pos_x][curr_pos_y]["active"] = False
+                map[curr_pos_x][curr_pos_y]["visited"] = True
+            else:
+                break
+
+    return map
+
+
+def invert_non_visited(map: NestedDictList) -> None:
+    """Non visited cells are changed to blockers."""
+    for row in range(len(map)):
+        for col in range(len(map[row])):
+            if not map[row][col]["visited"]:
+                map[row][col]["blocker"] = True
+            else:
+                map[row][col]["visited"] = False

@@ -229,10 +229,10 @@ def test_creation_data(test_map_data):
 @pytest.fixture
 def game_method_create(test_map_data):
     return {
-        "level": 1,
+        # "level": 1,
         "map": test_map_data["data"],
         "status": "init",
-        "rounds": 2,
+        "rounds": 3,
         "levels_per_round": 3,
         "current_round": 1,
         "p1_rounds_won": 0,

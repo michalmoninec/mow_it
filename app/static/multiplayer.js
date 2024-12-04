@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let restartGameButton = document.getElementById('restart_game');
     let roundValue = document.getElementById('round_value');
     let winnerLabel = document.getElementById('winner_label');
+    let levelLabel = document.getElementById('level-value');
     const grassBlock = document.getElementById('grass-block');
     let user_id = getUserID();
     let room_id = getRoomID();
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setModalDisable(p2_modal);
             setModalVisible(endGameModal);
         } else if (gameStatus == 'ready') {
+            p1ModalLinkDiv.style.display = 'none';
             socket.emit('request_maps_from_server', { room_id: room_id });
         } else if (gameStatus == 'finished') {
             finishedGame();
@@ -125,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_update_data', (data) => {
-        console.log(`map: ${data.map}`);
+        // console.log(`map: ${data.map}`);
         if (data.user_id == user_id) {
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
@@ -169,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.user_id == user_id) {
             readyToPlay = false;
             p1_modal_text.innerText = 'Level completed, waiting for oponent.';
+            p1ModalLinkDiv.style.display = 'none';
             setModalVisible(p1_modal);
         } else {
             p2_modal_text.innerText = 'Level completed.';
@@ -213,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_round_update', (data) => {
         roundValue.innerText = data.round;
+        levelLabel.innerText = data.level;
     });
 
     socket.on('response_init_data_update', () => {
