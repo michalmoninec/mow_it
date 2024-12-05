@@ -1,17 +1,14 @@
-import json
-import os
-
 from enum import Enum
 
-file_path = "app/config/status_enum.json"
+
+enum_data = {
+    "Status": {
+        "INIT": "init",
+        "JOIN_WAIT": "join_wait",
+        "READY": "ready",
+        "FINISHED": "finished",
+    }
+}
 
 
-def load_status_enum() -> Enum:
-    with open(file_path, "r") as f:
-        enum_data = json.load(f)
-
-        Status = Enum("Status", enum_data["Status"])
-    return Status
-
-
-Status = load_status_enum()
+Status = Enum("Status", enum_data["Status"])
