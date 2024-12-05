@@ -3,7 +3,7 @@ import os
 
 from enum import Enum
 
-file_path = os.path.join(os.path.dirname(__file__), "config/status_enum.json")
+file_path = "app/config/status_enum.json"
 
 
 def load_status_enum() -> Enum:
