@@ -69,29 +69,12 @@ style_script %}
         <button id="back_home">HOMEPAGE</button>
     </div>
 </div>
-<div style="display: none">
-    <div id="grass-block" class="grass-block">
-        <!-- Front row (closest to the viewer) -->
-        <div class="front-row">
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-        </div>
-
-        <!-- Middle row -->
-        <div class="middle-row">
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-            <div class="grass-blade"></div>
-        </div>
+<div id="round_end_modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-text">Round completed</div>
+        <div class="modal-text" id="winner-label">Winner value</div>
+        <button id="next_round">NEXT ROUND</button>
+        <button id="round_back_home">HOMEPAGE</button>
     </div>
 </div>
 {% endblock %}{% block scripts %}

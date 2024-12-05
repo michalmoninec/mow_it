@@ -24,15 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let backButton = document.getElementById('back');
     let homePageButton = document.getElementById('back_home');
+    let roundHomePageButton = document.getElementById('round_back_home');
     let restartGameButton = document.getElementById('restart_game');
     let roundValue = document.getElementById('round_value');
     let winnerLabel = document.getElementById('winner_label');
     let levelLabel = document.getElementById('level-value');
+    let roundEndModal = document.getElementById('round_end_modal');
+    let roundWinnerLabel = document.getElementById('winner-label');
+    let nextRoundButton = document.getElementById('next_round');
+
     const grassBlock = document.getElementById('grass-block');
     let user_id = getUserID();
     let room_id = getRoomID();
     let gameStatus;
     let readyToPlay;
+    let oponentMap;
 
     let lastDirection = 'horizontal';
 
@@ -119,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_maps_from_server', () => {
+        setModalDisable(roundEndModal);
         readyToPlay = true;
         socket.emit('request_initial_maps', {
             user_id: user_id,
@@ -127,11 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_update_data', (data) => {
-        // console.log(`map: ${data.map}`);
         if (data.user_id == user_id) {
+            console.log(data.map);
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
-            updateGrid(data.map, 'player', grassBlock);
+            updateGrid(data.map, 'player');
             if (data.key) {
                 rotateMower(data.key);
             }
@@ -155,7 +162,40 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setModalDisable(p2_modal);
             setModalDisable(endGameModal);
-            updateGrid(data.map, 'oponent', grassBlock);
+            if (data.map) {
+                oponentMap = data.map;
+                updateGrid(data.map, 'oponent');
+            }
+            if (data.key) {
+                rotateOponentMower(data.key);
+            }
+            p2_name.innerText = data['name'];
+            // p2_level.innerText = data['level'];
+            p2_score.innerText = data['score'];
+            p2_rounds_label.innerText = data.rounds_won;
+        }
+    });
+    socket.on('response_update_my_oponent', (data) => {
+        if (data.user_id == user_id) {
+            if (data.map) {
+                oponentMap = data.map;
+                updateGrid(data.map, 'oponent');
+            }
+            if (data.key) {
+                rotateOponentMower(data.key);
+            }
+            p2_name.innerText = data['name'];
+            // p2_level.innerText = data['level'];
+            p2_score.innerText = data['score'];
+            p2_rounds_label.innerText = data.rounds_won;
+        }
+    });
+    socket.on('response_update_oponent_data', (data) => {
+        if (data.user_id != user_id) {
+            if (data.map) {
+                oponentMap = data.map;
+                updateGrid(data.map, 'oponent');
+            }
             if (data.key) {
                 rotateOponentMower(data.key);
             }
@@ -197,6 +237,20 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             p2_modal_text.innerText = 'All levels of this round completed.';
             setModalVisible(p2_modal);
+        }
+    });
+
+    socket.on('response_both_players_finished_game', (data) => {
+        if (data.round_winner == user_id) {
+            readyToPlay = false;
+            roundWinnerLabel.innerText = 'You have won this round!';
+            setModalDisable(p1_modal);
+            setModalVisible(roundEndModal);
+        } else {
+            readyToPlay = false;
+            setModalDisable(p1_modal);
+            roundWinnerLabel.innerText = 'Oponent has won this round!';
+            setModalVisible(roundEndModal);
         }
     });
 
@@ -278,6 +332,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     homePageButton.addEventListener('click', () => {
         window.location.href = '/';
+    });
+
+    roundHomePageButton.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+
+    nextRoundButton.addEventListener('click', () => {
+        socket.emit('request_round_advance', {
+            user_id: user_id,
+            room_id: room_id,
+        });
     });
 
     restartGameButton.addEventListener('click', () => {

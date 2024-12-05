@@ -109,6 +109,16 @@ class UserState(db.Model):
         """Assigns level bonus."""
         self.add_score(LEVEL_BONUS)
 
+    def to_dict(self, client_key: str) -> dict:
+        """Return dictionary represantation of UserModel."""
+        user_dict = {
+            key: value
+            for key, value in vars(self).items()
+            if key != "_sa_instance_state"
+        }
+        user_dict["key"] = client_key
+        return user_dict
+
     @classmethod
     def advance_user_state_current_level(
         cls, user_id: str, max_level: int = None

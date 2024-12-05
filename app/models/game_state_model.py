@@ -1,5 +1,6 @@
 import uuid
 import random
+import json
 
 from flask import Response
 from sqlalchemy import Text, Column, Integer, String, Boolean, desc
@@ -34,6 +35,11 @@ class GameState(db.Model):
 
     p1_rounds_won = Column(Integer)
     p2_rounds_won = Column(Integer)
+
+    p1_moves_count = Column(Integer)
+    p2_moves_count = Column(Integer)
+    p1_moves_stack = Column(Text)
+    p2_moves_stack = Column(Text)
 
     status = Column(String)
     winner_id = Column(String)
@@ -162,6 +168,8 @@ class GameState(db.Model):
             player.set_level(self.level)
             player.set_default_state_by_level()
 
+        self.reset_stacks()
+
         db.session.commit()
 
     def final_round(self) -> bool:
@@ -194,15 +202,20 @@ class GameState(db.Model):
 
         db.session.commit()
 
-    def update_round_winner(self) -> None:
-        """Updates round winner and increases won round of user by 1."""
+    def update_round_winner(self) -> str:
+        """Updates round winner and increases won round of user by 1.
+        Returns ID of round winner"""
+        winner = None
         p1, p2 = self.get_players()
         if p1.score > p2.score:
             p1.rounds_won += 1
+            winner = p1.user_id
         elif p1.score < p2.score:
             p2.rounds_won += 1
+            winner = p2.user_id
 
         db.session.commit()
+        return winner
 
     def update_game_winner(self) -> None:
         """Checks which player has more won rounds and udpate
@@ -215,6 +228,47 @@ class GameState(db.Model):
             self.winner_id = p2.user_id
         else:
             self.winner_id = None
+        db.session.commit()
+
+    def add_move_to_stack(self, user_id: str, map: str, key: str):
+        """Adds user snapshot to stack."""
+        if self.player_1_id == user_id:
+            move_stack = json.loads(self.p1_moves_stack)
+            move_stack.append((map, key))
+            self.p1_moves_stack = json.dumps(move_stack)
+
+        elif self.player_2_id == user_id:
+            move_stack = json.loads(self.p2_moves_stack)
+            move_stack.append((map, key))
+            self.p2_moves_stack = json.dumps(move_stack)
+
+        db.session.commit()
+
+    def get_oponent_move(self, user_id: str) -> dict | None:
+        """Gets snapshot of oponents moves available for oponent
+        with corresponding move.
+        """
+
+        if (
+            len(json.loads(self.p1_moves_stack)) > 0
+            and len(json.loads(self.p2_moves_stack)) > 0
+        ):
+            p1_stack = json.loads(self.p1_moves_stack)
+            oponent_data = p1_stack.pop(0)
+            self.p1_moves_stack = json.dumps(p1_stack)
+            p2_stack = json.loads(self.p2_moves_stack)
+            my_oponent = p2_stack.pop(0)
+            self.p2_moves_stack = json.dumps(p2_stack)
+
+            if user_id == self.player_2_id:
+                oponent_data, my_oponent = my_oponent, oponent_data
+            db.session.commit()
+            return my_oponent, oponent_data
+        return None, None
+
+    def reset_stacks(self) -> None:
+        self.p1_moves_stack = json.dumps([])
+        self.p2_moves_stack = json.dumps([])
         db.session.commit()
 
     @classmethod
@@ -275,6 +329,10 @@ class GameState(db.Model):
         game_state.current_round = 1
         game_state.p1_rounds_won = 0
         game_state.p2_rounds_won = 0
+        game_state.p1_moves_count = 0
+        game_state.p2_moves_count = 0
+        game_state.p1_moves_stack = json.dumps([])
+        game_state.p2_moves_stack = json.dumps([])
 
         db.session.add(game_state)
         db.session.commit()

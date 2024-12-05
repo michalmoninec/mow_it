@@ -11,7 +11,9 @@ from app.types_validation import (
     validate_user_in_db_emit,
 )
 from app.scripts.game import (
+    get_position_from_map,
     user_state_update,
+    validate_move,
 )
 
 from app.models.game_state_model import UserState, GameState
@@ -61,6 +63,8 @@ def configure_socketio(socketio):
         user_state = UserState.get_user_by_id(user_id)
         game_state = GameState.get_game_state_by_room(room_id)
 
+        # game_state.add_move_to_stack(user_id, None)
+
         emit(
             "response_update_data",
             {
@@ -92,10 +96,27 @@ def configure_socketio(socketio):
         key = data.get("key")
 
         max_level = GameState.get_game_state_max_level_by_room(room_id)
-
+        orig_map = UserState.get_user_by_id(user_id=user_id).map
         user_state_update(key, user_id, max_level)
 
         user_state = UserState.get_user_by_id(user_id=user_id)
+        game_state = GameState.get_game_state_by_room(room_id)
+        updated_map = user_state.map
+
+        if orig_map != updated_map:
+            game_state.add_move_to_stack(user_id, json.loads(updated_map), key)
+            my_oponent, oponent_data = game_state.get_oponent_move(user_id)
+
+            if my_oponent and oponent_data:
+                emit(
+                    "response_update_my_oponent",
+                    {"map": my_oponent[0], "user_id": user_id, "key": my_oponent[1]},
+                )
+                emit(
+                    "response_update_oponent_data",
+                    {"map": oponent_data[0], "user_id": user_id, "key": key},
+                    to=room_id,
+                )
 
         emit(
             "response_update_data",
@@ -110,7 +131,6 @@ def configure_socketio(socketio):
                 "rounds_won": user_state.rounds_won,
                 "key": key,
             },
-            to=room_id,
         )
 
     @socketio.on("request_level_advance_confirmation")
@@ -147,6 +167,8 @@ def configure_socketio(socketio):
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         max_level = GameState.get_game_state_max_level_by_room(room_id)
+        game_state = GameState.get_game_state_by_room(room_id)
+        game_state.reset_stacks()
 
         UserState.advance_user_state_current_level(user_id, max_level)
 
@@ -177,7 +199,7 @@ def configure_socketio(socketio):
         user_state = UserState.get_user_by_id(user_id)
 
         if game_state.both_players_completed_game():
-            game_state.update_round_winner()
+            round_winner = game_state.update_round_winner()
             if game_state.final_round():
                 game_state.set_status(Status.FINISHED.value)
                 game_state.update_game_winner()
@@ -190,12 +212,24 @@ def configure_socketio(socketio):
                     to=room_id,
                 )
             else:
-                game_state.advance_next_round()
-                emit("response_maps_from_server", to=room_id)
+                emit(
+                    "response_both_players_finished_game",
+                    {"round_winner": round_winner},
+                    to=room_id,
+                )
+
         else:
             emit("response_player_finished_game", {"user_id": user_id})
             user_state.assign_level_bonus()
         emit("response_init_data_update", to=room_id)
+
+    @socketio.on("request_round_advance")
+    def handle_round_advance(data):
+        user_id = data.get("user_id")
+        room_id = data.get("room_id")
+        game_state = GameState.get_game_state_by_room(room_id)
+        game_state.advance_next_round()
+        emit("response_maps_from_server", to=room_id)
 
     @socketio.on("request_data_update")
     @validate_socket_payload(RoomAndUserID)
