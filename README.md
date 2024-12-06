@@ -10,7 +10,7 @@ Tests should be taken with caution because they served as a way to learn and try
 pip install -r requirements.txt
 ```
 
-### Run script
+### Run locally script
 
 ```bash
 python manage.py
