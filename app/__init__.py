@@ -17,7 +17,7 @@ def create_app(config_class="config.Config") -> Flask:
 
     db.init_app(app)
 
-    socketio.init_app(app, manage_session=True)
+    socketio.init_app(app, manage_session=True, cors_allowed_origins="*")
     configure_socketio(socketio)
 
     return app
@@ -37,3 +37,6 @@ def test_app(config_class="config.TestConfig") -> Flask:
 
     db.init_app(app)
     return app
+
+
+app = create_app()
