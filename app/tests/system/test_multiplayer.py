@@ -98,6 +98,10 @@ def test_multiplayer(two_clients, two_socket_clients, test_map):
     socket1.emit(event, payload)
     payload["user_id"] = user2_id
     socket2.emit(event, payload)
+
+    socket1.get_received()
+    socket2.get_received()
+
     event = "request_update_data"
     payload = {
         "user_id": user1_id,
@@ -111,8 +115,8 @@ def test_multiplayer(two_clients, two_socket_clients, test_map):
     s1_events = socket1.get_received()
     s2_events = socket2.get_received()
 
-    s1_event_data = s1_events[2]["args"][0]
-    s2_event_data = s2_events[3]["args"][0]
+    s1_event_data = s1_events[0]["args"][0]
+    s2_event_data = s2_events[2]["args"][0]
 
     assert s1_event_data["level_completed"] == True
     assert s2_event_data["level_completed"] == True

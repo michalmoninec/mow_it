@@ -1,8 +1,0 @@
-{
-    "Status": {
-        "INIT": "init",
-        "JOIN_WAIT": "join_wait",
-        "READY": "ready",
-        "FINISHED": "finished"
-    }
-}

@@ -250,7 +250,9 @@ class GameState(db.Model):
         """
 
         if (
-            len(json.loads(self.p1_moves_stack)) > 0
+            self.p1_moves_stack
+            and self.p2_moves_stack
+            and len(json.loads(self.p1_moves_stack)) > 0
             and len(json.loads(self.p2_moves_stack)) > 0
         ):
             p1_stack = json.loads(self.p1_moves_stack)

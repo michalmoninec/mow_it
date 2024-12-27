@@ -27,10 +27,10 @@ pytest [-v] [-s]
 Project is in active development.
 Current state functionality:
 
--   6 very simple maps.
+-   50 generated simple maps.
 -   Single player with level selection based on completed levels.
--   Multiplayer for two players, three rounds by two levels each.
--   User id is currently stored in local storage with no authorization.
+-   Multiplayer for two players, three rounds by three levels each.
+-   User ID is currently stored in local storage with no authorization.
 
 ## Simple web browser game, that aims to:
 

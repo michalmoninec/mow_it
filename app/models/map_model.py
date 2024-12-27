@@ -1,4 +1,5 @@
-import json, uuid
+import json
+import uuid
 
 
 from sqlalchemy import Text, Column, Integer, String, desc
@@ -24,9 +25,13 @@ class Maps(db.Model):
         """Creates, adds and commit new Maps object into database based on provided:
         name, map, level.
         """
-        db_map = cls(name=name, level=level, data=json.dumps(map))
-        db.session.add(db_map)
-        db.session.commit()
+        try:
+            db_map = cls(name=name, level=level, data=json.dumps(map))
+            db.session.add(db_map)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     @classmethod
     def get_max_level_of_maps(cls) -> int:
@@ -50,9 +55,7 @@ class Maps(db.Model):
 
     @classmethod
     def is_map_table_empty(cls):
-        """Chekcks, if there are some rows in Maps table.
+        """Checks, if there are some rows in Maps table.
         Returns True if there are some, otherwise False.
         """
-        if db.session.query(cls).first() == None:
-            return True
-        return False
+        return db.session.query(cls).first() is None

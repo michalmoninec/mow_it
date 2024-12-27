@@ -1,4 +1,8 @@
-from typing import List, TypedDict
+"""
+This script defines type validation utilities for the Flask application.
+"""
+
+from typing import List, Dict, TypedDict, Callable, Type
 from functools import wraps
 from flask import jsonify, request
 from flask_socketio import emit
@@ -30,19 +34,19 @@ class UserRoomIDKey(TypedDict, KeyAndUserID, RoomID):
     pass
 
 
-def validate_json(typed_dict):
-    """Validates json data with provided typed_dict.
+def validate_json(typed_dict: Type[Dict]) -> Callable:
+    """Validates JSON data with provided typed_dict.
     Checks field presence and type validation.
     If any exception is raised, return error message.
     Otherwise returns decorated function witch validated_data.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             data = request.get_json()
 
-            if not (isinstance(data, dict)):
+            if not isinstance(data, dict):
                 return jsonify({"error": "Invalid JSON payload."}), 400
 
             try:
@@ -62,13 +66,13 @@ def validate_json(typed_dict):
     return decorator
 
 
-def validate_user_in_db(user_model):
+def validate_user_in_db(user_model: Type) -> Callable:
     """Validates user presence inside db.
     If user is not None and it is not inside db, error is returned.
     Otherwise original function is returned.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             data = request.get_json()
@@ -82,13 +86,13 @@ def validate_user_in_db(user_model):
     return decorator
 
 
-def validate_user_in_db_emit(user_model):
+def validate_user_in_db_emit(user_model: Type) -> Callable:
     """Validates user presence inside db.
     If user is not None and it is not inside db, error is emitted.
     Otherwise original function is returned.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(data, *args, **kwargs):
             user_id = data.get("user_id")
@@ -102,13 +106,13 @@ def validate_user_in_db_emit(user_model):
     return decorator
 
 
-def validate_room_in_db(room_model):
+def validate_room_in_db(room_model: Type) -> Callable:
     """Validates room presence inside db.
     If room is not None and it is not inside db, error is returned.
     Otherwise original function is returned.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(data, *args, **kwargs):
             room_id = data.get("room_id")
@@ -121,13 +125,13 @@ def validate_room_in_db(room_model):
     return decorator
 
 
-def validate_room_in_db_emit(room_model):
+def validate_room_in_db_emit(room_model: Type) -> Callable:
     """Validates room presence inside db.
     If room is not None and it is not inside db, error is emitted.
     Otherwise original function is returned.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(data, *args, **kwargs):
             room_id = data.get("room_id")
@@ -141,14 +145,14 @@ def validate_room_in_db_emit(room_model):
     return decorator
 
 
-def validate_socket_payload(typed_dict):
+def validate_socket_payload(typed_dict: Type[Dict]) -> Callable:
     """Validates json socket data with provided typed_dict.
     Checks field presence and type validation.
     If any exception is raised, emits error message.
     Otherwise returns decorated function witch validated_data.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(data, *args, **kwargs):
             if not isinstance(data, dict):

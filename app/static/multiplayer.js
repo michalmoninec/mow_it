@@ -1,7 +1,7 @@
 import { updateGrid, setModalPosition } from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    let socket = io.connect('https://' + document.domain + ':' + location.port);
+    let socket = io.connect('http://' + document.domain + ':' + location.port);
 
     let p1_name = document.getElementById('p1_name');
     let p1_score = document.getElementById('p1_score');

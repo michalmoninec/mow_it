@@ -1,6 +1,7 @@
 import json
 
 from flask_socketio import emit, join_room
+from typing import Dict
 
 from app.types_validation import (
     RoomID,
@@ -26,7 +27,8 @@ def configure_socketio(socketio):
     @socketio.on("join_room")
     @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)
-    def handle_join_room(data) -> None:
+    def handle_join_room(data: Dict) -> None:
+        """Handles join room event."""
         room_id = data.get("room_id")
         user_id = data.get("user_id")
 
@@ -49,7 +51,8 @@ def configure_socketio(socketio):
 
     @socketio.on("request_maps_from_server")
     @validate_socket_payload(RoomID)
-    def handle_maps_from_server(data) -> None:
+    def handle_maps_from_server(data: Dict) -> None:
+        """Handles request maps from server event."""
         room = data.get("room_id")
         emit("response_maps_from_server", to=room)
 
@@ -57,13 +60,12 @@ def configure_socketio(socketio):
     @validate_socket_payload(RoomAndUserID)
     @validate_user_in_db_emit(UserState)
     @validate_room_in_db_emit(GameState)
-    def get_initial_maps(data) -> None:
+    def get_initial_maps(data: Dict) -> None:
+        """Handles request initial maps event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         user_state = UserState.get_user_by_id(user_id)
         game_state = GameState.get_game_state_by_room(room_id)
-
-        # game_state.add_move_to_stack(user_id, None)
 
         emit(
             "response_update_data",
@@ -90,7 +92,8 @@ def configure_socketio(socketio):
     @validate_socket_payload(UserRoomIDKey)
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
-    def handle_update_values(data: dict) -> None:
+    def handle_update_values(data: Dict) -> None:
+        """Handles request update data event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         key = data.get("key")
@@ -138,6 +141,7 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_level_advance_confirmation(data) -> None:
+        """Handles the request_level_advance_confirmation event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         user_state = UserState.get_user_by_id(user_id)
@@ -163,7 +167,7 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_level_advance(data) -> None:
-        print("advancing to next level")
+        """Handles the request_level_advance event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         max_level = GameState.get_game_state_max_level_by_room(room_id)
@@ -193,6 +197,7 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_game_finished(data) -> None:
+        """Handles the request_game_finished event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         game_state = GameState.get_game_state_by_room(room_id)
@@ -225,6 +230,7 @@ def configure_socketio(socketio):
 
     @socketio.on("request_round_advance")
     def handle_round_advance(data):
+        """Handles the request_round_advance event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         game_state = GameState.get_game_state_by_room(room_id)
@@ -236,6 +242,7 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_data_update(data) -> None:
+        """Handles the request_data_update event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         user_state = UserState.get_user_by_id(user_id)
@@ -260,6 +267,7 @@ def configure_socketio(socketio):
     @validate_socket_payload(RoomID)
     @validate_room_in_db_emit(GameState)
     def handle_game_state_reset(data) -> None:
+        """Handles the request_game_state_reset event."""
         room_id = data.get("room_id")
         game_state = GameState.get_game_state_by_room(room_id)
 
@@ -271,6 +279,7 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_disconnect(data) -> None:
+        """Handles the disconnect event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
         game_state = GameState.get_game_state_by_room(room_id)
@@ -283,6 +292,7 @@ def configure_socketio(socketio):
     @socketio.on("test_join_room")
     @validate_socket_payload(RoomID)
     def handle_test_join_room(data):
+        """Handles the test_join_room event."""
         room = data.get("room_id")
         if room:
             join_room(room)

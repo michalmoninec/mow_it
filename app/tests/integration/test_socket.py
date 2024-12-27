@@ -140,7 +140,7 @@ def test_get_inital_maps(socket_client, test_game, test_user):
 
 
 def test_handle_update_values(socket_client, test_user, test_game):
-    """Tests socketio on evenet for event name: "request_update_data".
+    """Tests socketio on event for event name: "request_update_data".
     Excpected is one received event.
     Assumed valid move with ArrowDown, returned map should differs with provided map.
     """
@@ -265,7 +265,7 @@ def test_handle_game_finished_regular_round(
     socket_client.emit(join_event, payload)
     socket_client.emit(event_name, payload)
     received_events = socket_client.get_received()
-    assert received_events[0]["name"] == "response_maps_from_server"
+    assert received_events[0]["name"] == "response_both_players_finished_game"
 
 
 def test_handle_game_finished_final_round(

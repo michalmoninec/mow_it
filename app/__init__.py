@@ -1,12 +1,15 @@
-from flask import Flask
+"""
+This script initializes the Flask application, registers blueprints, and configures extensions.
+"""
 
+from flask import Flask
 
 from app.extensions import db, socketio
 from app.socket import configure_socketio
 from app.routes import main, test_main, singleplayer, multiplayer
 
 
-def create_app(config_class="config.Config") -> Flask:
+def create_app(config_class: str = "config.Config") -> Flask:
     """Creates Flask app, register blueprints and configure socketio."""
     app = Flask(__name__)
 
@@ -23,7 +26,7 @@ def create_app(config_class="config.Config") -> Flask:
     return app
 
 
-def test_app(config_class="config.TestConfig") -> Flask:
+def test_app(config_class: str = "config.TestConfig") -> Flask:
     """Creates test Flask app, register blueprints, where main
     is different, due to map_table creation.
     Socketio is not configured here, it is configured inside test fixture.
