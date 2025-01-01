@@ -1,4 +1,9 @@
-import { updateGrid, setModalPosition } from './shared.js';
+import {
+    updateGrid,
+    setModalPosition,
+    getMowerPosition,
+    validateMove,
+} from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -135,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_update_data', (data) => {
         if (data.user_id == user_id) {
-            console.log(data.map);
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
             updateGrid(data.map, 'player');
@@ -143,17 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotateMower(data.key);
             }
             p1_name.innerText = data.name;
-            // p1_level.innerText = data.level;
             p1_score.innerText = data.score;
             p1_rounds_label.innerText = data.rounds_won;
             if (data.game_completed) {
-                console.log('Game finished');
                 socket.emit('request_game_finished', {
                     user_id: user_id,
                     room_id: room_id,
                 });
             } else if (data.level_completed) {
-                console.log('Level finished');
                 socket.emit('request_level_advance_confirmation', {
                     room_id: room_id,
                     user_id: user_id,
@@ -170,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotateOponentMower(data.key);
             }
             p2_name.innerText = data['name'];
-            // p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
             p2_rounds_label.innerText = data.rounds_won;
         }
@@ -185,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotateOponentMower(data.key);
             }
             p2_name.innerText = data['name'];
-            // p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
             p2_rounds_label.innerText = data.rounds_won;
         }
@@ -200,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotateOponentMower(data.key);
             }
             p2_name.innerText = data['name'];
-            // p2_level.innerText = data['level'];
             p2_score.innerText = data['score'];
             p2_rounds_label.innerText = data.rounds_won;
         }
@@ -351,14 +349,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function sendKeyPress(key) {
-        if (readyToPlay) {
+    function updateGameState(key) {
+        let newPos = validateMove(key);
+        if (newPos) {
             socket.emit('request_update_data', {
                 key: key,
                 user_id: user_id,
                 room_id: room_id,
             });
             lastDirection = key;
+        }
+    }
+
+    function sendKeyPress(key) {
+        if (readyToPlay) {
+            updateGameState(key);
+            rotateMower(key);
         }
     }
 

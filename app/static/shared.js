@@ -35,3 +35,56 @@ export function setModalPosition(grid, modal) {
     modal.style.top = `${pos.top}px`;
     modal.style.left = `${pos.left}px`;
 }
+
+export function validateMove(key) {
+    let [posX, posY] = getMowerPosition();
+    let [prevPosX, prevPosY] = [posX, posY];
+    let newPos = [posX, posY];
+    switch (key) {
+        case 'ArrowUp':
+            newPos = [posX, posY - 1];
+            break;
+        case 'ArrowDown':
+            newPos = [posX, posY + 1];
+            break;
+        case 'ArrowLeft':
+            newPos = [posX - 1, posY];
+            break;
+        case 'ArrowRight':
+            newPos = [posX + 1, posY];
+            break;
+    }
+    if (newPos[0] < 0 || newPos[0] > 9 || newPos[1] < 0 || newPos[1] > 9) {
+        return [posX, posY];
+    }
+    let gridItem = document.getElementById(`${newPos[0]}${newPos[1]}`);
+    if (gridItem.classList.contains('blocked')) {
+        return [posX, posY];
+    }
+    gridItem.classList.add('active');
+    // if (gridItem.classList.contains('visited')) {
+    //     score = score - 100;
+    // } else {
+    //     score = score + 100;
+    // }
+    gridItem = document.getElementById(`${posX}${posY}`);
+    gridItem.classList.remove('active');
+    gridItem.classList.add('visited');
+    const style = window.getComputedStyle(gridItem);
+    const transform = style.transform;
+    gridItem.style.transform = transform === 'none' ? 'none' : 'rotate(90deg)';
+
+    // updateScoreAndLevel(score, level);
+    return newPos;
+}
+
+export function getMowerPosition() {
+    for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            const gridItem = document.getElementById(`${col}${row}`);
+            if (gridItem.classList.contains('active')) {
+                return [col, row];
+            }
+        }
+    }
+}

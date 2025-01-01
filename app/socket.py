@@ -121,26 +121,17 @@ def configure_socketio(socketio):
                     to=room_id,
                 )
 
-        emit(
-            "response_update_data",
-            {
-                "user_id": user_id,
-                "map": json.loads(user_state.map),
-                "level": user_state.level,
-                "score": user_state.score,
-                "name": user_state.name,
-                "level_completed": user_state.level_completed,
-                "game_completed": user_state.game_completed,
-                "rounds_won": user_state.rounds_won,
-                "key": key,
-            },
-        )
+        if user_state.game_completed:
+            handle_game_finished({"user_id": user_id, "room_id": room_id})
+        elif user_state.level_completed:
+            handle_level_advance_confirmation({"user_id": user_id, "room_id": room_id})
 
     @socketio.on("request_level_advance_confirmation")
     @validate_socket_payload(RoomAndUserID)
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_level_advance_confirmation(data) -> None:
+        print(f"handling level adnvancing using this function..")
         """Handles the request_level_advance_confirmation event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")
