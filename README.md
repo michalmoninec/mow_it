@@ -1,8 +1,6 @@
 # MOW_IT - lawn mowing web browser game
 
-Simple web browser game.
-
-Tests should be taken with caution because they served as a way to learn and try to test different things.
+Simple web browser game where player mows a garden with some obstacles while trying to cut grass on all cells of the lawn.
 
 ### Dependencies
 
@@ -52,3 +50,5 @@ Current state functionality:
 -   After level completion, advancing is possible either by clicking next level button or pressing enter.
 -   Each unvisited cell adds score, when moving through visited cell, score is decreased.
 -   Multiplayer score has bonus for finishing level before your oponent.
+
+Tests should be taken with caution because they served as a way to learn and try to test different things.
