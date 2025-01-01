@@ -68,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 readyToPlay = true;
                 updateGrid(map, 'player', grassBlock);
                 updateScoreAndLevel(score, level);
+                document.querySelector('.active').style.transform =
+                    'rotate(90deg)';
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -90,18 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((response) => response.json())
             .then((data) => {
                 let gameState = data.user_state;
-                allLevelsCompleted = gameState.game_completed;
 
-                map = gameState.map;
-                score = gameState.score;
-                level = gameState.level;
-                // updatedMap = updateMap(map);
-                updateGrid(map, 'player');
-                rotateMower(key);
-                updateScoreAndLevel(score, level);
-                console.log(`outer key: ${key}`);
-
-                if (allLevelsCompleted) {
+                if (gameState.game_completed) {
                     document.getElementById('level_advance_label').innerText =
                         'CONGRATULATIONS, ALL LEVELS CLEARED';
                 }
@@ -156,6 +148,60 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function validateMove(key) {
+        let [posX, posY] = getMowerPosition();
+        let [prevPosX, prevPosY] = [posX, posY];
+        let newPos = [posX, posY];
+        switch (key) {
+            case 'ArrowUp':
+                newPos = [posX, posY - 1];
+                break;
+            case 'ArrowDown':
+                newPos = [posX, posY + 1];
+                break;
+            case 'ArrowLeft':
+                newPos = [posX - 1, posY];
+                break;
+            case 'ArrowRight':
+                newPos = [posX + 1, posY];
+                break;
+        }
+        if (newPos[0] < 0 || newPos[0] > 9 || newPos[1] < 0 || newPos[1] > 9) {
+            return [posX, posY];
+        }
+        let gridItem = document.getElementById(`${newPos[0]}${newPos[1]}`);
+        if (gridItem.classList.contains('blocked')) {
+            return [posX, posY];
+        }
+        gridItem.classList.add('active');
+        if (gridItem.classList.contains('visited')) {
+            score = score - 100;
+        } else {
+            score = score + 100;
+        }
+        gridItem = document.getElementById(`${posX}${posY}`);
+        gridItem.classList.remove('active');
+        gridItem.classList.add('visited');
+        const style = window.getComputedStyle(gridItem);
+        const transform = style.transform;
+        gridItem.style.transform =
+            transform === 'none' ? 'none' : 'rotate(90deg)';
+
+        updateScoreAndLevel(score, level);
+        return newPos;
+    }
+
+    function getMowerPosition() {
+        for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 10; col++) {
+                const gridItem = document.getElementById(`${col}${row}`);
+                if (gridItem.classList.contains('active')) {
+                    return [col, row];
+                }
+            }
+        }
+    }
+
     document.addEventListener('keydown', (event) => {
         const key = event.key;
         if (
@@ -164,6 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
             event.preventDefault();
             sendKeyPress(key);
+            validateMove(key);
+            rotateMower(key);
         }
         if (['Enter'].includes(key)) {
             if (levelCompletedModal.style.display === 'flex') {
@@ -204,70 +252,4 @@ document.addEventListener('DOMContentLoaded', () => {
         levelLabel.innerHTML = level;
     }
     let prevButtonStates = [];
-
-    function pollGamepad() {
-        const gamepads = navigator.getGamepads();
-
-        if (gamepads[0]) {
-            // Check if at least one gamepad is connected
-            const gamepad = gamepads[0];
-
-            // Loop through all the buttons
-            gamepad.buttons.forEach((button, index) => {
-                // Check if the button was just pressed
-                if (button.pressed && !prevButtonStates[index]) {
-                    console.log(`Button ${index} pressed`);
-                }
-
-                // Check if the button was just released
-                if (!button.pressed && prevButtonStates[index]) {
-                    console.log(`Button ${index} released`);
-                }
-
-                // Store the current state for the next frame
-                prevButtonStates[index] = button.pressed;
-            });
-        }
-
-        // Keep polling the gamepad
-        // requestAnimationFrame(pollGamepad);
-    }
-    // let prevAxesStates = [];
-
-    // function pollGamepadAxes() {
-    //     const gamepads = navigator.getGamepads();
-
-    //     if (gamepads[0]) {
-    //         // Check if at least one gamepad is connected
-    //         const gamepad = gamepads[0];
-
-    //         // Loop through all the axes
-    //         gamepad.axes.forEach((axisValue, index) => {
-    //             // Check if the axis value has changed significantly (to avoid noise)
-    //             const threshold = 0.1; // Define a threshold to detect significant movement
-    //             if (
-    //                 Math.abs(axisValue - (prevAxesStates[index] || 0)) >
-    //                 threshold
-    //             ) {
-    //                 console.log(`Axis ${index} moved: ${axisValue}`);
-    //             }
-
-    //             // Store the current state for the next frame
-    //             prevAxesStates[index] = axisValue;
-    //         });
-    //     }
-
-    //     // Keep polling the gamepad
-    //     requestAnimationFrame(pollGamepadAxes);
-    // }
-
-    // Start polling when the gamepad is connected
-
-    // Start polling the gamepad when it is connected
-    // window.addEventListener('gamepadconnected', () => {
-    //     prevButtonStates = []; // Initialize the previous button states
-    //     prevAxesStates = []; // Initialize the previous axis states
-    //     requestAnimationFrame(pollGamepadAxes);
-    //     requestAnimationFrame(pollGamepad);
-    // });
 });
