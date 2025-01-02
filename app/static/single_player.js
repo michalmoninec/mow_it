@@ -141,15 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function rotateMower(key) {
-        console.log(key);
         console.log(lastDirection);
         if (['ArrowLeft', 'ArrowRight'].includes(key)) {
             document.querySelector('.active').style.transform = 'rotate(0deg)';
             lastDirection = 'horizontal';
         } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
             document.querySelector('.active').style.transform = 'rotate(90deg)';
-        } else {
-            console.log('Shouldnt rotate.');
         }
     }
 
@@ -161,7 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
             event.preventDefault();
             sendKeyPress(key);
-            validateMove(key);
+            let pos;
+            [pos, score] = validateMove(key, score);
+            updateScoreAndLevel(score, level);
             rotateMower(key);
         }
         if (['Enter'].includes(key)) {

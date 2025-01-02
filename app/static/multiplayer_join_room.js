@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let userID = getUserID();
 
-    console.log(roomID);
-
     retrieveUserAndRoom();
 
     function getUserID() {

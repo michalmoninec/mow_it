@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const achievedLevels = document.getElementById('achieved-levels');
 
     let userID = getUserID();
-    console.log(userID);
 
     getUserData();
 

@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastDirection = 'horizontal';
 
+    let score;
+
     const gridContainerPlayer = document.getElementById(
         'grid-container-player'
     );
@@ -97,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then((data) => {
-                console.log(data.valid);
                 if (data.valid) {
                     socket.emit('join_room', {
                         user_id: user_id,
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_update_data', (data) => {
         if (data.user_id == user_id) {
+            score = data.score;
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
             updateGrid(data.map, 'player');
@@ -184,9 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.key) {
                 rotateOponentMower(data.key);
             }
-            p2_name.innerText = data['name'];
             p2_score.innerText = data['score'];
-            p2_rounds_label.innerText = data.rounds_won;
         }
     });
     socket.on('response_update_oponent_data', (data) => {
@@ -198,14 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.key) {
                 rotateOponentMower(data.key);
             }
-            p2_name.innerText = data['name'];
             p2_score.innerText = data['score'];
-            p2_rounds_label.innerText = data.rounds_won;
         }
     });
 
     socket.on('response_player_finished_level', (data) => {
-        console.log('Player finished level.');
         if (data.user_id == user_id) {
             readyToPlay = false;
             p1_modal_text.innerText = 'Level completed, waiting for oponent.';
@@ -218,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('response_advance_level_confirmation', () => {
-        console.log('server thinks he is ready to advance for this client');
         readyToPlay = true;
         socket.emit('request_level_advance', {
             user_id: user_id,
@@ -290,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('response_player_disconnected', () => {
         // socket.emit('join_room');
-        console.log('someone disconnected');
     });
 
     document.addEventListener('keydown', (event) => {
@@ -317,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.onbeforeunload = function () {
         socket.disconnect();
-        console.log('before unload happens..');
         socket.emit('disconnect', {
             user_id: user_id,
             room_id: room_id,
@@ -350,7 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateGameState(key) {
-        let newPos = validateMove(key);
+        let newPos;
+        [newPos, score] = validateMove(key, score);
+        p1_score.innerText = score;
         if (newPos) {
             socket.emit('request_update_data', {
                 key: key,
@@ -369,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function waitingForPlayerToJoin() {
-        console.log('Game not ready yet..');
         readyToPlay = false;
         p1_modal_text.innerText = `Waiting for oponent to join.`;
         p1ModalLinkDiv.innerText = getRoomLink();
@@ -377,16 +372,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setModalVisible(p1_modal);
     }
 
-    function startGame() {
-        console.log('Game is ready, starting!');
-    }
-
     function finishedGame() {
         console.log('Game finished');
     }
 
     function setModalVisible(modal) {
-        console.log('modal should be visible');
         modal.style.display = 'flex';
     }
 
@@ -403,7 +393,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.active').style.transform = 'rotate(0deg)';
         } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
             document.querySelector('.active').style.transform = 'rotate(90deg)';
-            console.log('should be vertical');
         }
     }
 
@@ -424,8 +413,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return localStorage.getItem('roomID');
     }
 
-    p1ModalLinkDiv.addEventListener('click', () => {
-        console.log('button works');
-        // window.location.href = '/';
-    });
+    // p1ModalLinkDiv.addEventListener('click', () => {
+    //     console.log('button works');
+    //     // window.location.href = '/';
+    // });
 });

@@ -25,18 +25,15 @@ export function updateGrid(map, player) {
     }
 }
 
-export function updateMap(map, key) {}
-
 export function setModalPosition(grid, modal) {
     modal.style.width = `${grid.offsetWidth}px`;
     modal.style.height = `${grid.offsetHeight}px`;
     let pos = grid.getBoundingClientRect();
-    // console.log(pos.top);
     modal.style.top = `${pos.top}px`;
     modal.style.left = `${pos.left}px`;
 }
 
-export function validateMove(key) {
+export function validateMove(key, score) {
     let [posX, posY] = getMowerPosition();
     let [prevPosX, prevPosY] = [posX, posY];
     let newPos = [posX, posY];
@@ -55,18 +52,18 @@ export function validateMove(key) {
             break;
     }
     if (newPos[0] < 0 || newPos[0] > 9 || newPos[1] < 0 || newPos[1] > 9) {
-        return [posX, posY];
+        return [[posX, posY], score];
     }
     let gridItem = document.getElementById(`${newPos[0]}${newPos[1]}`);
     if (gridItem.classList.contains('blocked')) {
-        return [posX, posY];
+        return [[posX, posY], score];
     }
     gridItem.classList.add('active');
-    // if (gridItem.classList.contains('visited')) {
-    //     score = score - 100;
-    // } else {
-    //     score = score + 100;
-    // }
+    if (gridItem.classList.contains('visited')) {
+        score = score - 100;
+    } else {
+        score = score + 100;
+    }
     gridItem = document.getElementById(`${posX}${posY}`);
     gridItem.classList.remove('active');
     gridItem.classList.add('visited');
@@ -74,8 +71,7 @@ export function validateMove(key) {
     const transform = style.transform;
     gridItem.style.transform = transform === 'none' ? 'none' : 'rotate(90deg)';
 
-    // updateScoreAndLevel(score, level);
-    return newPos;
+    return [newPos, score];
 }
 
 export function getMowerPosition() {

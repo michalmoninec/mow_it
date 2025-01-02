@@ -107,17 +107,29 @@ def configure_socketio(socketio):
         updated_map = user_state.map
 
         if orig_map != updated_map:
-            game_state.add_move_to_stack(user_id, json.loads(updated_map), key)
+            game_state.add_move_to_stack(
+                user_id, json.loads(updated_map), key, user_state.score
+            )
             my_oponent, oponent_data = game_state.get_oponent_move(user_id)
 
             if my_oponent and oponent_data:
                 emit(
                     "response_update_my_oponent",
-                    {"map": my_oponent[0], "user_id": user_id, "key": my_oponent[1]},
+                    {
+                        "map": my_oponent[0],
+                        "user_id": user_id,
+                        "key": my_oponent[1],
+                        "score": my_oponent[2],
+                    },
                 )
                 emit(
                     "response_update_oponent_data",
-                    {"map": oponent_data[0], "user_id": user_id, "key": key},
+                    {
+                        "map": oponent_data[0],
+                        "user_id": user_id,
+                        "key": key,
+                        "score": oponent_data[2],
+                    },
                     to=room_id,
                 )
 
@@ -131,7 +143,6 @@ def configure_socketio(socketio):
     @validate_room_in_db_emit(GameState)
     @validate_user_in_db_emit(UserState)
     def handle_level_advance_confirmation(data) -> None:
-        print(f"handling level adnvancing using this function..")
         """Handles the request_level_advance_confirmation event."""
         user_id = data.get("user_id")
         room_id = data.get("room_id")

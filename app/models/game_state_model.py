@@ -230,16 +230,16 @@ class GameState(db.Model):
             self.winner_id = None
         db.session.commit()
 
-    def add_move_to_stack(self, user_id: str, map: str, key: str):
+    def add_move_to_stack(self, user_id: str, map: str, key: str, score: int) -> None:
         """Adds user snapshot to stack."""
         if self.player_1_id == user_id:
             move_stack = json.loads(self.p1_moves_stack)
-            move_stack.append((map, key))
+            move_stack.append((map, key, score))
             self.p1_moves_stack = json.dumps(move_stack)
 
         elif self.player_2_id == user_id:
             move_stack = json.loads(self.p2_moves_stack)
-            move_stack.append((map, key))
+            move_stack.append((map, key, score))
             self.p2_moves_stack = json.dumps(move_stack)
 
         db.session.commit()
