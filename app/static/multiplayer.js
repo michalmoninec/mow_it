@@ -1,8 +1,9 @@
 import {
     updateGrid,
     setModalPosition,
-    getMowerPosition,
+    getPositionFromMap,
     validateMove,
+    getOponentMowerPosition,
 } from './shared.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let p1_name = document.getElementById('p1_name');
     let p1_score = document.getElementById('p1_score');
-    // let p1_level = document.getElementById('p1_level');
     let p1_grid = document.getElementById('p1_grid');
     let p1_modal = document.getElementById('player_modal');
     let p1_modal_text = document.getElementById('player_modal_text');
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let p2_name = document.getElementById('p2_name');
     let p2_score = document.getElementById('p2_score');
-    // let p2_level = document.getElementById('p2_level');
     let p2_grid = document.getElementById('p2_grid');
     let p2_modal = document.getElementById('oponent_modal');
     let p2_modal_text = document.getElementById('oponent_modal_text');
@@ -144,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             score = data.score;
             setModalDisable(p1_modal);
             setModalDisable(endGameModal);
+            removeMower();
             updateGrid(data.map, 'player');
             if (data.key) {
                 rotateMower(data.key);
@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setModalDisable(p2_modal);
             setModalDisable(endGameModal);
+            removeOponentMower();
             if (data.map) {
                 oponentMap = data.map;
                 updateGrid(data.map, 'oponent');
@@ -181,7 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.user_id == user_id) {
             if (data.map) {
                 oponentMap = data.map;
-                updateGrid(data.map, 'oponent');
+                // updateGrid(data.map, 'oponent');
+                updateOponent(data.map);
             }
             if (data.key) {
                 rotateOponentMower(data.key);
@@ -193,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.user_id != user_id) {
             if (data.map) {
                 oponentMap = data.map;
-                updateGrid(data.map, 'oponent');
+                // updateGrid(data.map, 'oponent');
+                updateOponent(data.map);
             }
             if (data.key) {
                 rotateOponentMower(data.key);
@@ -311,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.onbeforeunload = function () {
-        socket.disconnect();
+        // socket.disconnect();
         socket.emit('disconnect', {
             user_id: user_id,
             room_id: room_id,
@@ -342,6 +345,36 @@ document.addEventListener('DOMContentLoaded', () => {
             room_id: room_id,
         });
     });
+
+    function removeMower() {
+        let gridItem = document.querySelector('.active');
+        console.log(`gridItem: ${gridItem}`);
+        if (gridItem) {
+            gridItem.removeChild(gridItem.querySelector('.mower'));
+        }
+    }
+
+    function removeOponentMower() {
+        let gridItem = document.querySelector('.oactive');
+        console.log(`gridItem at oponent deletion: ${gridItem}`);
+        if (gridItem) {
+            gridItem.removeChild(gridItem.querySelector('.omower'));
+        }
+    }
+
+    function updateOponent(map) {
+        let prevPos = getOponentMowerPosition();
+        let pos = getPositionFromMap(map);
+        let gridItem = document.getElementById(`o${pos[0]}${pos[1]}`);
+        gridItem.classList.add('oactive');
+        let mower = document.querySelector('.omower');
+        if (mower) {
+            gridItem.appendChild(mower);
+        }
+        gridItem = document.getElementById(`o${prevPos[0]}${prevPos[1]}`);
+        gridItem.classList.remove('oactive');
+        gridItem.classList.add('visited');
+    }
 
     function updateGameState(key) {
         let newPos;
@@ -389,19 +422,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function rotateMower(key) {
-        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
-            document.querySelector('.active').style.transform = 'rotate(0deg)';
-        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
-            document.querySelector('.active').style.transform = 'rotate(90deg)';
+        if (['ArrowRight'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(0deg)';
+        } else if (['ArrowDown'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(90deg)';
+        } else if (['ArrowLeft'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(180deg)';
+        } else if (['ArrowUp'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(270deg)';
         }
     }
 
     function rotateOponentMower(key) {
-        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
-            document.querySelector('.oactive').style.transform = 'rotate(0deg)';
-        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
-            document.querySelector('.oactive').style.transform =
-                'rotate(90deg)';
+        if (['ArrowRight'].includes(key)) {
+            document.querySelector('.omower').style.transform = 'rotate(0deg)';
+        } else if (['ArrowDown'].includes(key)) {
+            document.querySelector('.omower').style.transform = 'rotate(90deg)';
+        } else if (['ArrowLeft'].includes(key)) {
+            document.querySelector('.omower').style.transform =
+                'rotate(180deg)';
+        } else if (['ArrowUp'].includes(key)) {
+            document.querySelector('.omower').style.transform =
+                'rotate(270deg)';
         }
     }
 

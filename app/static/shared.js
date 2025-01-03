@@ -11,6 +11,10 @@ export function updateGrid(map, player) {
             );
             if (cell.active) {
                 gridItem.className = idPrefix + 'active';
+                let mower = document.createElement('div');
+                mower.className = `${idPrefix}mower`;
+                mower.id = `${idPrefix}mowerMachine`;
+                gridItem.appendChild(mower);
             } else if (cell.visited) {
                 gridItem.className = 'visited';
                 gridItem.style.transform = 'none';
@@ -59,6 +63,8 @@ export function validateMove(key, score) {
         return [[posX, posY], score];
     }
     gridItem.classList.add('active');
+    let mower = document.getElementById('mowerMachine');
+    gridItem.appendChild(mower);
     if (gridItem.classList.contains('visited')) {
         score = score - 100;
     } else {
@@ -69,7 +75,8 @@ export function validateMove(key, score) {
     gridItem.classList.add('visited');
     const style = window.getComputedStyle(gridItem);
     const transform = style.transform;
-    gridItem.style.transform = transform === 'none' ? 'none' : 'rotate(90deg)';
+
+    // gridItem.style.transform = transform === 'none' ? 'rotate(90deg)' : 'none';
 
     return [newPos, score];
 }
@@ -80,6 +87,27 @@ export function getMowerPosition() {
             const gridItem = document.getElementById(`${col}${row}`);
             if (gridItem.classList.contains('active')) {
                 return [col, row];
+            }
+        }
+    }
+}
+
+export function getOponentMowerPosition() {
+    for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            const gridItem = document.getElementById(`o${col}${row}`);
+            if (gridItem.classList.contains('oactive')) {
+                return [col, row];
+            }
+        }
+    }
+}
+
+export function getPositionFromMap(map) {
+    for (const row of map) {
+        for (const cell of row) {
+            if (cell.active) {
+                return [cell.x, cell.y];
             }
         }
     }

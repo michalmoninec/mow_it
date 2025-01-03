@@ -73,8 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 readyToPlay = true;
                 updateGrid(map, 'player', grassBlock);
                 updateScoreAndLevel(score, level);
-                document.querySelector('.active').style.transform =
-                    'rotate(90deg)';
+
+                // document.querySelector('.active').style.transform =
+                //     'rotate(90deg)';
             })
             .catch((error) => console.error('Error:', error));
     }
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then((data) => {
                     if (data['valid_advance']) {
+                        removeMower();
                         retrieveMap();
                     } else {
                         console.log('Invalid level advance!');
@@ -140,13 +142,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function removeMower() {
+        let gridItem = document.querySelector('.active');
+        if (gridItem) {
+            gridItem.removeChild(gridItem.querySelector('.mower'));
+        }
+    }
+
     function rotateMower(key) {
-        console.log(lastDirection);
-        if (['ArrowLeft', 'ArrowRight'].includes(key)) {
-            document.querySelector('.active').style.transform = 'rotate(0deg)';
-            lastDirection = 'horizontal';
-        } else if (['ArrowUp', 'ArrowDown'].includes(key)) {
-            document.querySelector('.active').style.transform = 'rotate(90deg)';
+        if (['ArrowRight'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(0deg)';
+        } else if (['ArrowDown'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(90deg)';
+        } else if (['ArrowLeft'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(180deg)';
+        } else if (['ArrowUp'].includes(key)) {
+            document.querySelector('.mower').style.transform = 'rotate(270deg)';
         }
     }
 
@@ -201,5 +212,4 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreLabel.innerHTML = score;
         levelLabel.innerHTML = level;
     }
-    let prevButtonStates = [];
 });

@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{% block title%} My Flask App {% endblock%}</title>
+        <title>{% block title%} MOW_IT {% endblock%}</title>
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='styles/base.css') }}"
@@ -14,7 +14,7 @@
         <div class="container">
             <div class="horizontal whole-width space-around navbar">
                 <!-- <div id='navbar-spacer'></div> -->
-                <h1 class='app-title' id='app-title''>MOW_IT GAME</h1>
+                <h1 class="app-title" id="app-title">MOW_IT GAME</h1>
                 <!-- <div id='app-login' class='horizontal'>
                     <div>SIGN IN</div>
                     <div>LOGIN</div>
@@ -26,8 +26,6 @@
             <div class="footer">Powered by &copy; Anton's beer quality</div>
         </div>
         <script src="{{ url_for('static', filename='base.js') }}"></script>
-        {% endblock %} {% block scripts %}
-        {% endblock %}
+        {% endblock %} {% block scripts %} {% endblock %}
     </body>
 </html>
- 

@@ -23,17 +23,22 @@
 }
 .active {
     background-color: rgb(137, 204, 131) !important;
-    background-image: url('../styles/graphics/mower.svg'),
-        url('../styles/graphics/pattern.svg');
-    background-repeat: no-repeat, repeat;
-    background-size: auto, auto;
+    background-image: url('../styles/graphics/pattern.svg');
 }
+.mower {
+    background-image: url('../styles/graphics/mower.svg');
+    width: 100%;
+    height: 100%;
+}
+.omower {
+    background-image: url('../styles/graphics/mower.svg');
+    width: 100%;
+    height: 100%;
+}
+
 .oactive {
     background-color: rgb(137, 204, 131) !important;
-    background-image: url('../styles/graphics/mower.svg'),
-        url('../styles/graphics/pattern.svg');
-    background-repeat: no-repeat, repeat;
-    background-size: auto, auto;
+    background-image: url('../styles/graphics/pattern.svg');
 }
 .o-visited {
     background-color: rgb(90, 128, 0) !important;

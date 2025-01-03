@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    width="50"
    height="50"
@@ -22,14 +25,14 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="17.23266"
-     inkscape:cx="21.586917"
-     inkscape:cy="20.049139"
+     inkscape:cx="20.832535"
+     inkscape:cy="29.972158"
      inkscape:window-width="2560"
      inkscape:window-height="1387"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g37">
+     inkscape:current-layer="layer1">
     <inkscape:grid
        id="grid2"
        units="mm"
@@ -199,6 +202,36 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.17767;stroke-linecap:square;stroke-linejoin:bevel;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect3"
+       width="4.5814991"
+       height="2.5295956"
+       x="7.3065143"
+       y="4.4837894"
+       ry="0.021293977" />
+    <rect
+       style="fill:#4d4d4d;stroke:none;stroke-width:0.780126;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="rect2"
+       width="1.0831302"
+       height="7.45538"
+       x="8.8773518"
+       y="0.38378048"
+       ry="0.036081977"
+       inkscape:transform-center-x="-0.025346146"
+       inkscape:transform-center-y="-0.11491729"
+       transform="matrix(0.8077142,0.58957422,-0.44120227,0.89740769,0,0)" />
+    <rect
+       style="fill:#4d4d4d;stroke:none;stroke-width:0.72823;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="rect2-5"
+       width="0.97410399"
+       height="7.2236018"
+       x="13.255215"
+       y="-3.3937321"
+       ry="0.03496024"
+       inkscape:transform-center-x="-0.021358666"
+       inkscape:transform-center-y="-0.11457578"
+       transform="matrix(0.75682915,0.65361275,-0.3837236,0.923448,0,0)" />
+    <rect
        style="fill:#784421;fill-opacity:1;stroke-width:0.188423;stroke-dasharray:none;paint-order:normal"
        id="rect4"
        width="9.2824211"
@@ -212,7 +245,7 @@
        width="9.2824211"
        height="1.8564842"
        x="1.8303701"
-       y="5.5671067"
+       y="7.6837735"
        rx="0.26982355" />
     <rect
        style="fill:#784421;fill-opacity:1;stroke-width:0.14835;stroke-dasharray:none;paint-order:normal"
@@ -242,15 +275,23 @@
        id="path35" />
     <path
        style="fill:#552200;stroke:#622305;stroke-width:0.262109px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 1.9349472,7.3306718 H 10.975623"
+       d="M 1.9349472,9.4473386 H 10.975623"
        id="path35-6" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.157152px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 4.7204728,9.604206 v 3.249922"
+       id="path35-6-5" />
+    <path
+       style="fill:#552200;stroke:#622305;stroke-width:0.157;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:none"
+       d="M 9.3422227,9.5559369 V 12.805859"
+       id="path35-6-5-3" />
     <path
        style="fill:#552200;stroke:#622305;stroke-width:0.0932302;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
        d="M 8.2698562,5.5167211 H 9.4169366"
        id="path35-6-2" />
     <g
        id="g37"
-       transform="translate(0.08444479,-0.06909119)">
+       transform="matrix(1.2749054,0,0,1.4093264,-1.5028035,-1.0348166)">
       <rect
          style="fill:#ffccaa;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0992619;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
          id="rect36"
@@ -266,10 +307,40 @@
          x="3.0860734"
          y="4.1838555"
          id="text5"
-         transform="translate(0.47596155,1.5123294)"><tspan
+         transform="matrix(1.215489,0,0,1.27147,0.52476127,0.60764058)"><tspan
            x="3.0860734"
            y="4.1838555"
-           id="tspan1">CLOSED</tspan></text>
+           id="tspan3"><tspan
+             style="font-family:'Agency FB';-inkscape-font-specification:'Agency FB'"
+             id="tspan2">CLOSED</tspan></tspan></text>
     </g>
+    <ellipse
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.12311;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="path1"
+       cx="3.1158538"
+       cy="4.67378"
+       rx="0.14531597"
+       ry="0.15074427" />
+    <ellipse
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.12311;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="path1-8"
+       cx="3.0887418"
+       cy="8.0943003"
+       rx="0.14531597"
+       ry="0.15074427" />
+    <ellipse
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.12311;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="path1-8-1"
+       cx="10.125895"
+       cy="8.1103973"
+       rx="0.14531597"
+       ry="0.15074427" />
+    <ellipse
+       style="fill:#1a1a1a;stroke:#000000;stroke-width:0.12311;stroke-linecap:square;stroke-linejoin:bevel;paint-order:fill markers stroke"
+       id="path1-8-1-0"
+       cx="10.105021"
+       cy="4.6543403"
+       rx="0.14531597"
+       ry="0.15074427" />
   </g>
 </svg>
